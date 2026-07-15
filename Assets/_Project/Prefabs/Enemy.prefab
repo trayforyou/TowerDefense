@@ -86,7 +86,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca9c85e487845b64fa53af7f46f18b7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  _aimPoint: {fileID: 8214401573846594239}
+  <AimPoint>k__BackingField: {fileID: 8214401573846594239}
 --- !u!95 &8140556526734253159
 Animator:
   serializedVersion: 7

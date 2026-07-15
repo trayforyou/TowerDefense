@@ -17,7 +17,7 @@ public class MainMenu : MonoBehaviour
 
     private void OnEnable()
     {
-        ChangeMetaCoins(PlayerPrefs.GetInt(GameManager.MetaCurrency, 0));
+        ChangeMetaCoins(PlayerPrefs.GetInt(GameManager.META_CURRENCY, 0));
         
         _start.onClick.AddListener(ClickButton);
     }

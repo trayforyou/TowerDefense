@@ -19,7 +19,7 @@ public class Castle : MonoBehaviour
         _particles = GetComponent<ParticleSystem>();
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         _health.ValueChanged -= ChangedHealthValue;
         _health.Died -= Die;
@@ -36,22 +36,22 @@ public class Castle : MonoBehaviour
 
     public bool TryGetHealthInfo(out int maxHealth, out int currentHealth)
     {
-        if (_health is null)
+        if (_health == null)
         {
             maxHealth = 0;
             currentHealth = 0;
             return false;
         }
 
-        maxHealth = _health.MaxPoints;
-        currentHealth = _health.Points;
+        maxHealth = _health.MaxPointsCount;
+        currentHealth = _health.PointsCount;
 
         return true;
     }
 
     public void TakeDamage(int damage)
     {
-        if (_health is null)
+        if (_health == null)
             throw new Exception("_health не инициализирован");
 
         _particles.Play();
@@ -60,7 +60,7 @@ public class Castle : MonoBehaviour
 
     public void SetConfig(GameConfig config)
     {
-        if (_config is not null)
+        if (_config != null)
             return;
 
         _config = config;

@@ -27,7 +27,11 @@ public class Mover : MonoBehaviour
         if (_isInitialize)
             return;
 
-        _target = target ?? throw new ArgumentNullException(nameof(target));
+        if (target == null)
+            throw new ArgumentNullException(nameof(target));
+        else
+            _target = target;
+
         _sqrStopDistance = _config.EnemyStopDistance * _config.EnemyStopDistance;
         _agent.speed = _config.EnemySpeed;
         _isInitialize = true;
@@ -48,7 +52,7 @@ public class Mover : MonoBehaviour
 
         _agent.destination = _target.position;
 
-        if (_coroutine is not null)
+        if (_coroutine != null)
             StopCoroutine(_coroutine);
 
         _coroutine = StartCoroutine(RunToTower());

@@ -26,21 +26,21 @@ public class EnemySpawner : MonoBehaviour
     public event Action<int> ChangedAliveEnemies;
     public event Action<int> StartedNewWave;
 
-    private void OnEnable() => 
+    private void Start() => 
         _castle.Died += Stop;
 
-    private void OnDisable() =>
+    private void OnDestroy() =>
          _castle.Died -= Stop;
 
     public void StartWave()
     {
-        if (_config is null)
+        if (_config == null)
         {
             _config = GameManager.Instance.Config;
             _enemiesCount = _config.EnemiesPerWave;
         }
 
-        if (_coroutine is not null)
+        if (_coroutine != null)
             StopCoroutine(_coroutine);
 
         _coroutine = StartCoroutine(StartSpawning());
@@ -86,7 +86,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void InitializePool()
     {
-        if (_enemiesPool is not null)
+        if (_enemiesPool != null)
             return;
 
         _enemiesPool = new ObjectPool<Enemy>(

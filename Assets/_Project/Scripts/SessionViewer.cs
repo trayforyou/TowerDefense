@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ public class SessionViewer : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _waveTimeInfo;
     [SerializeField] private TextMeshProUGUI _enemiesKilled;
     [SerializeField] private CanvasGroup _canvasGroup;
+    [SerializeField] private float _initializationDelay = 1.5f;
 
     private string _splitter = "|";
     private string _wavesCountText;
@@ -23,8 +25,6 @@ public class SessionViewer : MonoBehaviour
     private bool _isHealthInfoInitialize = false;
     private int _maxEnemiesCount;
 
-    public event Action FindingInfo;
-
     private void Awake()
     {
         _wavesCountText = _wavesCount.text;
@@ -35,12 +35,6 @@ public class SessionViewer : MonoBehaviour
         _canvasGroup.interactable = false;
         _canvasGroup.blocksRaycasts = false;
         Show();
-    }
-
-    private void FixedUpdate()
-    {
-        if (_isWaveTimeInitialize || _isMoneysInfoInitialize || _isWavesCountInitialize || _isHealthInfoInitialize)
-            FindingInfo?.Invoke();
     }
 
     public void Show() =>
@@ -61,7 +55,7 @@ public class SessionViewer : MonoBehaviour
         ChangeEnemiesCount(currentEnemies);
     }
 
-    public void ChangeEnemiesCount(int currentEnemies) => 
+    public void ChangeEnemiesCount(int currentEnemies) =>
         _enemiesKilled.text = _enemiesKilledText + currentEnemies + _splitter + _maxEnemiesCount;
 
     public void ChangeCountMoney(int count)

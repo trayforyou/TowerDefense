@@ -6,7 +6,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasGroup))]
 public class BuildMenu : MonoBehaviour
 {
-    private const string CurrencySymbol = "$";
+    private const string CURRENCY_SYMBOL = "$";
 
     [SerializeField] private Button _buttonFastTower;
     [SerializeField] private TextMeshProUGUI _tMPFastTower;
@@ -62,8 +62,8 @@ public class BuildMenu : MonoBehaviour
 
     public void SetCostTowers(int fastTower, int strongTower)
     {
-        _tMPFastTower.text = fastTower.ToString() + CurrencySymbol;
-        _tMPStrongTower.text = strongTower.ToString() + CurrencySymbol;
+        _tMPFastTower.text = fastTower.ToString() + CURRENCY_SYMBOL;
+        _tMPStrongTower.text = strongTower.ToString() + CURRENCY_SYMBOL;
     }
 
     public void SetCanBuyFast(bool value)

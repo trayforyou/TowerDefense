@@ -5,9 +5,9 @@ public class Tower : MonoBehaviour
 {
     private Shooter _shooter;
 
-    private void Awake() => 
+    private void Awake() =>
         _shooter = GetComponent<Shooter>();
 
-    public void Stop() => 
+    public void Stop() =>
         _shooter.Stop();
 }

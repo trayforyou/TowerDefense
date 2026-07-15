@@ -1,21 +1,17 @@
-using System;
 using System.Collections;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class SessionHandler : MonoBehaviour
 {
     [SerializeField] private SessionViewer _sessionViewer;
     [SerializeField] private BuildManager _buildManager;
     [SerializeField] private EnemySpawner _spawner;
-    [SerializeField] private EndMenu _endMenu;
+    [SerializeField] private EndMenuViewer _endMenu;
     [SerializeField] private Castle _castle;
     [SerializeField] private Wallet _wallet;
-    [SerializeField] private bool _isGameOver = false;
-    [SerializeField] private int _wavesSurvived = 0;
-    [SerializeField] private int _kills = 0;
 
+    private bool _isGameOver = false;
+    private int _kills = 0;
     private GameConfig _config;
     private Coroutine _coroutine;
     private int _waveNumber = 0;
@@ -34,12 +30,16 @@ public class SessionHandler : MonoBehaviour
 
     private void Start()
     {
+        SubscribeAll();
         _sessionViewer.ChangeWaveNumber(++_waveNumber);
         _spawner.StartWave();
         _buildManager.SetParameters(_wallet);
     }
 
-    private void OnEnable()
+    private void OnDestroy() =>
+        UnSubscribeAll();
+
+    private void SubscribeAll()
     {
         _spawner.EnemyDied += RegisterKill;
         _spawner.WaveEnded += ReloadWave;
@@ -48,12 +48,11 @@ public class SessionHandler : MonoBehaviour
         _castle.Died += EndSession;
         _castle.ValueChanged += ChangeHealthValue;
         _wallet.ValueChanged += ChangeMoneyValue;
-        _sessionViewer.FindingInfo += GetCastleInfo;
         _endMenu.ButtonRestartClicked += RestartSession;
         _endMenu.ButtonMenuClicked += GoToMenu;
     }
 
-    private void OnDisable()
+    private void UnSubscribeAll()
     {
         _endMenu.ButtonMenuClicked -= GoToMenu;
         _endMenu.ButtonRestartClicked -= RestartSession;
@@ -63,27 +62,27 @@ public class SessionHandler : MonoBehaviour
         _spawner.StartedNewWave -= SetEnemiesCount;
         _castle.ValueChanged -= ChangeHealthValue;
         _castle.Died -= EndSession;
-        _sessionViewer.FindingInfo -= GetCastleInfo;
         _wallet.ValueChanged -= ChangeMoneyValue;
     }
 
     private void EndSession()
     {
-        if (_isGameOver) return;
-        _isGameOver = true;
+        if (_isGameOver)
+            return;
 
-        int reward = _wavesSurvived * _config.MoneyPerWave + _kills * _config.MoneyPerKill;
+        _isGameOver = true;
+        int reward = _waveNumber * _config.MoneyPerWave + _kills * _config.MoneyPerKill;
 
         _buildManager.StopAllTowers();
         _sessionViewer.Hide();
         _endMenu.SetValue(_waveNumber, _kills, reward);
         _endMenu.Show();
 
-        int metaMoney = PlayerPrefs.GetInt(GameManager.MetaCurrency, 0);
+        int metaMoney = PlayerPrefs.GetInt(GameManager.META_CURRENCY, 0);
 
         metaMoney += reward;
 
-        PlayerPrefs.SetInt(GameManager.MetaCurrency, metaMoney);
+        PlayerPrefs.SetInt(GameManager.META_CURRENCY, metaMoney);
     }
 
     private void GoToMenu()
@@ -98,13 +97,13 @@ public class SessionHandler : MonoBehaviour
         GameManager.Instance.ReloadCurrentScene();
     }
 
-    private void ChangeEnemiesCount(int count) => 
+    private void ChangeEnemiesCount(int count) =>
         _sessionViewer.ChangeEnemiesCount(count);
 
-    private void SetEnemiesCount(int count) => 
+    private void SetEnemiesCount(int count) =>
         _sessionViewer.ChangeEnemiesCount(count, count);
 
-    private void ChangeMoneyValue(int count) => 
+    private void ChangeMoneyValue(int count) =>
         _sessionViewer.ChangeCountMoney(count);
 
     private void GetCastleInfo()
@@ -118,7 +117,7 @@ public class SessionHandler : MonoBehaviour
 
     private void ReloadWave()
     {
-        if (_coroutine is not null)
+        if (_coroutine != null)
             StopCoroutine(_coroutine);
 
         _coroutine = StartCoroutine(WaitWave());

@@ -7,8 +7,6 @@ using UnityEngine;
 [RequireComponent(typeof(ParticleSystem))]
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private Transform _aimPoint;
-
     private Mover _mover;
     private Animator _animator;
     private Castle _target;
@@ -21,8 +19,8 @@ public class Enemy : MonoBehaviour
     public event Action Running;
     public event Action<Enemy> Died;
 
-    public Transform AimPoint => _aimPoint;
-    public int Health => _health.Points;
+    [field: SerializeField] public Transform AimPoint { get; private set; }
+    public int Health => _health.PointsCount;
 
     private void Awake()
     {
@@ -31,6 +29,7 @@ public class Enemy : MonoBehaviour
         _mover = GetComponent<Mover>();
         _particles = GetComponent<ParticleSystem>();
     }
+
     private void OnEnable()
     {
         _particles.Stop();
@@ -57,7 +56,7 @@ public class Enemy : MonoBehaviour
 
     public void ResetHealth()
     {
-        if (_health is null)
+        if (_health == null)
             _health = new Health(_config.EnemyHealth);
         else
             _health.Reset();
@@ -76,7 +75,11 @@ public class Enemy : MonoBehaviour
 
     public void SetParams(Castle target)
     {
-        _target = target ?? throw new ArgumentNullException(nameof(target));
+        if (target == null)
+            throw new ArgumentNullException(nameof(target));
+        else
+            _target = target;
+
         _sqrStopDistance = _config.EnemyStopDistance * _config.EnemyStopDistance;
         _mover.SetParams(target.transform);
     }
@@ -86,7 +89,7 @@ public class Enemy : MonoBehaviour
 
     private void GoAttack()
     {
-        if (_coroutine is not null)
+        if (_coroutine != null)
             StopCoroutine(_coroutine);
 
         _animator.SetBool("IsRun", false);

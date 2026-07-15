@@ -6,7 +6,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasGroup))]
 public class PumpingMenu : MonoBehaviour
 {
-    private const string CurrencySymbol = "$";
+    private const string CURRENCY_SYMBOL = "$";
 
     [SerializeField] private Button _buttonHealthier;
     [SerializeField] private Button _buttonFaster;
@@ -16,15 +16,14 @@ public class PumpingMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _tMPStronger;
 
     private CanvasGroup _canvasGroup;
-    private bool _isActive = false;
 
     public event Action TriedUpHealth;
     public event Action TriedUpSpeed;
     public event Action TriedUpStrong;
 
-    public bool IsActive => _isActive;
+    [field: SerializeField] public bool IsActive { get; private set; } = false;
 
-    private void Awake() => 
+    private void Awake() =>
         _canvasGroup = GetComponent<CanvasGroup>();
 
     private void Start()
@@ -48,7 +47,7 @@ public class PumpingMenu : MonoBehaviour
         _canvasGroup.alpha = 1;
         _canvasGroup.interactable = true;
         _canvasGroup.blocksRaycasts = true;
-        _isActive = true;
+        IsActive = true;
     }
 
     public void Hide()
@@ -56,7 +55,7 @@ public class PumpingMenu : MonoBehaviour
         _canvasGroup.alpha = 0;
         _canvasGroup.interactable = false;
         _canvasGroup.blocksRaycasts = false;
-        _isActive = false;
+        IsActive = false;
     }
 
     public void SetStartCost(int cost)
@@ -67,13 +66,13 @@ public class PumpingMenu : MonoBehaviour
     }
 
     public void ChangeCostUpgradeHealth(int cost) =>
-        _tMPHealthier.text = cost + CurrencySymbol;
+        _tMPHealthier.text = cost + CURRENCY_SYMBOL;
 
     public void ChangeCostUpgradeSpeed(int cost) =>
-        _tMPFaster.text = cost + CurrencySymbol;
+        _tMPFaster.text = cost + CURRENCY_SYMBOL;
 
     public void ChangeCostUpgradeStrong(int cost) =>
-        _tMPStronger.text = cost + CurrencySymbol;
+        _tMPStronger.text = cost + CURRENCY_SYMBOL;
 
     public void SetCanUpHealth(bool value) =>
         ChangeView(_tMPHealthier, value);
@@ -93,11 +92,6 @@ public class PumpingMenu : MonoBehaviour
     private void TryUpStrong() =>
         TriedUpStrong?.Invoke();
 
-    private void ChangeView(TextMeshProUGUI tMPTower, bool value)
-    {
-        if (value)
-            tMPTower.color = Color.green;
-        else
-            tMPTower.color = Color.red;
-    }
+    private void ChangeView(TextMeshProUGUI tMPTower, bool value) => 
+        tMPTower.color = value ? Color.green : Color.red;
 }

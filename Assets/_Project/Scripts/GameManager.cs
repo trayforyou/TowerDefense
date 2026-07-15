@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-    public const string MetaCurrency = "MetaCurrency";
+    public const string META_CURRENCY = "MetaCurrency";
 
     [SerializeField] private string _mainMenuScene = "Menu";
     [SerializeField] private string _gameScene = "Game";
@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance is not null && Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;

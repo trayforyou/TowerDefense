@@ -37,8 +37,11 @@ public class BuildManager : MonoBehaviour
         _pumpingMenu.SetStartCost(_config.UpgradeCastleCost);
     }
 
-    private void Start() => 
+    private void Start()
+    {
         _mainCamera = Camera.main;
+        SubscribeAll();
+    }
 
     private void Update()
     {
@@ -56,7 +59,10 @@ public class BuildManager : MonoBehaviour
         }
     }
 
-    private void OnEnable()
+    private void OnDestroy() => 
+        UnsubscribeAll();
+
+    private void SubscribeAll()
     {
         _buildMenu.TriedBuyFastTower += BuildFastTower;
         _buildMenu.TriedBuyStrongTower += BuildStrongTower;
@@ -65,7 +71,7 @@ public class BuildManager : MonoBehaviour
         _pumpingMenu.TriedUpSpeed += UpCastleSpeed;
     }
 
-    private void OnDisable()
+    private void UnsubscribeAll()
     {
         _buildMenu.TriedBuyFastTower -= BuildFastTower;
         _buildMenu.TriedBuyStrongTower -= BuildStrongTower;
@@ -77,7 +83,10 @@ public class BuildManager : MonoBehaviour
 
     public void SetParameters(Wallet wallet)
     {
-        _wallet = wallet ?? throw new ArgumentNullException(nameof(wallet));
+        if (wallet == null)
+            throw new ArgumentNullException(nameof(wallet));
+        else
+            _wallet = wallet;
 
         _wallet.ValueChanged += ChangeOpportunitiesBuy;
     }
@@ -89,8 +98,14 @@ public class BuildManager : MonoBehaviour
         else
             _buildMenu.Hide();
     }
+    
+    public void StopAllTowers()
+    {
+        foreach (Tower tower in _towers)
+            tower.Stop();
+    }
 
-    public void BuildFastTower()
+    private void BuildFastTower()
     {
         if (_wallet.TryTakeMoney(_config.FastTowerCost))
             BuildTower(_fastTowerPrefab);
@@ -98,7 +113,7 @@ public class BuildManager : MonoBehaviour
             _buildMenu.Hide();
     }
 
-    public void UpCastleHealth()
+    private void UpCastleHealth()
     {
         if (_wallet.TryTakeMoney(_currentCostUpgradeHealth) && _castleHealthLevel <= _config.MaxCastleLevel)
         {
@@ -109,10 +124,9 @@ public class BuildManager : MonoBehaviour
         }
 
         _pumpingMenu.Hide();
-
     }
 
-    public void UpCastleStrong()
+    private void UpCastleStrong()
     {
         if (_wallet.TryTakeMoney(_currentCostUpgradeForce) && _castleStrongLevel <= _config.MaxCastleLevel)
         {
@@ -125,7 +139,7 @@ public class BuildManager : MonoBehaviour
         _pumpingMenu.Hide();
     }
 
-    public void UpCastleSpeed()
+    private void UpCastleSpeed()
     {
         if (_wallet.TryTakeMoney(_currentCostUpgradeSpeed) && _castleSpeedLevel <= _config.MaxCastleLevel)
         {
@@ -136,12 +150,6 @@ public class BuildManager : MonoBehaviour
         }
 
         _pumpingMenu.Hide();
-    }
-
-    public void StopAllTowers()
-    {
-        foreach (Tower tower in _towers)
-            tower.Stop();
     }
 
     private void ChangeOpportunitiesBuy(int count)

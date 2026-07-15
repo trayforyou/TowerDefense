@@ -56,7 +56,7 @@ public class Shooter : MonoBehaviour
         for (int i = 1; i < _currentSpeedLevel; i++)
             _currentDelay = _currentDelay / _config.UpgradeMultiplier;
 
-        if (_attackCoroutine is not null)
+        if (_attackCoroutine != null)
             StopCoroutine(_attackCoroutine);
 
         _attackCoroutine = null;
@@ -73,7 +73,7 @@ public class Shooter : MonoBehaviour
         for (int i = 1; i < _currentForceLevel; i++)
             _currentDamage = (int)(_currentDamage * _config.UpgradeMultiplier);
 
-        if (_attackCoroutine is not null)
+        if (_attackCoroutine != null)
             StopCoroutine(_attackCoroutine);
 
         _attackCoroutine = null;
@@ -99,12 +99,12 @@ public class Shooter : MonoBehaviour
         {
             yield return wait;
 
-            if (_attackCoroutine is not null)
+            if (_attackCoroutine != null)
                 continue;
 
             _target = FindNearestEnemy();
 
-            if (_target is null)
+            if (_target == null)
                 continue;
 
             _target.Died += ClearTarget;
@@ -146,9 +146,9 @@ public class Shooter : MonoBehaviour
     {
         var wait = new WaitForSeconds(_currentDelay);
 
-        while (_target is not null && _target == currentTarget)
+        while (_target != null && _target == currentTarget)
         {
-            if (_target is null)
+            if (_target == null)
             {
                 _attackCoroutine = null;
                 yield break;
@@ -164,7 +164,7 @@ public class Shooter : MonoBehaviour
 
     private IEnumerator Shoot()
     {
-        if (_target is null)
+        if (_target == null)
             yield break;
 
         bool isEnemyAlive = true;

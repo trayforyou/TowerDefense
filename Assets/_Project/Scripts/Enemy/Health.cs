@@ -2,37 +2,37 @@
 
 public class Health
 {
-    protected int _points;
-    protected int _maxPoints;
+    protected int Points;
+    protected int MaxPoints;
 
     public event Action Died;
 
-    public int Points => _points;
-    public int MaxPoints => _maxPoints;
+    public int PointsCount => Points;
+    public int MaxPointsCount => MaxPoints;
 
     public Health(int points)
     {
-        _points = points;
-        _maxPoints = points;
+        Points = points;
+        MaxPoints = points;
     }
 
     public void Reset() => 
-        _points = _maxPoints;
+        Points = MaxPoints;
 
     public void TakeDamage(int damage)
     {
         if (damage < 0)
             throw new ArgumentException("Отрицательное значение урона");
 
-        if (damage > _points)
+        if (damage > Points)
         {
-            _points = 0;
+            Points = 0;
             ValueChange();
             Died?.Invoke();
         }
         else
         {
-            _points -= damage;
+            Points -= damage;
             ValueChange();
         }
     }
