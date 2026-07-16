@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class PumpingMenu : MonoBehaviour
+public class UpgradeMenu : MonoBehaviour
 {
     private const string CURRENCY_SYMBOL = "$";
 

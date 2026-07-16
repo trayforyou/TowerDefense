@@ -11,34 +11,40 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private int _minPoolSize = 5;
     [SerializeField] private int _maxPoolSize = 20;
     [SerializeField] private List<SpawnPoint> _spawnPoints;
-    [SerializeField] private Castle _castle;
     [SerializeField] private Vector3 _createEnemiesPoint;
 
+    private Castle _castle;
     private ObjectPool<Enemy> _enemiesPool;
     private HashSet<Enemy> _enemies = new();
     private Coroutine _coroutine;
     private GameConfig _config;
     private int _enemiesCount;
     private int _currentEnemiesCount;
+    private bool _isInitialized = false;
 
     public event Action EnemyDied;
     public event Action WaveEnded;
     public event Action<int> ChangedAliveEnemies;
     public event Action<int> StartedNewWave;
 
-    private void Start() => 
-        _castle.Died += Stop;
+    public void Initialize(Castle castle, GameConfig config)
+    {
+        if (_isInitialized)
+            throw new Exception("Already Initialized");
 
-    private void OnDestroy() =>
-         _castle.Died -= Stop;
+        if (castle == null || config == null)
+            throw new ArgumentNullException();
+            
+        _isInitialized = true;
+        
+        _config = config;
+        _castle = castle;
+    }
 
     public void StartWave()
     {
-        if (_config == null)
-        {
-            _config = GameManager.Instance.Config;
-            _enemiesCount = _config.EnemiesPerWave;
-        }
+        if (!_isInitialized)
+            throw new Exception("Not Initialized");
 
         if (_coroutine != null)
             StopCoroutine(_coroutine);
@@ -46,10 +52,8 @@ public class EnemySpawner : MonoBehaviour
         _coroutine = StartCoroutine(StartSpawning());
     }
 
-    private void Stop()
+    public void Stop()
     {
-        _castle.Died -= Stop;
-
         StopAllCoroutines();
 
         foreach (Enemy enemy in _enemies)
@@ -90,13 +94,13 @@ public class EnemySpawner : MonoBehaviour
             return;
 
         _enemiesPool = new ObjectPool<Enemy>(
-    createFunc: () => CreateEnemy(),
-    actionOnGet: enemy => GetEnemy(enemy),
-    actionOnRelease: enemy => EnemyRelease(enemy),
-    actionOnDestroy: enemy => DestroyEnemy(enemy),
-    collectionCheck: false,
-    defaultCapacity: _minPoolSize,
-    maxSize: _maxPoolSize);
+            createFunc: () => CreateEnemy(),
+            actionOnGet: enemy => GetEnemy(enemy),
+            actionOnRelease: enemy => EnemyRelease(enemy),
+            actionOnDestroy: enemy => DestroyEnemy(enemy),
+            collectionCheck: false,
+            defaultCapacity: _minPoolSize,
+            maxSize: _maxPoolSize);
     }
 
     private void EnemyRelease(Enemy enemy)
