@@ -1,79 +1,87 @@
 using System;
 using System.Collections;
+using TowerDefense.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
-public class Mover : MonoBehaviour
+namespace TowerDefense.Enemy
 {
-    private NavMeshAgent _agent;
-    private GameConfig _config;
-    private Transform _target;
-    private Coroutine _coroutine;
-    private bool _isInitialize = false;
-    private float _sqrStopDistance;
-
-    public event Action HasCome;
-    public event Action Running;
-
-    private void Awake()
+    [RequireComponent(typeof(NavMeshAgent))]
+    public class Mover : MonoBehaviour
     {
-        _agent = GetComponent<NavMeshAgent>();
-        _config = GameManager.Instance.Config;
-    }
+        private NavMeshAgent _agent;
+        private GameConfig _config;
+        private Transform _target;
+        private Coroutine _coroutine;
+        private float _sqrStopDistance;
 
-    public void SetParams(Transform target)
-    {
-        if (_isInitialize)
-            return;
+        private bool _isInitialize => (_target != null && _config != null);
 
-        if (target == null)
-            throw new ArgumentNullException(nameof(target));
-        else
-            _target = target;
+        public event Action HasCome;
+        public event Action Running;
 
-        _sqrStopDistance = _config.EnemyStopDistance * _config.EnemyStopDistance;
-        _agent.speed = _config.EnemySpeed;
-        _isInitialize = true;
-    }
+        private void Awake() =>
+            _agent = GetComponent<NavMeshAgent>();
 
-    public void GoToTarget()
-    {
-        if (!_agent.isOnNavMesh)
+        public void SetParams(Transform target, GameConfig config)
         {
-            NavMeshHit hit;
-            float maxDistance = 1.5f;
-
-            if (NavMesh.SamplePosition(_target.position, out hit, maxDistance, NavMesh.AllAreas))
-                _agent.destination = hit.position;
-            else
+            if (_isInitialize)
                 return;
+
+            if (target == null || config == null)
+                throw new ArgumentNullException(nameof(target));
+
+            _target = target;
+            _config = config;
+
+            _sqrStopDistance = _config.EnemyStopDistance * _config.EnemyStopDistance;
+            _agent.speed = _config.EnemySpeed;
         }
 
-        _agent.destination = _target.position;
-
-        if (_coroutine != null)
-            StopCoroutine(_coroutine);
-
-        _coroutine = StartCoroutine(RunToTower());
-    }
-
-    private IEnumerator RunToTower()
-    {
-        _agent.isStopped = false;
-
-        Running?.Invoke();
-
-        float sqrDistance = Vector3.SqrMagnitude(_target.position - transform.position);
-
-        while (sqrDistance > _sqrStopDistance)
+        public void GoToTarget()
         {
-            sqrDistance = Vector3.SqrMagnitude(_target.position - transform.position);
-            yield return new WaitForFixedUpdate();
+            if (!_isInitialize)
+                return;
+
+            if (!_agent.isOnNavMesh)
+            {
+                NavMeshHit hit;
+                float maxDistance = 1.5f;
+
+                if (NavMesh.SamplePosition(_target.position, out hit, maxDistance, NavMesh.AllAreas))
+                    _agent.destination = hit.position;
+                else
+                    return;
+            }
+
+            _agent.destination = _target.position;
+
+            if (_coroutine != null)
+                StopCoroutine(_coroutine);
+
+            _coroutine = StartCoroutine(RunToTower());
         }
 
-        _agent.isStopped = true;
-        _agent.velocity = Vector3.zero;
-        HasCome?.Invoke();
+        private IEnumerator RunToTower()
+        {
+            if (!_isInitialize)
+                yield break;
+
+            _agent.isStopped = false;
+
+            Running?.Invoke();
+
+            float sqrDistance = Vector3.SqrMagnitude(_target.position - transform.position);
+
+            while (sqrDistance > _sqrStopDistance)
+            {
+                sqrDistance = Vector3.SqrMagnitude(_target.position - transform.position);
+                yield return new WaitForFixedUpdate();
+            }
+
+            _agent.isStopped = true;
+            _agent.velocity = Vector3.zero;
+            HasCome?.Invoke();
+        }
     }
 }

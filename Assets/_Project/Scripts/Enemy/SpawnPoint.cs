@@ -1,3 +1,8 @@
 using UnityEngine;
 
-public class SpawnPoint : MonoBehaviour{}
+namespace TowerDefense.Enemy
+{
+    public class SpawnPoint : MonoBehaviour
+    {
+    }
+}

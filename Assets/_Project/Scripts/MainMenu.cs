@@ -1,30 +1,29 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenu : MonoBehaviour
+namespace TowerDefense
 {
-    [SerializeField] private Button _start;
-    [SerializeField] private TextMeshProUGUI _metaCoins;
-
-    private string _metaCoinsText;
-
-    private void Awake() => 
-        _metaCoinsText = _metaCoins.text;
-
-    public void ChangeMetaCoins(int value) => 
-        _metaCoins.text = _metaCoinsText + value;
-
-    private void OnEnable()
+    public class MainMenu : MonoBehaviour
     {
-        ChangeMetaCoins(PlayerPrefs.GetInt(GameManager.META_CURRENCY, 0));
-        
-        _start.onClick.AddListener(ClickButton);
+        [SerializeField] private Button _start;
+        [SerializeField] private TextMeshProUGUI _metaCoins;
+
+        private string _metaCoinsText;
+
+        public event Action TriedLoadGame;
+
+        private void Awake()
+        {
+            _metaCoins.text += PlayerPrefs.GetInt(GameStarter.META_CURRENCY, 0);
+            _start.onClick.AddListener(ClickButton);
+        }
+
+        private void OnDisable() =>
+            _start.onClick.RemoveListener(ClickButton);
+
+        private void ClickButton() =>
+            TriedLoadGame?.Invoke();
     }
-
-    private void OnDisable() => 
-        _start.onClick.RemoveListener(ClickButton);
-
-    private void ClickButton() => 
-        GameManager.Instance.LoadGame();
 }
