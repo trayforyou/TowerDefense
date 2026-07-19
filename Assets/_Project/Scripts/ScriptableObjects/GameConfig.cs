@@ -21,7 +21,6 @@ namespace TowerDefense.ScriptableObjects
 
         [field: SerializeField] public int MaxCastleLevel { get; private set; } = 10;
         [field: SerializeField] public int UpgradeCastleCost { get; private set; } = 10;
-        [field: SerializeField] public float BulletSpeed { get; private set; } = 3f;
         [field: SerializeField, Min(1.1f)] public float UpgradeMultiplier { get; private set; } = 1.2f;
         [field: SerializeField, Min(1.1f)] public float CostMultiplier { get; private set; } = 1.2f;
         [field: SerializeField] public float RadiusRangeCastle { get; private set; } = 1;
@@ -29,15 +28,21 @@ namespace TowerDefense.ScriptableObjects
         [field: SerializeField] public int StartDamageCastle { get; private set; } = 1;
         [field: SerializeField] public int StartHealthCastle { get; private set; } = 25;
 
+        [field: SerializeField] public int MinEnemyPullSize { get; private set; } = 5;
+        [field: SerializeField] public int MaxEnemyPullSize { get; private set; } = 15;
         [field: SerializeField] public int WavesDelay { get; private set; } = 15;
         [field: SerializeField] public float EnemySpawnDelay { get; private set; } = 1f;
         [field: SerializeField] public float EnemySpeed { get; private set; } = 0.5f;
         [field: SerializeField] public float EnemyAttackDelay { get; private set; } = 1f;
         [field: SerializeField] public int EnemyDamage { get; private set; } = 1;
         [field: SerializeField] public int EnemyHealth { get; private set; } = 1;
-        [field: SerializeField] public int CostEnemyDeath { get; private set; } = 10;
         [field: SerializeField] public int EnemiesPerWave { get; private set; } = 5;
         [field: SerializeField] public float EnemyStopDistance { get; private set; } = 1f;
         [field: SerializeField, Min(1.1f)] public float MultiplierEnemiesPerWave { get; private set; } = 1.2f;
+
+        [field: SerializeField] public float BulletSpeed { get; private set; } = 3f;
+        [field: SerializeField] public float FindDelay { get; private set; } = 1.5f;
+        [field: SerializeField] public int MinBulletPullSize { get; private set; } = 5;
+        [field: SerializeField] public int MaxBulletPullSize { get; private set; } = 15;
     }
 }

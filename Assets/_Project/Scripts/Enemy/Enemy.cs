@@ -61,11 +61,10 @@ namespace TowerDefense.Enemy
 
         public void ResetHealth()
         {
-            if (_health == null)
-                _health = new Health(_config.EnemyHealth);
-            else
-                _health.Reset();
+            if (!_isInitialized)
+                return;
 
+            _health.Reset();
             _health.Died += Die;
         }
 
@@ -88,8 +87,9 @@ namespace TowerDefense.Enemy
 
             _target = target;
             _config = config;
-
+            _health = new Health(_config.EnemyHealth);
             _sqrStopDistance = _config.EnemyStopDistance * _config.EnemyStopDistance;
+            
             _mover.SetParams(target.transform, config);
         }
 

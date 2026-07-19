@@ -13,7 +13,7 @@ namespace TowerDefense.Builds.Castle
         private GameConfig _config;
         private Shooter.Shooter _shooter;
 
-        public event Action<int, int> ValueChanged;
+        public event HealthChangedEventHandler ValueChanged;
         public event Action Died;
 
         private void Awake()
@@ -72,7 +72,7 @@ namespace TowerDefense.Builds.Castle
             if (_config == null)
                 throw new ArgumentException("Config is null");
 
-            _health = new CastleHealth(_config.StartHealthCastle, _config.MaxCastleLevel, _config.UpgradeMultiplier);
+            _health = new CastleHealth(_config.StartHealthCastle, _config.UpgradeMultiplier);
             _health.ValueChanged += ChangedHealthValue;
             _health.Died += Die;
             _health.RefreshInfo();

@@ -39,8 +39,6 @@ namespace TowerDefense
             }
         }
 
-        protected virtual void ValueChange()
-        {
-        }
+        protected virtual void ValueChange() {}
     }
 }

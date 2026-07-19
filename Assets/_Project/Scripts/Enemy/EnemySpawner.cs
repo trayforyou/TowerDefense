@@ -12,10 +12,7 @@ namespace TowerDefense.Enemy
     public class EnemySpawner : MonoBehaviour
     {
         [SerializeField] private Enemy _enemyPrefab;
-        [SerializeField] private int _minPoolSize = 5;
-        [SerializeField] private int _maxPoolSize = 20;
         [SerializeField] private List<SpawnPoint> _spawnPoints;
-        [SerializeField] private Vector3 _createEnemiesPoint;
 
         private Castle _castle;
         private ObjectPool<Enemy> _enemiesPool;
@@ -98,13 +95,13 @@ namespace TowerDefense.Enemy
                 return;
 
             _enemiesPool = new ObjectPool<Enemy>(
-                createFunc: () => CreateEnemy(),
+                createFunc: CreateEnemy,
                 actionOnGet: enemy => GetEnemy(enemy),
-                actionOnRelease: enemy => EnemyRelease(enemy),
-                actionOnDestroy: enemy => DestroyEnemy(enemy),
+                actionOnRelease: EnemyRelease,
+                actionOnDestroy: DestroyEnemy,
                 collectionCheck: false,
-                defaultCapacity: _minPoolSize,
-                maxSize: _maxPoolSize);
+                defaultCapacity: _config.MinEnemyPullSize,
+                maxSize: _config.MaxEnemyPullSize);
         }
 
         private void EnemyRelease(Enemy enemy)

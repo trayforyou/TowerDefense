@@ -7,9 +7,6 @@ namespace TowerDefense.Builds.Shooter
 {
     public class Shooter : MonoBehaviour
     {
-        [SerializeField] private int _minPoolSize = 3;
-        [SerializeField] private int _maxPoolSize = 10;
-        [SerializeField] private float _findDelay = 0.5f;
         [SerializeField] private Bullet _bulletPrefab;
         [SerializeField] private Transform _shootPoint;
 
@@ -19,36 +16,45 @@ namespace TowerDefense.Builds.Shooter
         private Enemy.Enemy _target;
         private float _sqrRadius;
         private float _currentDelay;
+        private float _range;
         private int _currentDamage;
-        private int _currentForceLevel = 1;
-        private int _currentSpeedLevel = 1;
+        private int _currentForceLevel;
+        private int _currentSpeedLevel;
 
         public void Initialize(GameConfig config, float range, float delay, int damage)
         {
             if (_config != null)
                 return;
 
+            _currentForceLevel++;
+            _currentSpeedLevel++;
             _config = config;
-            _sqrRadius = range;
+            _range = range;
+            _sqrRadius = range * range;
             _currentDamage = damage;
             _currentDelay = delay;
 
             _bulletsPool = new ObjectPool<Bullet>
             (
                 createFunc: () => Instantiate(_bulletPrefab),
-                actionOnGet: bullet => GetBullet(bullet),
-                actionOnRelease: bullet => ReleaseBullet(bullet),
+                actionOnGet: GetBullet,
+                actionOnRelease: ReleaseBullet,
                 actionOnDestroy: bullet => Destroy(bullet.gameObject),
                 collectionCheck: true,
-                defaultCapacity: _minPoolSize,
-                maxSize: _maxPoolSize
+                defaultCapacity: _config.MinBulletPullSize,
+                maxSize: _config.MaxBulletPullSize
             );
 
             StartCoroutine(StartFindNearestEnemy());
         }
 
-        public void Stop() =>
+        public void Stop()
+        {
+            if (_target != null)
+                _target.Died -= ClearTarget;
+
             StopAllCoroutines();
+        }
 
         public void UpSpeedLevel()
         {
@@ -59,7 +65,7 @@ namespace TowerDefense.Builds.Shooter
             _currentDelay = _config.StartDelayShootCastle;
 
             for (int i = 1; i < _currentSpeedLevel; i++)
-                _currentDelay = _currentDelay / _config.UpgradeMultiplier;
+                _currentDelay /= _config.UpgradeMultiplier;
 
             if (_attackCoroutine != null)
                 StopCoroutine(_attackCoroutine);
@@ -98,7 +104,7 @@ namespace TowerDefense.Builds.Shooter
 
         private IEnumerator StartFindNearestEnemy()
         {
-            var wait = new WaitForSeconds(_findDelay);
+            var wait = new WaitForSeconds(_config.FindDelay);
 
             while (enabled)
             {
@@ -119,7 +125,7 @@ namespace TowerDefense.Builds.Shooter
 
         private Enemy.Enemy FindNearestEnemy()
         {
-            Collider[] colliders = Physics.OverlapSphere(_shootPoint.position, _config.RadiusRangeCastle);
+            Collider[] colliders = Physics.OverlapSphere(_shootPoint.position, _range);
 
             if (colliders.Length == 0)
                 return null;

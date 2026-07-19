@@ -44,6 +44,13 @@ namespace TowerDefense.Builds
             _buttonStronger.onClick.AddListener(TryUpStrong);
         }
 
+        private void OnDisable()
+        {
+            _buttonFaster.onClick.RemoveListener(TryUpSpeed);
+            _buttonHealthier.onClick.RemoveListener(TryUpHealth);
+            _buttonStronger.onClick.RemoveListener(TryUpStrong);
+        }
+
         public void Show()
         {
             _canvasGroup.alpha = 1;

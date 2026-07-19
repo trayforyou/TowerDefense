@@ -1,39 +1,32 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TowerDefense.Builds.Castle
 {
+    public delegate void HealthChangedEventHandler(int currentHealth, int maxHealth);
+
     public class CastleHealth : Health
     {
         private float _healthMultiply;
-        private int _maxLevel;
 
-        [field: SerializeField] public int CurrentLevel { get; private set; }
+        public event HealthChangedEventHandler ValueChanged;
 
-        public bool CanUpLevel => CurrentLevel < _maxLevel;
-
-        public event Action<int, int> ValueChanged;
-
-        public CastleHealth(int points, int maxLevel, float healthPercentMultiply) : base(points)
-        {
-            _maxLevel = maxLevel;
+        public CastleHealth(int points, float healthPercentMultiply) : base(points) =>
             _healthMultiply = healthPercentMultiply;
-        }
 
         public void RefreshInfo() =>
             ValueChange();
 
-        public bool TryUpLevel()
+        public void TryUpLevel()
         {
-            if (!CanUpLevel)
-                return false;
-
             MaxPoints = (int)(MaxPoints * _healthMultiply);
-            Points = (int)(Points * _healthMultiply);
+            int tempHp = (int)(Points * _healthMultiply);
+
+            if (Points == tempHp)
+                Points++;
+            else
+                Points = tempHp;
 
             ValueChange();
-
-            return true;
         }
 
         protected override void ValueChange() =>

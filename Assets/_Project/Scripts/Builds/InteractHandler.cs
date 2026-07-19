@@ -54,6 +54,9 @@ namespace TowerDefense.Builds
             }
         }
 
+        private void OnDestroy() => 
+            _towerBuilder.BuildingTower -= AddNewPositon;
+
         public void SetParameters(GameConfig config, Wallet wallet, Castle.Castle castle)
         {
             if (wallet == null || config == null || castle == null)

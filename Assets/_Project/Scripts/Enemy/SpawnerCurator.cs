@@ -75,13 +75,13 @@ namespace TowerDefense.Enemy
 
         private IEnumerator WaitWave()
         {
-            var wait = new WaitForSeconds(1);
+            var oneSecond = new WaitForSeconds(1);
             int currentTime = _config.WavesDelay;
 
             while (currentTime >= 0)
             {
                 TimeChanged?.Invoke(currentTime);
-                yield return wait;
+                yield return oneSecond;
                 currentTime--;
             }
 

@@ -1,10 +1,9 @@
-using System.Collections;
+using System;
 using TowerDefense.Builds;
 using TowerDefense.Builds.Castle;
 using TowerDefense.Enemy;
 using TowerDefense.ScriptableObjects;
 using UnityEngine;
-using UnityEngine.Purchasing;
 using UnityEngine.SceneManagement;
 
 namespace TowerDefense.Session
@@ -22,12 +21,12 @@ namespace TowerDefense.Session
 
         private SpawnerCurator _spawnerCurator;
         private Coroutine _coroutine;
-        private int _waveNumber = 0;
+        private int _waveNumber;
 
         private void Start()
         {
             if (_interactHandler == null)
-                throw new NullReceiptException(nameof(_interactHandler));
+                throw new NullReferenceException(nameof(_interactHandler));
 
             _spawnerCurator = GetComponent<SpawnerCurator>();
 
@@ -52,20 +51,22 @@ namespace TowerDefense.Session
             _castle.ValueChanged += _sessionViewer.ChangeHealthInfo;
             _wallet.ValueChanged += _sessionViewer.ChangeCountMoney;
             _spawnerCurator.InitializedEnemiesCount += _sessionViewer.InitializeEnemiesCount;
-
             _castle.Died += End;
-
             _endMenu.ButtonRestartClicked += RestartSession;
             _endMenu.ButtonMenuClicked += GoToMenu;
         }
 
         private void UnSubscribeAll()
         {
-            _endMenu.ButtonMenuClicked -= GoToMenu;
-            _endMenu.ButtonRestartClicked -= RestartSession;
-
+            _spawnerCurator.WaveChanged -= _sessionViewer.ChangeWaveNumber;
+            _spawnerCurator.TimeChanged -= _sessionViewer.ChangeWaveTime;
+            _spawnerCurator.ChangedEnemiesCount -= _sessionViewer.ChangeEnemiesCount;
             _castle.ValueChanged -= _sessionViewer.ChangeHealthInfo;
             _wallet.ValueChanged -= _sessionViewer.ChangeCountMoney;
+            _spawnerCurator.InitializedEnemiesCount -= _sessionViewer.InitializeEnemiesCount;
+            _castle.Died -= End;
+            _endMenu.ButtonRestartClicked -= RestartSession;
+            _endMenu.ButtonMenuClicked -= GoToMenu;
         }
 
         private void End()

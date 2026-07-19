@@ -25,20 +25,24 @@ MonoBehaviour:
   <DamageFastTower>k__BackingField: 1
   <MaxCastleLevel>k__BackingField: 10
   <UpgradeCastleCost>k__BackingField: 10
-  <BulletSpeed>k__BackingField: 3
   <UpgradeMultiplier>k__BackingField: 1.2
   <CostMultiplier>k__BackingField: 1.2
   <RadiusRangeCastle>k__BackingField: 10
   <StartDelayShootCastle>k__BackingField: 1.5
   <StartDamageCastle>k__BackingField: 1
   <StartHealthCastle>k__BackingField: 25
+  <MinEnemyPullSize>k__BackingField: 5
+  <MaxEnemyPullSize>k__BackingField: 15
   <WavesDelay>k__BackingField: 5
   <EnemySpawnDelay>k__BackingField: 1
   <EnemySpeed>k__BackingField: 0.5
   <EnemyAttackDelay>k__BackingField: 1
   <EnemyDamage>k__BackingField: 1
-  <EnemyHealth>k__BackingField: 5
-  <CostEnemyDeath>k__BackingField: 10
+  <EnemyHealth>k__BackingField: 2
   <EnemiesPerWave>k__BackingField: 5
   <EnemyStopDistance>k__BackingField: 1
   <MultiplierEnemiesPerWave>k__BackingField: 1.2
+  <BulletSpeed>k__BackingField: 3
+  <FindDelay>k__BackingField: 1.5
+  <MinBulletPullSize>k__BackingField: 5
+  <MaxBulletPullSize>k__BackingField: 15
