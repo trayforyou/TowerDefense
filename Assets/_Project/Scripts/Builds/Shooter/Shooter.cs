@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using TowerDefense.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -12,6 +12,9 @@ namespace TowerDefense.Builds.Shooter
 
         private ObjectPool<Bullet> _bulletsPool;
         private GameConfig _config;
+        private BulletsStorage _bulletsPool;
+        private Vector3 _shootPoint;
+        private WaitForSeconds _currentDelay;
         private Coroutine _attackCoroutine;
         private Enemy.Enemy _target;
         private float _sqrRadius;
