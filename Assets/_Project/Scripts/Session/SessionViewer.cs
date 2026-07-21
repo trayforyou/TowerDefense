@@ -9,7 +9,7 @@ namespace TowerDefense.Session
         [SerializeField] private TextMeshProUGUI _moneysInfo;
         [SerializeField] private TextMeshProUGUI _healthInfo;
         [SerializeField] private TextMeshProUGUI _waveTimeInfo;
-        [SerializeField] private TextMeshProUGUI _enemiesKilled;
+        [SerializeField] private TextMeshProUGUI _enemiesAlive;
         [SerializeField] private CanvasGroup _canvasGroup;
 
         private readonly string _splitter = "|";
@@ -17,7 +17,7 @@ namespace TowerDefense.Session
         private string _moneysText;
         private string _healthText;
         private string _waveTimeText;
-        private string _enemiesKilledText;
+        private string _enemiesAliveText;
         private int _maxEnemiesCount;
 
         private void Awake()
@@ -26,7 +26,7 @@ namespace TowerDefense.Session
             _waveTimeText = _waveTimeInfo.text;
             _moneysText = _moneysInfo.text;
             _healthText = _healthInfo.text;
-            _enemiesKilledText = _enemiesKilled.text;
+            _enemiesAliveText = _enemiesAlive.text;
             _canvasGroup.interactable = false;
             _canvasGroup.blocksRaycasts = false;
             Show();
@@ -50,9 +50,9 @@ namespace TowerDefense.Session
         }
 
         public void ChangeEnemiesCount(int currentEnemies) =>
-            _enemiesKilled.text = _enemiesKilledText + currentEnemies + _splitter + _maxEnemiesCount;
+            _enemiesAlive.text = _enemiesAliveText + currentEnemies + _splitter + _maxEnemiesCount;
 
-        public void ChangeCountMoney(int count) => 
+        public void ChangeCountMoneys(int count) => 
             _moneysInfo.text = _moneysText + count.ToString();
 
         public void ChangeWaveNumber(int count) => 

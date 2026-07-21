@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DefaultConfig
   m_EditorClassIdentifier: Assembly-CSharp::MetaCurrencyConfig
   <MoneyPerWave>k__BackingField: 50
-  <MoneyPerKill>k__BackingField: 10
+  <MoneyPerKill>k__BackingField: 50
   <MinDistanceForBuilding>k__BackingField: 1
   <FastTowerCost>k__BackingField: 10
   <StrongTowerCost>k__BackingField: 10
@@ -25,7 +25,7 @@ MonoBehaviour:
   <DamageFastTower>k__BackingField: 1
   <MaxCastleLevel>k__BackingField: 10
   <UpgradeCastleCost>k__BackingField: 10
-  <UpgradeMultiplier>k__BackingField: 1.2
+  <UpgradeMultiplier>k__BackingField: 2
   <CostMultiplier>k__BackingField: 1.2
   <RadiusRangeCastle>k__BackingField: 10
   <StartDelayShootCastle>k__BackingField: 1.5
@@ -44,5 +44,5 @@ MonoBehaviour:
   <MultiplierEnemiesPerWave>k__BackingField: 1.2
   <BulletSpeed>k__BackingField: 3
   <FindDelay>k__BackingField: 1.5
-  <MinBulletPullSize>k__BackingField: 5
-  <MaxBulletPullSize>k__BackingField: 15
+  <MinBulletPoolSize>k__BackingField: 5
+  <MaxBulletPoolSize>k__BackingField: 15

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using TowerDefense.Builds.Castle;
 using TowerDefense.ScriptableObjects;
 using UnityEngine;
@@ -9,121 +8,88 @@ namespace TowerDefense.Enemy
     [RequireComponent(typeof(Mover))]
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(ParticleSystem))]
+    [RequireComponent(typeof(EnemyAttacker))]
     public class Enemy : MonoBehaviour
     {
+        private static readonly int IsRun = Animator.StringToHash("IsRun");
+        private static readonly int Attack = Animator.StringToHash("Attack");
+        
         private Mover _mover;
-        private Animator _animator;
-        private Castle _target;
-        private float _sqrStopDistance;
         private Health _health;
-        private GameConfig _config;
-        private Coroutine _coroutine;
+        private Animator _animator;
+        private EnemyAttacker _attacker;
         private ParticleSystem _particles;
 
-        private bool _isInitialized => (_target != null && _config != null);
-
-        public event Action Running;
         public event Action<Enemy> Died;
 
         [field: SerializeField] public Transform AimPoint { get; private set; }
-        public int Health => _health.PointsCount;
 
         private void Awake()
         {
             _animator = GetComponent<Animator>();
             _mover = GetComponent<Mover>();
             _particles = GetComponent<ParticleSystem>();
+            _attacker = GetComponent<EnemyAttacker>();
         }
 
         private void OnEnable()
         {
             _particles.Stop();
-            _mover.HasCome += GoAttack;
-            _mover.Running += Run;
+            _mover.HasCome += StartAttack;
+            _mover.Running += AnimateRun;
+            _attacker.Attacking += AnimateAttack;
+            _attacker.NeedingRun += GoToTarget;
         }
 
         private void OnDisable()
         {
-            _mover.HasCome -= GoAttack;
-            _mover.Running -= Run;
+            _mover.HasCome -= StartAttack;
+            _mover.Running -= AnimateRun;
             _health.Died -= Die;
+            _attacker.Attacking -= AnimateAttack;
+            _attacker.NeedingRun -= GoToTarget;
         }
+
+        public void SetParams(Castle target, GameConfig config)
+        {
+            _health = new Health(config.EnemyHealth);
+            float sqrStopDistance = config.EnemyStopDistance * config.EnemyStopDistance;
+            _attacker.Initialize(config,target,sqrStopDistance,transform);
+            _mover.SetParams(target.transform, config);
+        }
+        
+        public void GoToTarget() => 
+            _mover.GoToTarget();
 
         public void Stop()
         {
             StopAllCoroutines();
 
-            _animator.SetBool("IsRun", false);
-            _mover.HasCome -= GoAttack;
-            _mover.Running -= Run;
+            _animator.SetBool(IsRun, false);
+            _attacker.Stop();
+            _attacker.Attacking -= AnimateAttack;
+            _attacker.NeedingRun -= GoToTarget;
+            _mover.HasCome -= StartAttack;
+            _mover.Running -= AnimateRun;
             _health.Died -= Die;
         }
 
         public void ResetHealth()
         {
-            if (!_isInitialized)
-                return;
-
             _health.Reset();
             _health.Died += Die;
         }
-
-        private void Run() =>
-            Running?.Invoke();
 
         public void TakeDamage(int damage)
         {
             _particles.Play();
             _health.TakeDamage(damage);
         }
-
-        public void SetParams(Castle target, GameConfig config)
+        
+        private void StartAttack()
         {
-            if (_isInitialized)
-                return;
-
-            if (target == null || config == null)
-                throw new ArgumentNullException();
-
-            _target = target;
-            _config = config;
-            _health = new Health(_config.EnemyHealth);
-            _sqrStopDistance = _config.EnemyStopDistance * _config.EnemyStopDistance;
-            
-            _mover.SetParams(target.transform, config);
-        }
-
-        public void StartAttack() =>
-            StartCoroutine(StartAttackCoroutine());
-
-        private void GoAttack()
-        {
-            if (_coroutine != null)
-                StopCoroutine(_coroutine);
-
-            _animator.SetBool("IsRun", false);
-
-            _coroutine = StartCoroutine(StartAttackCoroutine());
-        }
-
-        private IEnumerator StartAttackCoroutine()
-        {
-            var wait = new WaitForSeconds(_config.EnemyAttackDelay);
-            float sqrDistance = Vector3.SqrMagnitude(_target.transform.position - transform.position);
-
-            while (sqrDistance < _sqrStopDistance)
-            {
-                _target.TakeDamage(_config.EnemyDamage);
-                _animator.SetTrigger("Attack");
-                sqrDistance = Vector3.SqrMagnitude(_target.transform.position - transform.position);
-
-                yield return wait;
-            }
-
-            _mover.GoToTarget();
-
-            _animator.SetBool("IsRun", true);
-            _coroutine = null;
+            _animator.SetBool(IsRun, false);
+            _attacker.Attack();
         }
 
         private void Die()
@@ -131,5 +97,11 @@ namespace TowerDefense.Enemy
             _health.Died -= Die;
             Died?.Invoke(this);
         }
+        
+        private void AnimateRun() => 
+            _animator.SetBool(IsRun, true);
+        
+        private void AnimateAttack() => 
+            _animator.SetTrigger(Attack);
     }
 }

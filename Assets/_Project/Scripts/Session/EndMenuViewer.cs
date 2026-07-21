@@ -12,11 +12,11 @@ namespace TowerDefense.Session
         [SerializeField] private Button _menu;
         [SerializeField] private TextMeshProUGUI _waves;
         [SerializeField] private TextMeshProUGUI _enemiesKilled;
-        [SerializeField] private TextMeshProUGUI _moneyPerSession;
+        [SerializeField] private TextMeshProUGUI _moneysPerSession;
 
         private string _wavesText;
         private string _enemiesKilledText;
-        private string _moneyPerSessionText;
+        private string _moneysPerSessionText;
 
         public event Action ButtonRestartClicked;
         public event Action ButtonMenuClicked;
@@ -27,7 +27,7 @@ namespace TowerDefense.Session
         {
             _wavesText = _waves.text;
             _enemiesKilledText = _enemiesKilled.text;
-            _moneyPerSessionText = _moneyPerSession.text;
+            _moneysPerSessionText = _moneysPerSession.text;
 
             Hide();
         }
@@ -56,7 +56,7 @@ namespace TowerDefense.Session
         {
             _waves.text = _wavesText + waves;
             _enemiesKilled.text = _enemiesKilledText + enemies;
-            _moneyPerSession.text = _moneyPerSessionText + currency;
+            _moneysPerSession.text = _moneysPerSessionText + currency;
         }
 
         private void Hide()

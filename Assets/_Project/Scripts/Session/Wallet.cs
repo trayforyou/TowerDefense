@@ -12,14 +12,14 @@ namespace TowerDefense.Session
         private void Start() =>
             Count = 0;
 
-        public void AddMoney(int count)
+        public void AddMoneys(int count)
         {
             Count += count;
 
             ValueChanged?.Invoke(Count);
         }
 
-        public bool TryTakeMoney(int count)
+        public bool TryTakeMoneys(int count)
         {
             if (Count < count)
                 return false;

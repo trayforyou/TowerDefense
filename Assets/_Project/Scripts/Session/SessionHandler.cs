@@ -49,7 +49,7 @@ namespace TowerDefense.Session
             _spawnerCurator.TimeChanged += _sessionViewer.ChangeWaveTime;
             _spawnerCurator.ChangedEnemiesCount += _sessionViewer.ChangeEnemiesCount;
             _castle.ValueChanged += _sessionViewer.ChangeHealthInfo;
-            _wallet.ValueChanged += _sessionViewer.ChangeCountMoney;
+            _wallet.ValueChanged += _sessionViewer.ChangeCountMoneys;
             _spawnerCurator.InitializedEnemiesCount += _sessionViewer.InitializeEnemiesCount;
             _castle.Died += End;
             _endMenu.ButtonRestartClicked += RestartSession;
@@ -62,7 +62,7 @@ namespace TowerDefense.Session
             _spawnerCurator.TimeChanged -= _sessionViewer.ChangeWaveTime;
             _spawnerCurator.ChangedEnemiesCount -= _sessionViewer.ChangeEnemiesCount;
             _castle.ValueChanged -= _sessionViewer.ChangeHealthInfo;
-            _wallet.ValueChanged -= _sessionViewer.ChangeCountMoney;
+            _wallet.ValueChanged -= _sessionViewer.ChangeCountMoneys;
             _spawnerCurator.InitializedEnemiesCount -= _sessionViewer.InitializeEnemiesCount;
             _castle.Died -= End;
             _endMenu.ButtonRestartClicked -= RestartSession;
@@ -76,20 +76,20 @@ namespace TowerDefense.Session
             _interactHandler.Stop();
             _sessionViewer.Hide();
 
-            int reward = _spawnerCurator.WaveNumber * _config.MoneyPerWave +
-                         _spawnerCurator.EnemiesDeaths * _config.MoneyPerKill;
+            int reward = _spawnerCurator.WaveNumber * _config.MoneysPerWave +
+                         _spawnerCurator.EnemiesDeaths * _config.MoneysPerKill;
 
-            AddMetaMoney(reward);
+            AddMetaMoneys(reward);
 
             _endMenu.SetValue(_spawnerCurator.WaveNumber, _spawnerCurator.EnemiesDeaths, reward);
             _endMenu.Show();
         }
 
-        private void AddMetaMoney(int count)
+        private void AddMetaMoneys(int count)
         {
-            int metaMoney = PlayerPrefs.GetInt(GameStarter.META_CURRENCY, 0);
-            metaMoney += count;
-            PlayerPrefs.SetInt(GameStarter.META_CURRENCY, metaMoney);
+            int metaMoneys = PlayerPrefs.GetInt(GameStarter.META_CURRENCY, 0);
+            metaMoneys += count;
+            PlayerPrefs.SetInt(GameStarter.META_CURRENCY, metaMoneys);
         }
 
         private void GoToMenu()

@@ -5,12 +5,10 @@ namespace TowerDefense
     public class Health
     {
         protected int Points;
-        protected int MaxPoints;
 
         public event Action Died;
 
-        public int PointsCount => Points;
-        public int MaxPointsCount => MaxPoints;
+        public int MaxPoints { get; protected set; } //=> MaxPointsS;
 
         public Health(int points)
         {
@@ -37,6 +35,9 @@ namespace TowerDefense
                 Points -= damage;
                 ValueChange();
             }
+            
+            if(Points <= 0)
+                Died?.Invoke();
         }
 
         protected virtual void ValueChange() {}

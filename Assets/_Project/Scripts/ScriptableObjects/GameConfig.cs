@@ -5,8 +5,8 @@ namespace TowerDefense.ScriptableObjects
     [CreateAssetMenu(fileName = "GameConfig", menuName = "Scriptable Objects/GameConfig")]
     public class GameConfig : ScriptableObject
     {
-        [field: SerializeField] public int MoneyPerWave { get; private set; } = 50;
-        [field: SerializeField] public int MoneyPerKill { get; private set; } = 10;
+        [field: SerializeField] public int MoneysPerWave { get; private set; } = 50;
+        [field: SerializeField] public int MoneysPerKill { get; private set; } = 10;
 
         [field: SerializeField] public float MinDistanceForBuilding { get; private set; } = 1f;
         [field: SerializeField] public int FastTowerCost { get; private set; } = 10;
@@ -28,8 +28,8 @@ namespace TowerDefense.ScriptableObjects
         [field: SerializeField] public int StartDamageCastle { get; private set; } = 1;
         [field: SerializeField] public int StartHealthCastle { get; private set; } = 25;
 
-        [field: SerializeField] public int MinEnemyPullSize { get; private set; } = 5;
-        [field: SerializeField] public int MaxEnemyPullSize { get; private set; } = 15;
+        [field: SerializeField] public int MinEnemyPoolSize { get; private set; } = 5;
+        [field: SerializeField] public int MaxEnemyPoolSize { get; private set; } = 15;
         [field: SerializeField] public int WavesDelay { get; private set; } = 15;
         [field: SerializeField] public float EnemySpawnDelay { get; private set; } = 1f;
         [field: SerializeField] public float EnemySpeed { get; private set; } = 0.5f;
@@ -42,7 +42,7 @@ namespace TowerDefense.ScriptableObjects
 
         [field: SerializeField] public float BulletSpeed { get; private set; } = 3f;
         [field: SerializeField] public float FindDelay { get; private set; } = 1.5f;
-        [field: SerializeField] public int MinBulletPullSize { get; private set; } = 5;
-        [field: SerializeField] public int MaxBulletPullSize { get; private set; } = 15;
+        [field: SerializeField] public int MinBulletPoolSize { get; private set; } = 5;
+        [field: SerializeField] public int MaxBulletPoolSize { get; private set; } = 15;
     }
 }

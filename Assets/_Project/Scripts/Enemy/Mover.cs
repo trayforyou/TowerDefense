@@ -15,8 +15,6 @@ namespace TowerDefense.Enemy
         private Coroutine _coroutine;
         private float _sqrStopDistance;
 
-        private bool _isInitialize => (_target != null && _config != null);
-
         public event Action HasCome;
         public event Action Running;
 
@@ -25,12 +23,6 @@ namespace TowerDefense.Enemy
 
         public void SetParams(Transform target, GameConfig config)
         {
-            if (_isInitialize)
-                return;
-
-            if (target == null || config == null)
-                throw new ArgumentNullException(nameof(target));
-
             _target = target;
             _config = config;
 
@@ -40,9 +32,6 @@ namespace TowerDefense.Enemy
 
         public void GoToTarget()
         {
-            if (!_isInitialize)
-                return;
-
             if (!_agent.isOnNavMesh)
             {
                 NavMeshHit hit;
@@ -64,19 +53,17 @@ namespace TowerDefense.Enemy
 
         private IEnumerator RunToTower()
         {
-            if (!_isInitialize)
-                yield break;
-
             _agent.isStopped = false;
 
             Running?.Invoke();
 
             float sqrDistance = Vector3.SqrMagnitude(_target.position - transform.position);
+            var wait = new WaitForFixedUpdate();
 
             while (sqrDistance > _sqrStopDistance)
             {
                 sqrDistance = Vector3.SqrMagnitude(_target.position - transform.position);
-                yield return new WaitForFixedUpdate();
+                yield return wait;
             }
 
             _agent.isStopped = true;

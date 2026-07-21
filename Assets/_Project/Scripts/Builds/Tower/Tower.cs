@@ -3,18 +3,18 @@ using UnityEngine;
 
 namespace TowerDefense.Builds.Tower
 {
-    [RequireComponent(typeof(Shooter.Shooter))]
+    [RequireComponent(typeof(Shooter.Gun))]
     public class Tower : MonoBehaviour
     {
-        private Shooter.Shooter _shooter;
+        private Shooter.Gun _gun;
 
         private void Awake() =>
-            _shooter = GetComponent<Shooter.Shooter>();
+            _gun = GetComponent<Shooter.Gun>();
 
         public void Initialize(GameConfig config, float range,float delay,int damage) =>
-            _shooter.Initialize(config, range, delay, damage);
+            _gun.Initialize(config, range, delay, damage);
 
         public void Stop() =>
-            _shooter.Stop();
+            _gun.Stop();
     } 
 }

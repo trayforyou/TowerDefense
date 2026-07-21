@@ -21,22 +21,13 @@ namespace TowerDefense.Enemy
         private GameConfig _config;
         private int _enemiesCount;
         private int _currentEnemiesCount;
-        private bool _isInitialized = false;
-
         public event Action EnemyDied;
         public event Action WaveEnded;
         public event Action<int> ChangedAliveEnemies;
         public event Action<int> StartedNewWave;
 
         public void Initialize(Castle castle, GameConfig config)
-        {
-            if (_isInitialized)
-                throw new Exception("Already Initialized");
-
-            if (castle == null || config == null)
-                throw new ArgumentNullException();
-
-            _isInitialized = true;
+        {        
             _config = config;
             _castle = castle;
             _enemiesCount = _config.EnemiesPerWave;
@@ -44,9 +35,6 @@ namespace TowerDefense.Enemy
 
         public void StartWave()
         {
-            if (!_isInitialized)
-                throw new Exception("Not Initialized");
-
             if (_coroutine != null)
                 StopCoroutine(_coroutine);
 
@@ -78,7 +66,7 @@ namespace TowerDefense.Enemy
                 tempEnemy = _enemiesPool.Get();
                 tempEnemy.transform.position = GetRandomSpawnPoint();
 
-                tempEnemy.StartAttack();
+                tempEnemy.GoToTarget();
             }
 
             while (_enemiesPool.CountActive > 0)
@@ -100,8 +88,8 @@ namespace TowerDefense.Enemy
                 actionOnRelease: EnemyRelease,
                 actionOnDestroy: DestroyEnemy,
                 collectionCheck: false,
-                defaultCapacity: _config.MinEnemyPullSize,
-                maxSize: _config.MaxEnemyPullSize);
+                defaultCapacity: _config.MinEnemyPoolSize,
+                maxSize: _config.MaxEnemyPoolSize);
         }
 
         private void EnemyRelease(Enemy enemy)

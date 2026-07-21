@@ -4,21 +4,21 @@ using UnityEngine;
 
 namespace TowerDefense.Builds.Castle
 {
-    [RequireComponent(typeof(Shooter.Shooter))]
+    [RequireComponent(typeof(Shooter.Gun))]
     [RequireComponent(typeof(ParticleSystem))]
     public class Castle : MonoBehaviour
     {
         private ParticleSystem _particles;
         private CastleHealth _health;
         private GameConfig _config;
-        private Shooter.Shooter _shooter;
+        private Shooter.Gun _gun;
 
         public event HealthChangedEventHandler ValueChanged;
         public event Action Died;
 
         private void Awake()
         {
-            _shooter = GetComponent<Shooter.Shooter>();
+            _gun = GetComponent<Shooter.Gun>();
             _particles = GetComponent<ParticleSystem>();
         }
 
@@ -30,7 +30,7 @@ namespace TowerDefense.Builds.Castle
 
         private void Die()
         {
-            _shooter.Stop();
+            _gun.Stop();
             Died?.Invoke();
         }
 
@@ -52,20 +52,20 @@ namespace TowerDefense.Builds.Castle
                 return;
 
             _config = config;
-            _shooter.Initialize(_config, _config.RadiusRangeCastle, _config.StartDelayShootCastle,
+            _gun.Initialize(_config, _config.RadiusRangeCastle, _config.StartDelayShootCastle,
                 _config.StartDamageCastle);
             CreateHealth();
-            ValueChanged?.Invoke(_health.MaxPointsCount, _health.MaxPointsCount);
+            ValueChanged?.Invoke(_health.MaxPoints, _health.MaxPoints);
         }
 
         public void UpHealth() =>
             _health.TryUpLevel();
 
         public void UpStrong() =>
-            _shooter.UpForceLevel();
+            _gun.UpForceLevel();
 
         public void UpSpeed() =>
-            _shooter.UpSpeedLevel();
+            _gun.UpSpeedLevel();
 
         private void CreateHealth()
         {

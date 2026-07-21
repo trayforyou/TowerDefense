@@ -14,7 +14,6 @@ namespace TowerDefense.Enemy
         private GameConfig _config;
         private Coroutine _coroutine;
         private Wallet _wallet;
-        private bool _isInitialized = false;
 
         public int WaveNumber { get; private set; } = 0;
         public int EnemiesDeaths { get; private set; } = 0;
@@ -26,31 +25,17 @@ namespace TowerDefense.Enemy
 
         public void Initialize(Castle castle, GameConfig config, Wallet wallet)
         {
-            if (_isInitialized)
-                throw new Exception("Already Initialized");
-
-            if (castle == null || config == null || wallet == null)
-                throw new ArgumentNullException();
-
-            _isInitialized = true;
-
             _wallet = wallet;
             _config = config;
             _spawner.Initialize(castle, config);
             SubscribeAll();
-            StartWave();
         }
 
         private void OnDestroy() =>
             UnSubscribeAll();
 
-        public void StartWave()
-        {
-            if (_coroutine != null)
-                return;
-
+        public void StartWave() => 
             _spawner.StartWave();
-        }
 
         public void Stop()
         {
@@ -61,7 +46,7 @@ namespace TowerDefense.Enemy
 
         private void RegisterKill()
         {
-            _wallet.AddMoney(_config.MoneyPerKill);
+            _wallet.AddMoneys(_config.MoneysPerKill);
             EnemiesDeaths++;
         }
 

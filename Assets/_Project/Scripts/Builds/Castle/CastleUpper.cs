@@ -1,4 +1,3 @@
-using System;
 using TowerDefense.ScriptableObjects;
 using TowerDefense.Session;
 using UnityEngine;
@@ -18,7 +17,6 @@ namespace TowerDefense.Builds.Castle
         private int _currentCostUpgradeSpeed;
         private int _currentCostUpgradeForce;
         private int _currentCostUpgradeHealth;
-        private bool _isInitialize = false;
 
         public bool IsActive => _upgradeMenu.IsActive;
 
@@ -30,10 +28,6 @@ namespace TowerDefense.Builds.Castle
 
         public void Initialize(GameConfig config, Wallet wallet, Castle castle)
         {
-            if (_isInitialize)
-                throw new InvalidOperationException("Апгрейдер уже инициализирован");
-
-            _isInitialize = true;
             _config = config;
             _wallet = wallet;
             _castle = castle;
@@ -50,19 +44,9 @@ namespace TowerDefense.Builds.Castle
 
         private void ChangeOpportunitiesBuy(int count)
         {
-            _upgradeMenu.SetCanUpHealth(CheckOnOpportunity(count, _castleHealthLevel));
-            _upgradeMenu.SetCanUpSpeed(CheckOnOpportunity(count, _castleSpeedLevel));
-            _upgradeMenu.SetCanUpStrong(CheckOnOpportunity(count, _castleStrongLevel));
-        }
-
-        private bool CheckOnOpportunity(int count, int currentLevel)
-        {
-            int tempCost = _config.UpgradeCastleCost;
-
-            for (int i = 1; i < currentLevel; i++)
-                tempCost = (int)(tempCost * _config.CostMultiplier);
-
-            return count >= tempCost;
+            _upgradeMenu.SetCanUpHealth(count >= _currentCostUpgradeHealth);
+            _upgradeMenu.SetCanUpSpeed(count >= _currentCostUpgradeSpeed);
+            _upgradeMenu.SetCanUpStrong(count >= _currentCostUpgradeForce);
         }
 
         private void SubscribeAll()
@@ -83,7 +67,10 @@ namespace TowerDefense.Builds.Castle
 
         private void UpCastleHealth()
         {
-            if (_wallet.TryTakeMoney(_currentCostUpgradeHealth) && _castleHealthLevel <= _config.MaxCastleLevel)
+            if (_castleHealthLevel > _config.MaxCastleLevel)
+                return;
+
+            if (_wallet.TryTakeMoneys(_currentCostUpgradeHealth))
             {
                 _castle.UpHealth();
                 _currentCostUpgradeHealth = (int)(_currentCostUpgradeHealth * _config.CostMultiplier);
@@ -96,7 +83,10 @@ namespace TowerDefense.Builds.Castle
 
         private void UpCastleStrong()
         {
-            if (_wallet.TryTakeMoney(_currentCostUpgradeForce) && _castleStrongLevel <= _config.MaxCastleLevel)
+            if (_castleStrongLevel > _config.MaxCastleLevel)
+                return;
+
+            if (_wallet.TryTakeMoneys(_currentCostUpgradeForce))
             {
                 _castle.UpStrong();
                 _currentCostUpgradeForce = (int)(_currentCostUpgradeForce * _config.CostMultiplier);
@@ -109,7 +99,10 @@ namespace TowerDefense.Builds.Castle
 
         private void UpCastleSpeed()
         {
-            if (_wallet.TryTakeMoney(_currentCostUpgradeSpeed) && _castleSpeedLevel <= _config.MaxCastleLevel)
+            if (_castleSpeedLevel > _config.MaxCastleLevel)
+                return;
+
+            if (_wallet.TryTakeMoneys(_currentCostUpgradeSpeed))
             {
                 _castle.UpSpeed();
                 _currentCostUpgradeSpeed = (int)(_currentCostUpgradeSpeed * _config.CostMultiplier);

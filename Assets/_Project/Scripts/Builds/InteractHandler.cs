@@ -19,20 +19,18 @@ namespace TowerDefense.Builds
         private HashSet<Vector3> _buildPositions = new();
         private CastleUpper _castleUpper;
         private TowerBuilder _towerBuilder;
-
         private Castle.Castle _castle;
         private Wallet _wallet;
         private GameConfig _config;
         private Camera _mainCamera;
         private Vector3 _buildPosition;
 
-
         private void Awake()
         {
             _castleUpper = GetComponent<CastleUpper>();
-            _towerBuilder = GetComponentInChildren<TowerBuilder>();
+            _towerBuilder = GetComponent<TowerBuilder>();
 
-            _towerBuilder.BuildingTower += AddNewPositon;
+            _towerBuilder.BuildingTower += AddNewPosition;
         }
 
         private void Start() =>
@@ -46,16 +44,13 @@ namespace TowerDefense.Builds
                 {
                     if (EventSystem.current.IsPointerOverGameObject()) return;
 
-                    if (_towerBuilder.IsActive || _castleUpper.IsActive || !Application.isFocused)
-                        return;
-
                     HandleClick();
                 }
             }
         }
 
         private void OnDestroy() => 
-            _towerBuilder.BuildingTower -= AddNewPositon;
+            _towerBuilder.BuildingTower -= AddNewPosition;
 
         public void SetParameters(GameConfig config, Wallet wallet, Castle.Castle castle)
         {
@@ -77,7 +72,7 @@ namespace TowerDefense.Builds
             _towerBuilder.TurnOff();
         }
 
-        private void AddNewPositon(Vector3 position) =>
+        private void AddNewPosition(Vector3 position) =>
             _buildPositions.Add(position);
 
         private void HandleClick()

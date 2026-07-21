@@ -63,7 +63,7 @@ namespace TowerDefense.Builds.Tower
 
         private void BuildStrongTower()
         {
-            if (_wallet.TryTakeMoney(_config.StrongTowerCost))
+            if (_wallet.TryTakeMoneys(_config.StrongTowerCost))
                 BuildTower(_strongTowerPrefab, _config.RadiusRangeStrongTower, _config.DelayShootStrongTower,
                     _config.DamageStrongTower);
             else
@@ -72,7 +72,7 @@ namespace TowerDefense.Builds.Tower
 
         private void BuildFastTower()
         {
-            if (_wallet.TryTakeMoney(_config.FastTowerCost))
+            if (_wallet.TryTakeMoneys(_config.FastTowerCost))
                 BuildTower(_fastTowerPrefab, _config.RadiusRangeFastTower, _config.DelayShootFastTower,
                     _config.DamageFastTower);
             else
