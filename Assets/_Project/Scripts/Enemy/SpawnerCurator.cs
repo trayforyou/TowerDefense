@@ -15,8 +15,8 @@ namespace TowerDefense.Enemy
         private Coroutine _coroutine;
         private Wallet _wallet;
 
-        public int WaveNumber { get; private set; } = 0;
-        public int EnemiesDeaths { get; private set; } = 0;
+        public int WaveNumber { get; private set; }
+        public int EnemiesDeaths { get; private set; }
 
         public event Action<int> TimeChanged;
         public event Action<int> WaveChanged;

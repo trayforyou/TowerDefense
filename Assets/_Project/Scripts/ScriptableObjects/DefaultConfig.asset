@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c1a55ea1e1b3e54c97978c0f870562a, type: 3}
   m_Name: DefaultConfig
   m_EditorClassIdentifier: Assembly-CSharp::MetaCurrencyConfig
-  <MoneyPerWave>k__BackingField: 50
-  <MoneyPerKill>k__BackingField: 50
+  <MoneysPerWave>k__BackingField: 50
+  <MoneysPerKill>k__BackingField: 100
   <MinDistanceForBuilding>k__BackingField: 1
   <FastTowerCost>k__BackingField: 10
   <StrongTowerCost>k__BackingField: 10
@@ -29,16 +29,16 @@ MonoBehaviour:
   <CostMultiplier>k__BackingField: 1.2
   <RadiusRangeCastle>k__BackingField: 10
   <StartDelayShootCastle>k__BackingField: 1.5
-  <StartDamageCastle>k__BackingField: 1
+  <StartDamageCastle>k__BackingField: 2
   <StartHealthCastle>k__BackingField: 25
-  <MinEnemyPullSize>k__BackingField: 5
-  <MaxEnemyPullSize>k__BackingField: 15
+  <MinEnemyPoolSize>k__BackingField: 5
+  <MaxEnemyPoolSize>k__BackingField: 15
   <WavesDelay>k__BackingField: 5
   <EnemySpawnDelay>k__BackingField: 1
   <EnemySpeed>k__BackingField: 0.5
   <EnemyAttackDelay>k__BackingField: 1
   <EnemyDamage>k__BackingField: 1
-  <EnemyHealth>k__BackingField: 2
+  <EnemyHealth>k__BackingField: 4
   <EnemiesPerWave>k__BackingField: 5
   <EnemyStopDistance>k__BackingField: 1
   <MultiplierEnemiesPerWave>k__BackingField: 1.2

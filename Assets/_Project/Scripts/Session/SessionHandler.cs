@@ -1,7 +1,7 @@
-using System;
 using TowerDefense.Builds;
 using TowerDefense.Builds.Castle;
 using TowerDefense.Enemy;
+using TowerDefense.Saver;
 using TowerDefense.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 namespace TowerDefense.Session
 {
     [RequireComponent(typeof(SpawnerCurator))]
+    [RequireComponent(typeof(Saver.Saver))]
     public class SessionHandler : MonoBehaviour
     {
         [SerializeField] private SessionViewer _sessionViewer;
@@ -19,16 +20,15 @@ namespace TowerDefense.Session
         [SerializeField] private string _mainMenuScene = "Menu";
         [SerializeField] private InteractHandler _interactHandler;
 
+        private Saver.Saver _saver;
         private SpawnerCurator _spawnerCurator;
         private Coroutine _coroutine;
         private int _waveNumber;
 
         private void Start()
         {
-            if (_interactHandler == null)
-                throw new NullReferenceException(nameof(_interactHandler));
-
             _spawnerCurator = GetComponent<SpawnerCurator>();
+            _saver = GetComponent<Saver.Saver>();
 
             SubscribeAll();
 
@@ -78,18 +78,18 @@ namespace TowerDefense.Session
 
             int reward = _spawnerCurator.WaveNumber * _config.MoneysPerWave +
                          _spawnerCurator.EnemiesDeaths * _config.MoneysPerKill;
-
+            
             AddMetaMoneys(reward);
-
+    
             _endMenu.SetValue(_spawnerCurator.WaveNumber, _spawnerCurator.EnemiesDeaths, reward);
             _endMenu.Show();
         }
 
         private void AddMetaMoneys(int count)
         {
-            int metaMoneys = PlayerPrefs.GetInt(GameStarter.META_CURRENCY, 0);
-            metaMoneys += count;
-            PlayerPrefs.SetInt(GameStarter.META_CURRENCY, metaMoneys);
+            SaveData data = _saver.Load();
+            int metaMoneys = data.MetaCurrency + count;
+            _saver.Save(new SaveData(metaMoneys));
         }
 
         private void GoToMenu()

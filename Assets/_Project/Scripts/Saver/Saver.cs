@@ -1,16 +1,26 @@
 using UnityEngine;
 
-public class Saver : MonoBehaviour
+namespace TowerDefense.Saver
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class Saver : MonoBehaviour
     {
+        private readonly string _key = "data";
         
-    }
+        public void Save(SaveData data)
+        {
+            string json = JsonUtility.ToJson(data);
+            PlayerPrefs.SetString(_key, json);
+            PlayerPrefs.Save();
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public SaveData Load()
+        {
+            string json = PlayerPrefs.GetString(_key);
+
+            if (string.IsNullOrEmpty(json))
+                return new SaveData(0);
+            
+            return JsonUtility.FromJson<SaveData>(json);
+        }
     }
 }
