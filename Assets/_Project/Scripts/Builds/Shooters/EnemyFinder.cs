@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections;
-using TowerDefense.ScriptableObjects;
+using _Project.Scripts.Enemies;
+using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 
-namespace TowerDefense.Builds.Shooter
+namespace _Project.Scripts.Builds.Shooters
 {
     public class EnemyFinder : MonoBehaviour
     {
         private GameConfig _config;
         private float _sqrRadius;
         private float _range;
-        private bool _isEnabled;
+        private bool _isEnabled = true;
 
-        public event Action<Enemy.Enemy> FoundEnemy;
+        public event Action<Enemy> FoundEnemy;
 
         public void Initialize(float radius, GameConfig config)
         {
@@ -23,7 +24,7 @@ namespace TowerDefense.Builds.Shooter
 
         public void Find()
         {
-            Enemy.Enemy tempEnemy = FindNearestEnemy();
+            var tempEnemy = FindNearestEnemy();
 
             if (tempEnemy != null)
             {
@@ -34,15 +35,18 @@ namespace TowerDefense.Builds.Shooter
             StartCoroutine(StartFindNearestEnemy());
         }
 
-        public void OnDestroy() =>
+        public void Stop() => 
+            _isEnabled = false;
+
+        private void OnDestroy() =>
             StopAllCoroutines();
 
         private IEnumerator StartFindNearestEnemy()
         {
             var wait = new WaitForSeconds(_config.FindDelay);
-            Enemy.Enemy target = null;
+            Enemy target = null;
             
-            while (enabled)
+            while (_isEnabled)
             {
                 target = FindNearestEnemy();
 
@@ -55,7 +59,7 @@ namespace TowerDefense.Builds.Shooter
             FoundEnemy?.Invoke(target);
         }
 
-        private Enemy.Enemy FindNearestEnemy()
+        private Enemy FindNearestEnemy()
         {
             Collider[] colliders = Physics.OverlapSphere(transform.position, _range);
 
@@ -63,11 +67,11 @@ namespace TowerDefense.Builds.Shooter
                 return null;
 
             float minSqrDistance = float.MaxValue;
-            Enemy.Enemy nearestEnemy = null;
+            Enemy nearestEnemy = null;
 
-            foreach (Collider collider in colliders)
+            foreach (Collider enemyCollider in colliders)
             {
-                if (collider.TryGetComponent(out Enemy.Enemy enemy))
+                if (enemyCollider.TryGetComponent(out Enemy enemy))
                 {
                     if (!enemy.isActiveAndEnabled)
                         continue;

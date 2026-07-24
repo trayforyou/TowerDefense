@@ -1,31 +1,27 @@
 using System;
-using UnityEngine;
 
-namespace TowerDefense.Session
+namespace _Project.Scripts.Session
 {
-    public class Wallet : MonoBehaviour
+    public class Wallet
     {
+        private int _count;
+        
         public event Action<int> ValueChanged;
-
-        public int Count { get; private set; }
-
-        private void Start() =>
-            Count = 0;
 
         public void AddMoneys(int count)
         {
-            Count += count;
+            _count += count;
 
-            ValueChanged?.Invoke(Count);
+            ValueChanged?.Invoke(_count);
         }
 
         public bool TryTakeMoneys(int count)
         {
-            if (Count < count)
+            if (_count < count)
                 return false;
 
-            Count -= count;
-            ValueChanged?.Invoke(Count);
+            _count -= count;
+            ValueChanged?.Invoke(_count);
 
             return true;
         }

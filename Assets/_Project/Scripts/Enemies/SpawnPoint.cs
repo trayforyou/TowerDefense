@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace TowerDefense.Enemy
+namespace _Project.Scripts.Enemies
 {
     public class SpawnPoint : MonoBehaviour {}
 }

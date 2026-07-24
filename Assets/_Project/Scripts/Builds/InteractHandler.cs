@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using TowerDefense.Builds.Castle;
-using TowerDefense.Builds.Tower;
-using TowerDefense.ScriptableObjects;
-using TowerDefense.Session;
+using _Project.Scripts.Builds.Castles;
+using _Project.Scripts.Builds.Towers;
+using _Project.Scripts.ScriptableObjects;
+using _Project.Scripts.Session;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace TowerDefense.Builds
+namespace _Project.Scripts.Builds
 {
     [RequireComponent(typeof(CastleUpper))]
     [RequireComponent(typeof(TowerBuilder))]
@@ -16,10 +16,10 @@ namespace TowerDefense.Builds
         [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private LayerMask _castleLayer;
 
-        private HashSet<Vector3> _buildPositions = new();
+        private readonly HashSet<Vector3> _buildPositions = new();
         private CastleUpper _castleUpper;
         private TowerBuilder _towerBuilder;
-        private Castle.Castle _castle;
+        private Castle _castle;
         private Wallet _wallet;
         private GameConfig _config;
         private Camera _mainCamera;
@@ -52,7 +52,7 @@ namespace TowerDefense.Builds
         private void OnDestroy() => 
             _towerBuilder.BuildingTower -= AddNewPosition;
 
-        public void SetParameters(GameConfig config, Wallet wallet, Castle.Castle castle)
+        public void SetParameters(GameConfig config, Wallet wallet, Castle castle)
         {
             if (wallet == null || config == null || castle == null)
                 throw new ArgumentNullException();
@@ -78,9 +78,8 @@ namespace TowerDefense.Builds
         private void HandleClick()
         {
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, _castleLayer))
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _castleLayer))
             {
                 _castleUpper.Activate();
             }

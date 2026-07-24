@@ -1,35 +1,35 @@
-using TowerDefense.Builds;
-using TowerDefense.Builds.Castle;
-using TowerDefense.Enemy;
-using TowerDefense.Saver;
-using TowerDefense.ScriptableObjects;
+using _Project.Scripts.Builds;
+using _Project.Scripts.Builds.Castles;
+using _Project.Scripts.Enemies;
+using _Project.Scripts.Savers;
+using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace TowerDefense.Session
+namespace _Project.Scripts.Session
 {
     [RequireComponent(typeof(SpawnerCurator))]
-    [RequireComponent(typeof(Saver.Saver))]
     public class SessionHandler : MonoBehaviour
     {
         [SerializeField] private SessionViewer _sessionViewer;
         [SerializeField] private EndMenuViewer _endMenu;
         [SerializeField] private Castle _castle;
-        [SerializeField] private Wallet _wallet;
         [SerializeField] private GameConfig _config;
         [SerializeField] private string _mainMenuScene = "Menu";
         [SerializeField] private InteractHandler _interactHandler;
 
-        private Saver.Saver _saver;
+        private Saver _saver;
         private SpawnerCurator _spawnerCurator;
         private Coroutine _coroutine;
         private int _waveNumber;
+        private Wallet _wallet;
 
         private void Start()
         {
             _spawnerCurator = GetComponent<SpawnerCurator>();
-            _saver = GetComponent<Saver.Saver>();
-
+            _saver = new Saver();
+            _wallet = new Wallet();
+            
             SubscribeAll();
 
             _interactHandler.SetParameters(_config, _wallet, _castle);

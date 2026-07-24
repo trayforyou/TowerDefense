@@ -1,32 +1,29 @@
-﻿using static UnityEngine.Object;
-using TowerDefense.ScriptableObjects;
+﻿using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Pool;
+using static UnityEngine.Object;
 
-namespace TowerDefense.Builds.Shooter
+namespace _Project.Scripts.Builds.Shooters
 {
     public class BulletsStorage
     {
-        private ObjectPool<Bullet> _bulletsPool;
-        private Bullet _bulletPrefab;
-        private GameConfig _config;
+        private readonly ObjectPool<Bullet> _bulletsPool;
         private int _currentDamage;
 
         public BulletsStorage(Bullet bulletPrefab, GameConfig config, int damage)
         {
             _currentDamage = damage;
-            _config = config;
-            _bulletPrefab = bulletPrefab;
+            var bulletPrefab1 = bulletPrefab;
 
             _bulletsPool = new ObjectPool<Bullet>
             (
-                createFunc: () => Instantiate(_bulletPrefab),
+                createFunc: () => Instantiate(bulletPrefab1),
                 actionOnGet: GetBullet,
                 actionOnRelease: ReleaseBullet,
                 actionOnDestroy: bullet => Destroy(bullet.gameObject),
                 collectionCheck: true,
-                defaultCapacity: _config.MinBulletPoolSize,
-                maxSize: _config.MaxBulletPoolSize
+                defaultCapacity: config.MinBulletPoolSize,
+                maxSize: config.MaxBulletPoolSize
             );
         }
 

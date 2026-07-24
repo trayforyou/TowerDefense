@@ -8388,9 +8388,7 @@ GameObject:
   m_Component:
   - component: {fileID: 727398362}
   - component: {fileID: 727398361}
-  - component: {fileID: 727398363}
   - component: {fileID: 727398364}
-  - component: {fileID: 727398365}
   m_Layer: 0
   m_Name: SessionHandler
   m_TagString: Untagged
@@ -8413,7 +8411,6 @@ MonoBehaviour:
   _sessionViewer: {fileID: 2033830352}
   _endMenu: {fileID: 1435184917}
   _castle: {fileID: 981011939}
-  _wallet: {fileID: 727398363}
   _config: {fileID: 11400000, guid: 6ac96d1cbf4d4c1459176035ba09add3, type: 2}
   _mainMenuScene: Menu
   _interactHandler: {fileID: 572343749}
@@ -8432,18 +8429,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &727398363
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727398360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d25662efbe10cef47ad9bc974cd2d1aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
 --- !u!114 &727398364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8457,18 +8442,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpawnerCurator
   _spawner: {fileID: 1652926921}
---- !u!114 &727398365
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727398360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b680eae9f564d7a4fa834485b9fa6e97, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerDefense.Saver.Saver
 --- !u!1 &729958735
 GameObject:
   m_ObjectHideFlags: 0
@@ -12098,14 +12071,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: -3015088591601857363, guid: af29493b30569b945921d4618236dc58, type: 3}
-      propertyPath: m_Name
-      value: Castle
-      objectReference: {fileID: 0}
-    - target: {fileID: -3015088591601857363, guid: af29493b30569b945921d4618236dc58, type: 3}
-      propertyPath: m_Layer
-      value: 7
-      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1af06c9d3ad812045a8553f57ebedd78, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.55
@@ -12167,6 +12132,14 @@ PrefabInstance:
       value: Castle
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1af06c9d3ad812045a8553f57ebedd78, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -3015088591601857363, guid: af29493b30569b945921d4618236dc58, type: 3}
+      propertyPath: m_Name
+      value: Castle
+      objectReference: {fileID: 0}
+    - target: {fileID: -3015088591601857363, guid: af29493b30569b945921d4618236dc58, type: 3}
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}

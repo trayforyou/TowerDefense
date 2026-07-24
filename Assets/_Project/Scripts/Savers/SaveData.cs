@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TowerDefense.Saver
+namespace _Project.Scripts.Savers
 {
     [Serializable]
     public class SaveData

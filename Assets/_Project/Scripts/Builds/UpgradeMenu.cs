@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TowerDefense.Builds
+namespace _Project.Scripts.Builds
 {
     [RequireComponent(typeof(CanvasGroup))]
     public class UpgradeMenu : MonoBehaviour
@@ -23,7 +23,7 @@ namespace TowerDefense.Builds
         public event Action TriedUpSpeed;
         public event Action TriedUpStrong;
 
-        [field: SerializeField] public bool IsActive { get; private set; } = false;
+        [field: SerializeField] public bool IsActive { get; private set; }
 
         private void Awake() =>
             _canvasGroup = GetComponent<CanvasGroup>();
@@ -101,7 +101,7 @@ namespace TowerDefense.Builds
         private void TryUpStrong() =>
             TriedUpStrong?.Invoke();
 
-        private void ChangeView(TextMeshProUGUI tMPTower, bool value) =>
-            tMPTower.color = value ? Color.green : Color.red;
+        private void ChangeView(TextMeshProUGUI tMpTower, bool value) =>
+            tMpTower.color = value ? Color.green : Color.red;
     }
 }

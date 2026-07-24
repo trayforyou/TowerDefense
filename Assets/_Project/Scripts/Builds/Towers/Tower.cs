@@ -1,15 +1,16 @@
-using TowerDefense.ScriptableObjects;
+using _Project.Scripts.Builds.Shooters;
+using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 
-namespace TowerDefense.Builds.Tower
+namespace _Project.Scripts.Builds.Towers
 {
-    [RequireComponent(typeof(Shooter.Gun))]
+    [RequireComponent(typeof(Gun))]
     public class Tower : MonoBehaviour
     {
-        private Shooter.Gun _gun;
+        private Gun _gun;
 
         private void Awake() =>
-            _gun = GetComponent<Shooter.Gun>();
+            _gun = GetComponent<Gun>();
 
         public void Initialize(GameConfig config, float range,float delay,int damage) =>
             _gun.Initialize(config, range, delay, damage);

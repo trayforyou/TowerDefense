@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TowerDefense
+namespace _Project.Scripts
 {
     public class Health
     {
@@ -8,7 +8,7 @@ namespace TowerDefense
 
         public event Action Died;
 
-        public int MaxPoints { get; protected set; } //=> MaxPointsS;
+        public int MaxPoints { get; protected set; }
 
         public Health(int points)
         {

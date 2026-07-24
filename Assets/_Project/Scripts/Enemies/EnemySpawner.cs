@@ -1,13 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TowerDefense.Builds.Castle;
-using TowerDefense.ScriptableObjects;
+using _Project.Scripts.Builds.Castles;
+using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
 
-namespace TowerDefense.Enemy
+namespace _Project.Scripts.Enemies
 {
     public class EnemySpawner : MonoBehaviour
     {
@@ -16,7 +16,7 @@ namespace TowerDefense.Enemy
 
         private Castle _castle;
         private ObjectPool<Enemy> _enemiesPool;
-        private HashSet<Enemy> _enemies = new();
+        private readonly HashSet<Enemy> _enemies = new();
         private Coroutine _coroutine;
         private GameConfig _config;
         private int _enemiesCount;
@@ -84,7 +84,7 @@ namespace TowerDefense.Enemy
 
             _enemiesPool = new ObjectPool<Enemy>(
                 createFunc: CreateEnemy,
-                actionOnGet: enemy => GetEnemy(enemy),
+                actionOnGet: GetEnemy,
                 actionOnRelease: EnemyRelease,
                 actionOnDestroy: DestroyEnemy,
                 collectionCheck: false,
@@ -108,7 +108,7 @@ namespace TowerDefense.Enemy
 
         private Enemy CreateEnemy()
         {
-            Enemy enemy = Instantiate(_enemyPrefab);
+            var enemy = Instantiate(_enemyPrefab);
             _enemies.Add(enemy);
             enemy.SetParams(_castle, _config);
             enemy.Died += _enemiesPool.Release;
@@ -116,12 +116,10 @@ namespace TowerDefense.Enemy
             return enemy;
         }
 
-        private Enemy GetEnemy(Enemy enemy)
+        private void GetEnemy(Enemy enemy)
         {
             enemy.ResetHealth();
             enemy.gameObject.SetActive(true);
-
-            return enemy;
         }
 
         private Vector3 GetRandomSpawnPoint()

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace TowerDefense.ScriptableObjects
+namespace _Project.Scripts.ScriptableObjects
 {
     [CreateAssetMenu(fileName = "GameConfig", menuName = "Scriptable Objects/GameConfig")]
     public class GameConfig : ScriptableObject

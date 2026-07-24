@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TowerDefense.Session
+namespace _Project.Scripts.Session
 {
     public class EndMenuViewer : MonoBehaviour
     {
@@ -20,9 +20,7 @@ namespace TowerDefense.Session
 
         public event Action ButtonRestartClicked;
         public event Action ButtonMenuClicked;
-
-        public bool IsActive { get; private set; }
-
+        
         private void Awake()
         {
             _wavesText = _waves.text;
@@ -49,7 +47,6 @@ namespace TowerDefense.Session
             _canvasGroup.alpha = 1;
             _canvasGroup.interactable = true;
             _canvasGroup.blocksRaycasts = true;
-            IsActive = true;
         }
 
         public void SetValue(int waves, int enemies, int currency)
@@ -64,19 +61,12 @@ namespace TowerDefense.Session
             _canvasGroup.alpha = 0;
             _canvasGroup.interactable = false;
             _canvasGroup.blocksRaycasts = false;
-            IsActive = false;
         }
 
-        private void RestartScene()
-        {
-            _restart.onClick.RemoveListener(RestartScene);
+        private void RestartScene() => 
             ButtonRestartClicked?.Invoke();
-        }
 
-        private void GoToMenu()
-        {
-            _menu.onClick.RemoveListener(GoToMenu);
+        private void GoToMenu() => 
             ButtonMenuClicked?.Invoke();
-        }
     }
 }

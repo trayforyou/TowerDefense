@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using TowerDefense.ScriptableObjects;
-using TowerDefense.Session;
+using _Project.Scripts.ScriptableObjects;
+using _Project.Scripts.Session;
 using UnityEngine;
 
-namespace TowerDefense.Builds.Tower
+namespace _Project.Scripts.Builds.Towers
 {
     public class TowerBuilder : MonoBehaviour
     {
@@ -12,9 +12,9 @@ namespace TowerDefense.Builds.Tower
         [SerializeField] private Tower _strongTowerPrefab;
         [SerializeField] private Tower _fastTowerPrefab;
 
+        private readonly List<Tower> _towers = new();
         private GameConfig _config;
         private Wallet _wallet;
-        private List<Tower> _towers = new();
         private Vector3 _buildPosition;
 
         public event Action<Vector3> BuildingTower;
@@ -43,7 +43,7 @@ namespace TowerDefense.Builds.Tower
 
         public void StopAttack()
         {
-            foreach (Tower tower in _towers)
+            foreach (var tower in _towers)
                 tower.Stop();
         }
 

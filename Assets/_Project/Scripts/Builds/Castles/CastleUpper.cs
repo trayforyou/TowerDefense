@@ -1,8 +1,8 @@
-using TowerDefense.ScriptableObjects;
-using TowerDefense.Session;
+using _Project.Scripts.ScriptableObjects;
+using _Project.Scripts.Session;
 using UnityEngine;
 
-namespace TowerDefense.Builds.Castle
+namespace _Project.Scripts.Builds.Castles
 {
     public class CastleUpper : MonoBehaviour
     {

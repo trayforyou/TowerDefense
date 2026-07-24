@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
-using TowerDefense.Builds.Castle;
-using TowerDefense.ScriptableObjects;
+using _Project.Scripts.Builds.Castles;
+using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 
-namespace TowerDefense.Enemy
+namespace _Project.Scripts.Enemies
 {
     public class EnemyAttacker : MonoBehaviour
     {
@@ -16,12 +16,12 @@ namespace TowerDefense.Enemy
         public event Action Attacking;
         public event Action NeedingRun;
 
-        public void Initialize(GameConfig config, Castle castle, float sqrStopDistance, Transform transform)
+        public void Initialize(GameConfig config, Castle castle, float sqrStopDistance, Transform enemy)
         {
             _config = config;
             _castle = castle;
             _sqrStopDistance = sqrStopDistance;
-            _transform = transform;
+            _transform = enemy;
         }
 
         public void Attack()
@@ -42,7 +42,7 @@ namespace TowerDefense.Enemy
             {
                 _castle.TakeDamage(_config.EnemyDamage);
                 Attacking?.Invoke();
-                sqrDistance = Vector3.SqrMagnitude(_castle.transform.position - transform.position);
+                sqrDistance = Vector3.SqrMagnitude(_castle.transform.position - _transform.position);
 
                 yield return wait;
             }

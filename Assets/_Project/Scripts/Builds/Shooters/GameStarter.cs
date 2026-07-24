@@ -1,12 +1,10 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace TowerDefense
+namespace _Project.Scripts.Builds.Shooters
 {
     public class GameStarter : MonoBehaviour
     {
-        public const string META_CURRENCY = "MetaCurrency";
-
         [SerializeField] private MainMenu _startMenu;
         [SerializeField] private string _gameSceneName = "Game";
         

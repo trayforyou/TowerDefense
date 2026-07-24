@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections;
-using TowerDefense.Builds.Castle;
-using TowerDefense.ScriptableObjects;
-using TowerDefense.Session;
+using _Project.Scripts.Builds.Castles;
+using _Project.Scripts.ScriptableObjects;
+using _Project.Scripts.Session;
 using UnityEngine;
 
-namespace TowerDefense.Enemy
+namespace _Project.Scripts.Enemies
 {
     public class SpawnerCurator : MonoBehaviour
     {

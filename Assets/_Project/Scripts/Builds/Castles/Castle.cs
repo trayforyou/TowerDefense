@@ -1,24 +1,25 @@
 ﻿using System;
-using TowerDefense.ScriptableObjects;
+using _Project.Scripts.Builds.Shooters;
+using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 
-namespace TowerDefense.Builds.Castle
+namespace _Project.Scripts.Builds.Castles
 {
-    [RequireComponent(typeof(Shooter.Gun))]
+    [RequireComponent(typeof(Gun))]
     [RequireComponent(typeof(ParticleSystem))]
     public class Castle : MonoBehaviour
     {
         private ParticleSystem _particles;
         private CastleHealth _health;
         private GameConfig _config;
-        private Shooter.Gun _gun;
+        private Gun _gun;
 
         public event HealthChangedEventHandler ValueChanged;
         public event Action Died;
 
         private void Awake()
         {
-            _gun = GetComponent<Shooter.Gun>();
+            _gun = GetComponent<Gun>();
             _particles = GetComponent<ParticleSystem>();
         }
 

@@ -1,12 +1,10 @@
-﻿using UnityEngine;
-
-namespace TowerDefense.Builds.Castle
+﻿namespace _Project.Scripts.Builds.Castles
 {
     public delegate void HealthChangedEventHandler(int currentHealth, int maxHealth);
 
     public class CastleHealth : Health
     {
-        private float _healthMultiply;
+        private readonly float _healthMultiply;
 
         public event HealthChangedEventHandler ValueChanged;
 

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections;
-using TowerDefense.ScriptableObjects;
+﻿using System.Collections;
+using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 
-namespace TowerDefense.Builds.Shooter
+namespace _Project.Scripts.Builds.Shooters
 {
     public class Shooter : MonoBehaviour
     {
@@ -21,7 +20,7 @@ namespace TowerDefense.Builds.Shooter
             _shootPoint = shootPoint;
         }
 
-        public void Attack(Enemy.Enemy enemy)
+        public void Attack(Enemies.Enemy enemy)
         {
             _attackCoroutine = StartCoroutine(StartAttack(enemy));
         }
@@ -38,22 +37,19 @@ namespace TowerDefense.Builds.Shooter
         public void UpLevelDamage(int damage) =>
             _bulletsPool.ChangeDamage(damage);
 
-        private IEnumerator StartAttack(Enemy.Enemy currentTarget)
+        private IEnumerator StartAttack(Enemies.Enemy currentTarget)
         {
             yield return _currentDelay;
 
             while (currentTarget.isActiveAndEnabled)
             {
-                if (currentTarget.isActiveAndEnabled == false)
-                    yield break;
-
                 StartCoroutine(FlyBullet(currentTarget));
 
                 yield return _currentDelay;
             }
         }
 
-        private IEnumerator FlyBullet(Enemy.Enemy target)
+        private IEnumerator FlyBullet(Enemies.Enemy target)
         {
             bool isEnemyAlive = true;
             Bullet bullet = _bulletsPool.Get();

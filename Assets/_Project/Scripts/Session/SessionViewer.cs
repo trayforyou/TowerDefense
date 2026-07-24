@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace TowerDefense.Session
+namespace _Project.Scripts.Session
 {
     public class SessionViewer : MonoBehaviour
     {

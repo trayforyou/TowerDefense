@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
-using TowerDefense.ScriptableObjects;
+using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace TowerDefense.Enemy
+namespace _Project.Scripts.Enemies
 {
     [RequireComponent(typeof(NavMeshAgent))]
     public class Mover : MonoBehaviour
@@ -13,7 +13,6 @@ namespace TowerDefense.Enemy
         private GameConfig _config;
         private Transform _target;
         private Coroutine _coroutine;
-        private float _sqrStopDistance;
 
         public event Action HasCome;
         public event Action Running;
@@ -26,7 +25,7 @@ namespace TowerDefense.Enemy
             _target = target;
             _config = config;
 
-            _sqrStopDistance = _config.EnemyStopDistance * _config.EnemyStopDistance;
+            _agent.stoppingDistance = _config.EnemyStopDistance;
             _agent.speed = _config.EnemySpeed;
         }
 
@@ -34,10 +33,9 @@ namespace TowerDefense.Enemy
         {
             if (!_agent.isOnNavMesh)
             {
-                NavMeshHit hit;
                 float maxDistance = 1.5f;
 
-                if (NavMesh.SamplePosition(_target.position, out hit, maxDistance, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(_target.position, out NavMeshHit hit, maxDistance, NavMesh.AllAreas))
                     _agent.destination = hit.position;
                 else
                     return;
@@ -57,14 +55,10 @@ namespace TowerDefense.Enemy
 
             Running?.Invoke();
 
-            float sqrDistance = Vector3.SqrMagnitude(_target.position - transform.position);
-            var wait = new WaitForFixedUpdate();
+            yield return null;
 
-            while (sqrDistance > _sqrStopDistance)
-            {
-                sqrDistance = Vector3.SqrMagnitude(_target.position - transform.position);
-                yield return wait;
-            }
+            while (_agent.remainingDistance > _agent.stoppingDistance)
+                yield return null;
 
             _agent.isStopped = true;
             _agent.velocity = Vector3.zero;

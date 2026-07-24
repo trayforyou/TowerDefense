@@ -1,9 +1,9 @@
 using System;
-using TowerDefense.Builds.Castle;
-using TowerDefense.ScriptableObjects;
 using UnityEngine;
+using _Project.Scripts.Builds.Castles;
+using _Project.Scripts.ScriptableObjects;
 
-namespace TowerDefense.Enemy
+namespace _Project.Scripts.Enemies
 {
     [RequireComponent(typeof(Mover))]
     [RequireComponent(typeof(Animator))]
@@ -35,20 +35,11 @@ namespace TowerDefense.Enemy
         private void OnEnable()
         {
             _particles.Stop();
-            _mover.HasCome += StartAttack;
-            _mover.Running += AnimateRun;
-            _attacker.Attacking += AnimateAttack;
-            _attacker.NeedingRun += GoToTarget;
+            SubscribeAll();
         }
 
-        private void OnDisable()
-        {
-            _mover.HasCome -= StartAttack;
-            _mover.Running -= AnimateRun;
-            _health.Died -= Die;
-            _attacker.Attacking -= AnimateAttack;
-            _attacker.NeedingRun -= GoToTarget;
-        }
+        private void OnDisable() => 
+            UnsubscribeAll();
 
         public void SetParams(Castle target, GameConfig config)
         {
@@ -67,11 +58,7 @@ namespace TowerDefense.Enemy
 
             _animator.SetBool(IsRun, false);
             _attacker.Stop();
-            _attacker.Attacking -= AnimateAttack;
-            _attacker.NeedingRun -= GoToTarget;
-            _mover.HasCome -= StartAttack;
-            _mover.Running -= AnimateRun;
-            _health.Died -= Die;
+            UnsubscribeAll();
         }
 
         public void ResetHealth()
@@ -84,6 +71,24 @@ namespace TowerDefense.Enemy
         {
             _particles.Play();
             _health.TakeDamage(damage);
+        }
+
+        private void UnsubscribeAll()
+        {
+            _mover.HasCome -= StartAttack;
+            _mover.Running -= AnimateRun;
+            _health.Died -= Die;
+            _attacker.Attacking -= AnimateAttack;
+            _attacker.NeedingRun -= GoToTarget;
+        }
+        
+        private void SubscribeAll()
+        {
+            _mover.HasCome += StartAttack;
+            _mover.Running += AnimateRun;
+            _health.Died += Die;
+            _attacker.Attacking += AnimateAttack;
+            _attacker.NeedingRun += GoToTarget;
         }
         
         private void StartAttack()

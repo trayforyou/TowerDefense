@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TowerDefense.Builds
+namespace _Project.Scripts.Builds
 {
     [RequireComponent(typeof(CanvasGroup))]
     public class BuildMenu : MonoBehaviour
@@ -16,13 +16,13 @@ namespace TowerDefense.Builds
         [SerializeField] private TextMeshProUGUI _tMPStrongTower;
 
         private CanvasGroup _canvasGroup;
-        private bool _canBuyFast = false;
-        private bool _canBuyStrong = false;
+        private bool _canBuyFast;
+        private bool _canBuyStrong;
 
         public event Action TriedBuyFastTower;
         public event Action TriedBuyStrongTower;
 
-        public bool IsActive { get; private set; } = false;
+        public bool IsActive { get; private set; }
 
         private void Awake() =>
             _canvasGroup = GetComponent<CanvasGroup>();
@@ -64,8 +64,8 @@ namespace TowerDefense.Builds
 
         public void SetCostTowers(int fastTower, int strongTower)
         {
-            _tMPFastTower.text = fastTower.ToString() + CURRENCY_SYMBOL;
-            _tMPStrongTower.text = strongTower.ToString() + CURRENCY_SYMBOL;
+            _tMPFastTower.text = fastTower + CURRENCY_SYMBOL;
+            _tMPStrongTower.text = strongTower + CURRENCY_SYMBOL;
         }
 
         public void SetCanBuyFast(bool value)
@@ -83,12 +83,9 @@ namespace TowerDefense.Builds
         private void ClickBuyStrongTower() =>
             TriedBuyStrongTower?.Invoke();
 
-        private void ChangeView(TextMeshProUGUI tMPTower, bool value)
+        private void ChangeView(TextMeshProUGUI tMpTower, bool value)
         {
-            if (value)
-                tMPTower.color = Color.green;
-            else
-                tMPTower.color = Color.red;
+            tMpTower.color = value ? Color.green : Color.red;
         }
 
         public void SetCanBuyStrong(bool value)

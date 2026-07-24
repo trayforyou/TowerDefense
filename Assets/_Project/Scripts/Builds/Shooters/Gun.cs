@@ -1,8 +1,8 @@
-using System;
-using TowerDefense.ScriptableObjects;
+using _Project.Scripts.Enemies;
+using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 
-namespace TowerDefense.Builds.Shooter
+namespace _Project.Scripts.Builds.Shooters
 {
     [RequireComponent(typeof(EnemyFinder))]
     [RequireComponent(typeof(Shooter))]
@@ -12,8 +12,7 @@ namespace TowerDefense.Builds.Shooter
         [SerializeField] private Transform _shootPoint;
 
         private GameConfig _config;
-        private Coroutine _attackCoroutine;
-        private Enemy.Enemy _currentTarget;
+        private Enemy _currentTarget;
         private EnemyFinder _enemyFinder;
         private Shooter _shooter;
         private int _currentForceLevel;
@@ -53,17 +52,19 @@ namespace TowerDefense.Builds.Shooter
                 _currentTarget.Died -= RefreshTarget;
 
             _shooter.Stop();
+            _enemyFinder.Stop();
             StopAllCoroutines();
         }
 
-        private void StartShoot(Enemy.Enemy target)
+        private void StartShoot(Enemy target)
         {
-            target.Died += RefreshTarget;
+            _currentTarget = target;
+            _currentTarget.Died += RefreshTarget;
             _shooter.Stop();
-            _shooter.Attack(target);
+            _shooter.Attack(_currentTarget);
         }
 
-        private void RefreshTarget(Enemy.Enemy enemy)
+        private void RefreshTarget(Enemy enemy)
         {
             enemy.Died -= RefreshTarget;
             RefreshTarget();

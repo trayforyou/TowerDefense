@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TowerDefense.Builds.Shooter
+namespace _Project.Scripts.Builds.Shooters
 {
     [RequireComponent(typeof(SphereCollider))]
     public class Bullet : MonoBehaviour
@@ -16,7 +16,7 @@ namespace TowerDefense.Builds.Shooter
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out Enemy.Enemy enemy))
+            if (other.TryGetComponent(out Enemies.Enemy enemy))
                 enemy.TakeDamage(_damage);
         }
 
