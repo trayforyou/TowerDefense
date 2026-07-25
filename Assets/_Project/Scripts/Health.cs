@@ -28,7 +28,6 @@ namespace _Project.Scripts
             {
                 Points = 0;
                 ValueChange();
-                Died?.Invoke();
             }
             else
             {
