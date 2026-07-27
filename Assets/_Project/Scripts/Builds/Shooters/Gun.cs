@@ -11,14 +11,9 @@ namespace _Project.Scripts.Builds.Shooters
         [SerializeField] private Bullet _bulletPrefab;
         [SerializeField] private Transform _shootPoint;
 
-        private GameConfig _config;
         private Enemy _currentTarget;
         private EnemyFinder _enemyFinder;
         private Shooter _shooter;
-        private int _currentForceLevel;
-        private int _currentSpeedLevel;
-        private float _currentDelay;
-        private int _currentDamage;
 
         private void Awake()
         {
@@ -31,16 +26,8 @@ namespace _Project.Scripts.Builds.Shooters
 
         public void Initialize(GameConfig config, float range, float shootDelay, int damage)
         {
-            if (_enemyFinder == null)
-                Debug.Log("EnemyFinder равен нулю"); 
-            
-            _currentDelay = shootDelay;
-            _currentDamage = damage;
-            _currentForceLevel++;
-            _currentSpeedLevel++;
-            _config = config;
-            _enemyFinder.Initialize(range, _config);
-            _shooter.Initialize(_config, damage, shootDelay, _bulletPrefab, _shootPoint.transform.position);
+            _enemyFinder.Initialize(range, config);
+            _shooter.Initialize(config, damage, shootDelay, _bulletPrefab, _shootPoint.transform.position);
 
             _enemyFinder.FoundEnemy += StartShoot;
             _enemyFinder.Find();
@@ -73,32 +60,10 @@ namespace _Project.Scripts.Builds.Shooters
         private void RefreshTarget() =>
             _enemyFinder.Find();
 
-        public void UpSpeedLevel()
-        {
-            if (_currentSpeedLevel > _config.MaxCastleLevel)
-                return;
+        public void SetShootDelay(float delay) => 
+            _shooter.SetShootDelay(delay);
 
-            _currentSpeedLevel++;
-            _currentDelay = _config.StartDelayShootCastle;
-
-            for (int i = 1; i < _currentSpeedLevel; i++)
-                _currentDelay /= _config.UpgradeMultiplier;
-
-            _shooter.UpLevelSpeed(_currentDelay);
-        }
-
-        public void UpForceLevel()
-        {
-            if (_currentForceLevel > _config.MaxCastleLevel)
-                return;
-
-            _currentForceLevel++;
-            _currentDamage = _config.StartDamageCastle;
-
-            for (int i = 1; i < _currentForceLevel; i++)
-                _currentDamage = (int)(_currentDamage * _config.UpgradeMultiplier);
-
-            _shooter.UpLevelDamage(_currentDamage);
-        }
+        public void SetDamage(int damage) => 
+            _shooter.SetDamage(damage);
     }
 }

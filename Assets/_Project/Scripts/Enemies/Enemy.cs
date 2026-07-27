@@ -66,11 +66,8 @@ namespace _Project.Scripts.Enemies
             UnsubscribeAll();
         }
 
-        public void ResetHealth()
-        {
+        public void ResetHealth() => 
             _health.Reset();
-            _health.Died += Die;
-        }
 
         public void TakeDamage(int damage)
         {

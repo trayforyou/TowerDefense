@@ -52,13 +52,13 @@ namespace _Project.Scripts.Session
         public void ChangeEnemiesCount(int currentEnemies) =>
             _enemiesAlive.text = _enemiesAliveText + currentEnemies + _splitter + _maxEnemiesCount;
 
-        public void ChangeCountMoneys(int count) => 
-            _moneysInfo.text = _moneysText + count.ToString();
+        public void ChangeCountMoneys(int count) =>
+            _moneysInfo.text = _moneysText + count;
 
-        public void ChangeWaveNumber(int count) => 
-            _wavesCount.text = _wavesCountText + count.ToString();
+        public void ChangeWaveNumber(int count) =>
+            _wavesCount.text = _wavesCountText + count;
 
-        public void ChangeHealthInfo(int maxCount, int currentCount) => 
-            _healthInfo.text = _healthText + currentCount.ToString() + _splitter + maxCount.ToString();
+        public void ChangeHealthInfo(int currentCount, int maxCount) =>
+            _healthInfo.text = _healthText + maxCount + _splitter + currentCount;
     }
 }

@@ -31,10 +31,10 @@ namespace _Project.Scripts.Builds.Shooters
                 StopCoroutine(_attackCoroutine);
         }
 
-        public void UpLevelSpeed(float newDelay) =>
+        public void SetShootDelay(float newDelay) =>
             _currentDelay = new WaitForSeconds(newDelay);
 
-        public void UpLevelDamage(int damage) =>
+        public void SetDamage(int damage) =>
             _bulletsPool.ChangeDamage(damage);
 
         private IEnumerator StartAttack(Enemies.Enemy currentTarget)

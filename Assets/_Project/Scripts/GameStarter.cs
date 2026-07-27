@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace _Project.Scripts.Builds.Shooters
+namespace _Project.Scripts
 {
     public class GameStarter : MonoBehaviour
     {

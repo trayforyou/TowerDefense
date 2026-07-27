@@ -14,7 +14,7 @@
         public void RefreshInfo() =>
             ValueChange();
 
-        public void TryUpLevel()
+        public void TryUpgrade()
         {
             MaxPoints = (int)(MaxPoints * _healthMultiply);
             int tempHp = (int)(Points * _healthMultiply);

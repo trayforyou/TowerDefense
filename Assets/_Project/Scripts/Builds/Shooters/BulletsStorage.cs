@@ -13,11 +13,11 @@ namespace _Project.Scripts.Builds.Shooters
         public BulletsStorage(Bullet bulletPrefab, GameConfig config, int damage)
         {
             _currentDamage = damage;
-            var bulletPrefab1 = bulletPrefab;
+            Bullet prefab = bulletPrefab;
 
             _bulletsPool = new ObjectPool<Bullet>
             (
-                createFunc: () => Instantiate(bulletPrefab1),
+                createFunc: () => Instantiate(prefab),
                 actionOnGet: GetBullet,
                 actionOnRelease: ReleaseBullet,
                 actionOnDestroy: bullet => Destroy(bullet.gameObject),

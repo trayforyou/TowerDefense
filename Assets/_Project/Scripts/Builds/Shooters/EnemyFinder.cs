@@ -35,7 +35,7 @@ namespace _Project.Scripts.Builds.Shooters
             StartCoroutine(StartFindNearestEnemy());
         }
 
-        public void Stop() => 
+        public void Stop() =>
             _isEnabled = false;
 
         private void OnDestroy() =>
@@ -44,19 +44,20 @@ namespace _Project.Scripts.Builds.Shooters
         private IEnumerator StartFindNearestEnemy()
         {
             var wait = new WaitForSeconds(_config.FindDelay);
-            Enemy target = null;
-            
+            Enemy target;
+
             while (_isEnabled)
             {
                 target = FindNearestEnemy();
 
                 if (target != null)
+                {
+                    FoundEnemy?.Invoke(target);
                     break;
+                }
 
                 yield return wait;
             }
-
-            FoundEnemy?.Invoke(target);
         }
 
         private Enemy FindNearestEnemy()

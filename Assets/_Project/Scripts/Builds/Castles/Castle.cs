@@ -60,13 +60,13 @@ namespace _Project.Scripts.Builds.Castles
         }
 
         public void UpHealth() =>
-            _health.TryUpLevel();
+            _health.TryUpgrade();
 
-        public void UpStrong() =>
-            _gun.UpForceLevel();
+        public void UpStrong(int damage) =>
+            _gun.SetDamage(damage);
 
-        public void UpSpeed() =>
-            _gun.UpSpeedLevel();
+        public void UpSpeed(float delay) =>
+            _gun.SetShootDelay(delay);
 
         private void CreateHealth()
         {

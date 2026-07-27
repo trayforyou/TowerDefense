@@ -17,6 +17,8 @@ namespace _Project.Scripts.Builds.Castles
         private int _currentCostUpgradeSpeed;
         private int _currentCostUpgradeForce;
         private int _currentCostUpgradeHealth;
+        private float _currentDelay;
+        private int _currentDamage;
 
         public bool IsActive => _upgradeMenu.IsActive;
 
@@ -36,6 +38,8 @@ namespace _Project.Scripts.Builds.Castles
             _currentCostUpgradeSpeed = _config.UpgradeCastleCost;
             _currentCostUpgradeForce = _config.UpgradeCastleCost;
             _currentCostUpgradeHealth = _config.UpgradeCastleCost;
+            _currentDelay = config.StartDelayShootCastle;
+            _currentDamage = config.StartDamageCastle;
             SubscribeAll();
         }
 
@@ -88,7 +92,13 @@ namespace _Project.Scripts.Builds.Castles
 
             if (_wallet.TryTakeMoneys(_currentCostUpgradeForce))
             {
-                _castle.UpStrong();
+                int temDamage = _currentDamage;
+                _currentDamage = (int)(_currentDamage * _config.UpgradeMultiplier);
+
+                if (temDamage == _currentDamage)
+                    _currentDamage++;
+
+                _castle.UpStrong(_currentDamage);
                 _currentCostUpgradeForce = (int)(_currentCostUpgradeForce * _config.CostMultiplier);
                 _upgradeMenu.ChangeCostUpgradeStrong(_currentCostUpgradeForce);
                 _castleStrongLevel++;
@@ -104,7 +114,8 @@ namespace _Project.Scripts.Builds.Castles
 
             if (_wallet.TryTakeMoneys(_currentCostUpgradeSpeed))
             {
-                _castle.UpSpeed();
+                _currentDelay /= _config.UpgradeMultiplier;
+                _castle.UpSpeed(_currentDelay);
                 _currentCostUpgradeSpeed = (int)(_currentCostUpgradeSpeed * _config.CostMultiplier);
                 _upgradeMenu.ChangeCostUpgradeSpeed(_currentCostUpgradeSpeed);
                 _castleSpeedLevel++;
