@@ -35,7 +35,9 @@ namespace _Project.Scripts.Enemies
         private void OnEnable()
         {
             _particles.Stop();
-            SubscribeAll();
+            
+            if(_health is not null)
+                SubscribeAll();
         }
 
         private void OnDisable() => 
@@ -45,6 +47,9 @@ namespace _Project.Scripts.Enemies
         {
             _health = new Health(config.EnemyHealth);
             float sqrStopDistance = config.EnemyStopDistance * config.EnemyStopDistance;
+            
+            SubscribeAll();
+            
             _attacker.Initialize(config,target,sqrStopDistance,transform);
             _mover.SetParams(target.transform, config);
         }
