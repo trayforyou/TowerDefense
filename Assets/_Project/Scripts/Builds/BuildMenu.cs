@@ -32,15 +32,11 @@ namespace _Project.Scripts.Builds
             Hide();
             ChangeView(_tMPFastTower, _canBuyFast);
             ChangeView(_tMPStrongTower, _canBuyStrong);
-        }
-
-        private void OnEnable()
-        {
             _buttonFastTower.onClick.AddListener(ClickBuyFastTower);
             _buttonStrongTower.onClick.AddListener(ClickBuyStrongTower);
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             _buttonFastTower.onClick.RemoveListener(ClickBuyFastTower);
             _buttonStrongTower.onClick.RemoveListener(ClickBuyStrongTower);

@@ -34,8 +34,11 @@ namespace _Project.Scripts.Enemies
         private void OnDestroy() =>
             UnSubscribeAll();
 
-        public void StartWave() => 
+        public void StartWave()
+        {
+            WaveChanged?.Invoke(++WaveNumber);   
             _spawner.StartWave();
+        }
 
         public void Stop()
         {

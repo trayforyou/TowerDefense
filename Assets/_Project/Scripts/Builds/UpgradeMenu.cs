@@ -35,16 +35,12 @@ namespace _Project.Scripts.Builds
             ChangeView(_tMPHealthier, false);
             ChangeView(_tMPFaster, false);
             ChangeView(_tMPStronger, false);
-        }
-
-        private void OnEnable()
-        {
             _buttonFaster.onClick.AddListener(TryUpSpeed);
             _buttonHealthier.onClick.AddListener(TryUpHealth);
             _buttonStronger.onClick.AddListener(TryUpStrong);
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             _buttonFaster.onClick.RemoveListener(TryUpSpeed);
             _buttonHealthier.onClick.RemoveListener(TryUpHealth);

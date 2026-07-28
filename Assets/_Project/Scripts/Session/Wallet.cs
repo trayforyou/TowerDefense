@@ -5,8 +5,12 @@ namespace _Project.Scripts.Session
     public class Wallet
     {
         private int _count;
-        
+
         public event Action<int> ValueChanged;
+
+        public void RefreshInfo() => 
+            ValueChanged?.Invoke(_count);
+        
 
         public void AddMoneys(int count)
         {

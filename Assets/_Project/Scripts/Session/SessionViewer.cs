@@ -59,6 +59,6 @@ namespace _Project.Scripts.Session
             _wavesCount.text = _wavesCountText + count;
 
         public void ChangeHealthInfo(int currentCount, int maxCount) =>
-            _healthInfo.text = _healthText + maxCount + _splitter + currentCount;
+            _healthInfo.text = _healthText + currentCount + _splitter + maxCount;
     }
 }

@@ -26,17 +26,13 @@ namespace _Project.Scripts.Session
             _wavesText = _waves.text;
             _enemiesKilledText = _enemiesKilled.text;
             _moneysPerSessionText = _moneysPerSession.text;
-
+            _restart.onClick.AddListener(RestartScene);
+            _menu.onClick.AddListener(GoToMenu);
+            
             Hide();
         }
 
-        private void OnEnable()
-        {
-            _restart.onClick.AddListener(RestartScene);
-            _menu.onClick.AddListener(GoToMenu);
-        }
-
-        private void OnDisable()
+        private void OnDestroy()
         {
             _restart.onClick.RemoveListener(RestartScene);
             _menu.onClick.RemoveListener(GoToMenu);

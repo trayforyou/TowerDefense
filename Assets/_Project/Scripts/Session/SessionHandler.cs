@@ -23,7 +23,7 @@ namespace _Project.Scripts.Session
         private Coroutine _coroutine;
         private int _waveNumber;
         private Wallet _wallet;
-
+        
         private void Start()
         {
             _spawnerCurator = GetComponent<SpawnerCurator>();
@@ -34,10 +34,10 @@ namespace _Project.Scripts.Session
 
             _interactHandler.SetParameters(_config, _wallet, _castle);
             _spawnerCurator.Initialize(_castle, _config, _wallet);
-            _sessionViewer.Show();
-            _sessionViewer.ChangeWaveNumber(++_waveNumber);
             _castle.SetConfig(_config);
+            _sessionViewer.Show();
             _spawnerCurator.StartWave();
+            _wallet.RefreshInfo();
         }
 
         private void OnDestroy() =>
