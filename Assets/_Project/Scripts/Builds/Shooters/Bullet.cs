@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using _Project.Scripts.Enemies;
+using UnityEngine;
 
 namespace _Project.Scripts.Builds.Shooters
 {
@@ -7,7 +10,10 @@ namespace _Project.Scripts.Builds.Shooters
     {
         private SphereCollider _collider;
         private int _damage;
+        private float _speed;
 
+        public event Action<Bullet> Releasing; 
+        
         private void Awake()
         {
             _collider = GetComponent<SphereCollider>();
@@ -20,7 +26,50 @@ namespace _Project.Scripts.Builds.Shooters
                 enemy.TakeDamage(_damage);
         }
 
-        public void SetDamage(int damage) =>
+        public void SetParameters(int damage, float speed)
+        {
+            _speed = speed;
             _damage = damage;
+        }
+
+        public void Shoot(Vector3 startPosition, Enemy target)
+        {
+            StartCoroutine(FlyBullet(target, startPosition));
+        }
+        
+        private IEnumerator FlyBullet(Enemy target, Vector3 startPoint)
+        {
+            bool isEnemyAlive = true;
+            transform.position = startPoint;
+            Vector3 lastTargetPosition = target.AimPoint.position;
+            bool isBulletFlying = true;
+            var wait = new WaitForFixedUpdate();
+
+            while (isBulletFlying)
+            {
+
+                if (target != null && target.isActiveAndEnabled && isEnemyAlive)
+                {
+                    lastTargetPosition = target.AimPoint.position;
+                    transform.position = Vector3.MoveTowards(transform.position,
+                        target.AimPoint.position, _speed * Time.deltaTime);
+                }
+                else
+                {
+                    isEnemyAlive = false;
+
+                    transform.position = Vector3.MoveTowards(transform.position, lastTargetPosition,
+                        _speed * Time.deltaTime);
+
+                    if (Vector3.Distance(transform.position, lastTargetPosition) < 0.1f)
+                    {
+                        Releasing?.Invoke(this);
+                        isBulletFlying = false;
+                    }
+                }
+
+                yield return wait;
+            }
+        }
     }
 }

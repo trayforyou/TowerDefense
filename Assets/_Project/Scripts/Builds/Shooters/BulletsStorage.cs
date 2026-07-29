@@ -9,10 +9,12 @@ namespace _Project.Scripts.Builds.Shooters
     {
         private readonly ObjectPool<Bullet> _bulletsPool;
         private int _currentDamage;
+        private float _bulletSpeed;
 
         public BulletsStorage(Bullet bulletPrefab, GameConfig config, int damage)
         {
             _currentDamage = damage;
+            _bulletSpeed = config.BulletSpeed;
             Bullet prefab = bulletPrefab;
 
             _bulletsPool = new ObjectPool<Bullet>
@@ -45,7 +47,7 @@ namespace _Project.Scripts.Builds.Shooters
         private void GetBullet(Bullet bullet)
         {
             bullet.gameObject.SetActive(true);
-            bullet.SetDamage(_currentDamage);
+            bullet.SetParameters(_currentDamage, _bulletSpeed);
         }
     }
 }
