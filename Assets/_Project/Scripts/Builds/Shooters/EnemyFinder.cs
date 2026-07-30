@@ -12,11 +12,14 @@ namespace _Project.Scripts.Builds.Shooters
         private float _sqrRadius;
         private float _range;
         private bool _isEnabled = true;
+        private Collider[] _collidersBuffer;
+        private int _bufferSize = 20;
 
         public event Action<Enemy> FoundEnemy;
 
         public void Initialize(float radius, GameConfig config)
         {
+            _collidersBuffer = new Collider[_bufferSize]; // TO DO Должен подставляться из конфига
             _range = radius;
             _sqrRadius = radius * radius;
             _config = config;
@@ -62,17 +65,17 @@ namespace _Project.Scripts.Builds.Shooters
 
         private Enemy FindNearestEnemy()
         {
-            Collider[] colliders = Physics.OverlapSphere(transform.position, _range);
+            int sizeArray = Physics.OverlapSphereNonAlloc(transform.position, _range, _collidersBuffer);
 
-            if (colliders.Length == 0)
+            if (sizeArray == 0)
                 return null;
 
             float minSqrDistance = float.MaxValue;
             Enemy nearestEnemy = null;
 
-            foreach (Collider enemyCollider in colliders)
+            for (int i = 0; i < sizeArray; i++)
             {
-                if (enemyCollider.TryGetComponent(out Enemy enemy))
+                if (_collidersBuffer[i].TryGetComponent(out Enemy enemy))
                 {
                     if (!enemy.IsAlive)
                         continue;
