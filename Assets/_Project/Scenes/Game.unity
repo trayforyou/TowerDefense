@@ -20415,7 +20415,7 @@ MonoBehaviour:
   _menu: {fileID: 1216209555}
   _waves: {fileID: 577825115}
   _enemiesKilled: {fileID: 1833604729}
-  _moneysPerSession: {fileID: 769982594}
+  _moneyPerSession: {fileID: 769982594}
 --- !u!1 &1440471265
 GameObject:
   m_ObjectHideFlags: 0
@@ -26159,7 +26159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   _wavesCount: {fileID: 501333790}
-  _moneysInfo: {fileID: 1923179999}
+  _moneyInfo: {fileID: 1923179999}
   _healthInfo: {fileID: 1741768099}
   _waveTimeInfo: {fileID: 1057276868}
   _enemiesAlive: {fileID: 967504913}
