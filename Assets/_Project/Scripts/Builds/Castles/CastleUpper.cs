@@ -8,15 +8,16 @@ namespace _Project.Scripts.Builds.Castles
     {
         [SerializeField] private UpgradeMenu _upgradeMenu;
 
+        private Upgrade _upgrade;
+
         private Wallet _wallet;
         private Castle _castle;
         private GameConfig _config;
-        private int _castleHealthLevel = 1;
-        private int _castleSpeedLevel = 1;
-        private int _castleForceLevel = 1;
-        private int _currentCostUpgradeSpeed;
-        private int _currentCostUpgradeForce;
-        private int _currentCostUpgradeHealth;
+
+        private Upgrade _healthUpgrade;
+        private Upgrade _forceUpgrade;
+        private Upgrade _speedUpgrade;
+
         private float _currentDelay;
         private int _currentDamage;
 
@@ -33,13 +34,34 @@ namespace _Project.Scripts.Builds.Castles
             _config = config;
             _wallet = wallet;
             _castle = castle;
-
-            _upgradeMenu.SetStartCost(_config.UpgradeCastleCost);
-            _currentCostUpgradeSpeed = _config.UpgradeCastleCost;
-            _currentCostUpgradeForce = _config.UpgradeCastleCost;
-            _currentCostUpgradeHealth = _config.UpgradeCastleCost;
             _currentDelay = config.StartDelayShootCastle;
             _currentDamage = config.StartDamageCastle;
+
+            _healthUpgrade = new Upgrade(config.UpgradeCastleCost, config.MaxCastleLevel, config.CostMultiplier,
+                () => _castle.UpHealth(),
+                cost => _upgradeMenu.ChangeCostUpgradeHealth(cost));
+
+            _forceUpgrade = new Upgrade(config.UpgradeCastleCost, config.MaxCastleLevel, config.CostMultiplier,
+                () =>
+                {
+                    int tempDamage = _currentDamage;
+                    _currentDamage = (int)(_currentDamage * _config.UpgradeMultiplier);
+                    if (tempDamage == _currentDamage)
+                        _currentDamage++;
+                    _castle.UpForce(_currentDamage);
+                },
+                cost => _upgradeMenu.ChangeCostUpgradeForce(cost));
+
+            _speedUpgrade = new Upgrade(config.UpgradeCastleCost, config.MaxCastleLevel, config.CostMultiplier,
+                () =>
+                {
+                    _currentDelay /= _config.UpgradeMultiplier;
+                    _castle.UpSpeed(_currentDelay);
+                },
+                cost => _upgradeMenu.ChangeCostUpgradeSpeed(cost));
+
+            _upgradeMenu.SetStartCost(config.UpgradeCastleCost);
+
             SubscribeAll();
         }
 
@@ -48,9 +70,9 @@ namespace _Project.Scripts.Builds.Castles
 
         private void ChangeOpportunitiesBuy(int count)
         {
-            _upgradeMenu.SetCanUpHealth(count >= _currentCostUpgradeHealth);
-            _upgradeMenu.SetCanUpSpeed(count >= _currentCostUpgradeSpeed);
-            _upgradeMenu.SetCanUpForce(count >= _currentCostUpgradeForce);
+            _upgradeMenu.SetCanUpHealth(count >= _healthUpgrade.CurrentCost);
+            _upgradeMenu.SetCanUpSpeed(count >= _speedUpgrade.CurrentCost);
+            _upgradeMenu.SetCanUpForce(count >= _forceUpgrade.CurrentCost);
         }
 
         private void SubscribeAll()
@@ -69,59 +91,19 @@ namespace _Project.Scripts.Builds.Castles
             _wallet.ValueChanged -= ChangeOpportunitiesBuy;
         }
 
-        private void UpCastleHealth()
+        private void ProcessUpgrade(Upgrade upgrade)
         {
-            if (_castleHealthLevel > _config.MaxCastleLevel)
-                return;
-
-            if (_wallet.TryTakeMoney(_currentCostUpgradeHealth))
-            {
-                _castle.UpHealth();
-                _currentCostUpgradeHealth = (int)(_currentCostUpgradeHealth * _config.CostMultiplier);
-                _upgradeMenu.ChangeCostUpgradeHealth(_currentCostUpgradeHealth);
-                _castleHealthLevel++;
-            }
-
+            upgrade.TryUpgrade(_wallet);
             _upgradeMenu.Hide();
         }
+        
+        private void UpCastleHealth() => 
+            ProcessUpgrade(_healthUpgrade);
 
-        private void UpCastleForce()
-        {
-            if (_castleForceLevel > _config.MaxCastleLevel)
-                return;
+        private void UpCastleForce() => 
+            ProcessUpgrade(_forceUpgrade);
 
-            if (_wallet.TryTakeMoney(_currentCostUpgradeForce))
-            {
-                int tempDamage = _currentDamage;
-                _currentDamage = (int)(_currentDamage * _config.UpgradeMultiplier);
-
-                if (tempDamage == _currentDamage)
-                    _currentDamage++;
-
-                _castle.UpForce(_currentDamage);
-                _currentCostUpgradeForce = (int)(_currentCostUpgradeForce * _config.CostMultiplier);
-                _upgradeMenu.ChangeCostUpgradeForce(_currentCostUpgradeForce);
-                _castleForceLevel++;
-            }
-
-            _upgradeMenu.Hide();
-        }
-
-        private void UpCastleSpeed()
-        {
-            if (_castleSpeedLevel > _config.MaxCastleLevel)
-                return;
-
-            if (_wallet.TryTakeMoney(_currentCostUpgradeSpeed))
-            {
-                _currentDelay /= _config.UpgradeMultiplier;
-                _castle.UpSpeed(_currentDelay);
-                _currentCostUpgradeSpeed = (int)(_currentCostUpgradeSpeed * _config.CostMultiplier);
-                _upgradeMenu.ChangeCostUpgradeSpeed(_currentCostUpgradeSpeed);
-                _castleSpeedLevel++;
-            }
-
-            _upgradeMenu.Hide();
-        }
+        private void UpCastleSpeed() => 
+            ProcessUpgrade(_speedUpgrade);
     }
 }
