@@ -22,6 +22,8 @@ namespace _Project.Scripts.Enemies
 
         public event Action<Enemy> Died;
 
+        public bool IsAlive { get; private set; }
+
         [field: SerializeField] public Transform AimPoint { get; private set; }
 
         private void Awake()
@@ -34,6 +36,8 @@ namespace _Project.Scripts.Enemies
 
         private void OnEnable()
         {
+            IsAlive = true;
+            
             _particles.Stop();
             
             if(_health is not null)
@@ -101,6 +105,7 @@ namespace _Project.Scripts.Enemies
 
         private void Die()
         {
+            IsAlive = false;
             _health.Died -= Die;
             Died?.Invoke(this);
         }

@@ -5,8 +5,8 @@ namespace _Project.Scripts.ScriptableObjects
     [CreateAssetMenu(fileName = "GameConfig", menuName = "Scriptable Objects/GameConfig")]
     public class GameConfig : ScriptableObject
     {
-        [field: SerializeField] public int MoneysPerWave { get; private set; } = 50;
-        [field: SerializeField] public int MoneysPerKill { get; private set; } = 10;
+        [field: SerializeField] public int MoneyPerWave { get; private set; } = 50;
+        [field: SerializeField] public int MoneyPerKill { get; private set; } = 10;
 
         [field: SerializeField] public float MinDistanceForBuilding { get; private set; } = 1f;
         [field: SerializeField] public int FastTowerCost { get; private set; } = 10;

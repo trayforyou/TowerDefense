@@ -12,11 +12,11 @@ namespace _Project.Scripts.Session
         [SerializeField] private Button _menu;
         [SerializeField] private TextMeshProUGUI _waves;
         [SerializeField] private TextMeshProUGUI _enemiesKilled;
-        [SerializeField] private TextMeshProUGUI _moneysPerSession;
+        [SerializeField] private TextMeshProUGUI _moneyPerSession;
 
         private string _wavesText;
         private string _enemiesKilledText;
-        private string _moneysPerSessionText;
+        private string _moneyPerSessionText;
 
         public event Action ButtonRestartClicked;
         public event Action ButtonMenuClicked;
@@ -25,7 +25,7 @@ namespace _Project.Scripts.Session
         {
             _wavesText = _waves.text;
             _enemiesKilledText = _enemiesKilled.text;
-            _moneysPerSessionText = _moneysPerSession.text;
+            _moneyPerSessionText = _moneyPerSession.text;
             _restart.onClick.AddListener(RestartScene);
             _menu.onClick.AddListener(GoToMenu);
             
@@ -49,7 +49,7 @@ namespace _Project.Scripts.Session
         {
             _waves.text = _wavesText + waves;
             _enemiesKilled.text = _enemiesKilledText + enemies;
-            _moneysPerSession.text = _moneysPerSessionText + currency;
+            _moneyPerSession.text = _moneyPerSessionText + currency;
         }
 
         private void Hide()

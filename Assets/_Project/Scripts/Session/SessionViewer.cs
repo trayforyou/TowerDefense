@@ -6,7 +6,7 @@ namespace _Project.Scripts.Session
     public class SessionViewer : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _wavesCount;
-        [SerializeField] private TextMeshProUGUI _moneysInfo;
+        [SerializeField] private TextMeshProUGUI _moneyInfo;
         [SerializeField] private TextMeshProUGUI _healthInfo;
         [SerializeField] private TextMeshProUGUI _waveTimeInfo;
         [SerializeField] private TextMeshProUGUI _enemiesAlive;
@@ -14,7 +14,7 @@ namespace _Project.Scripts.Session
 
         private readonly string _splitter = "|";
         private string _wavesCountText;
-        private string _moneysText;
+        private string _moneyText;
         private string _healthText;
         private string _waveTimeText;
         private string _enemiesAliveText;
@@ -24,7 +24,7 @@ namespace _Project.Scripts.Session
         {
             _wavesCountText = _wavesCount.text;
             _waveTimeText = _waveTimeInfo.text;
-            _moneysText = _moneysInfo.text;
+            _moneyText = _moneyInfo.text;
             _healthText = _healthInfo.text;
             _enemiesAliveText = _enemiesAlive.text;
             _canvasGroup.interactable = false;
@@ -52,8 +52,8 @@ namespace _Project.Scripts.Session
         public void ChangeEnemiesCount(int currentEnemies) =>
             _enemiesAlive.text = _enemiesAliveText + currentEnemies + _splitter + _maxEnemiesCount;
 
-        public void ChangeCountMoneys(int count) =>
-            _moneysInfo.text = _moneysText + count;
+        public void ChangeCountMoney(int count) =>
+            _moneyInfo.text = _moneyText + count;
 
         public void ChangeWaveNumber(int count) =>
             _wavesCount.text = _wavesCountText + count;

@@ -41,7 +41,7 @@ namespace _Project.Scripts.Builds.Shooters
             yield return _currentDelay;
             Bullet tempBullet;
 
-            while (currentTarget.isActiveAndEnabled)
+            while (currentTarget.IsAlive)
             {
                 tempBullet = _bulletsPool.Get();
                 tempBullet.Releasing += Release;

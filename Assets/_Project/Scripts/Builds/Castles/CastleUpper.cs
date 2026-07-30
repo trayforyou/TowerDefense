@@ -13,7 +13,7 @@ namespace _Project.Scripts.Builds.Castles
         private GameConfig _config;
         private int _castleHealthLevel = 1;
         private int _castleSpeedLevel = 1;
-        private int _castleStrongLevel = 1;
+        private int _castleForceLevel = 1;
         private int _currentCostUpgradeSpeed;
         private int _currentCostUpgradeForce;
         private int _currentCostUpgradeHealth;
@@ -50,13 +50,13 @@ namespace _Project.Scripts.Builds.Castles
         {
             _upgradeMenu.SetCanUpHealth(count >= _currentCostUpgradeHealth);
             _upgradeMenu.SetCanUpSpeed(count >= _currentCostUpgradeSpeed);
-            _upgradeMenu.SetCanUpStrong(count >= _currentCostUpgradeForce);
+            _upgradeMenu.SetCanUpForce(count >= _currentCostUpgradeForce);
         }
 
         private void SubscribeAll()
         {
             _upgradeMenu.TriedUpHealth += UpCastleHealth;
-            _upgradeMenu.TriedUpStrong += UpCastleStrong;
+            _upgradeMenu.TriedUpForce += UpCastleForce;
             _upgradeMenu.TriedUpSpeed += UpCastleSpeed;
             _wallet.ValueChanged += ChangeOpportunitiesBuy;
         }
@@ -64,7 +64,7 @@ namespace _Project.Scripts.Builds.Castles
         private void UnSubscribeAll()
         {
             _upgradeMenu.TriedUpHealth -= UpCastleHealth;
-            _upgradeMenu.TriedUpStrong -= UpCastleStrong;
+            _upgradeMenu.TriedUpForce -= UpCastleForce;
             _upgradeMenu.TriedUpSpeed -= UpCastleSpeed;
             _wallet.ValueChanged -= ChangeOpportunitiesBuy;
         }
@@ -74,7 +74,7 @@ namespace _Project.Scripts.Builds.Castles
             if (_castleHealthLevel > _config.MaxCastleLevel)
                 return;
 
-            if (_wallet.TryTakeMoneys(_currentCostUpgradeHealth))
+            if (_wallet.TryTakeMoney(_currentCostUpgradeHealth))
             {
                 _castle.UpHealth();
                 _currentCostUpgradeHealth = (int)(_currentCostUpgradeHealth * _config.CostMultiplier);
@@ -85,23 +85,23 @@ namespace _Project.Scripts.Builds.Castles
             _upgradeMenu.Hide();
         }
 
-        private void UpCastleStrong()
+        private void UpCastleForce()
         {
-            if (_castleStrongLevel > _config.MaxCastleLevel)
+            if (_castleForceLevel > _config.MaxCastleLevel)
                 return;
 
-            if (_wallet.TryTakeMoneys(_currentCostUpgradeForce))
+            if (_wallet.TryTakeMoney(_currentCostUpgradeForce))
             {
-                int temDamage = _currentDamage;
+                int tempDamage = _currentDamage;
                 _currentDamage = (int)(_currentDamage * _config.UpgradeMultiplier);
 
-                if (temDamage == _currentDamage)
+                if (tempDamage == _currentDamage)
                     _currentDamage++;
 
-                _castle.UpStrong(_currentDamage);
+                _castle.UpForce(_currentDamage);
                 _currentCostUpgradeForce = (int)(_currentCostUpgradeForce * _config.CostMultiplier);
-                _upgradeMenu.ChangeCostUpgradeStrong(_currentCostUpgradeForce);
-                _castleStrongLevel++;
+                _upgradeMenu.ChangeCostUpgradeForce(_currentCostUpgradeForce);
+                _castleForceLevel++;
             }
 
             _upgradeMenu.Hide();
@@ -112,7 +112,7 @@ namespace _Project.Scripts.Builds.Castles
             if (_castleSpeedLevel > _config.MaxCastleLevel)
                 return;
 
-            if (_wallet.TryTakeMoneys(_currentCostUpgradeSpeed))
+            if (_wallet.TryTakeMoney(_currentCostUpgradeSpeed))
             {
                 _currentDelay /= _config.UpgradeMultiplier;
                 _castle.UpSpeed(_currentDelay);

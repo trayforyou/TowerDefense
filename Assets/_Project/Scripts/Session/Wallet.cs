@@ -12,14 +12,14 @@ namespace _Project.Scripts.Session
             ValueChanged?.Invoke(_count);
         
 
-        public void AddMoneys(int count)
+        public void AddMoney(int count)
         {
             _count += count;
 
             ValueChanged?.Invoke(_count);
         }
 
-        public bool TryTakeMoneys(int count)
+        public bool TryTakeMoney(int count)
         {
             if (_count < count)
                 return false;

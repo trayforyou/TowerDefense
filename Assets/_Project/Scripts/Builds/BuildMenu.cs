@@ -16,8 +16,8 @@ namespace _Project.Scripts.Builds
         [SerializeField] private TextMeshProUGUI _tMPStrongTower;
 
         private CanvasGroup _canvasGroup;
-        private bool _canBuyFast;
-        private bool _canBuyStrong;
+        private bool _canBuyFastTower;
+        private bool _canBuyStrongTower;
 
         public event Action TriedBuyFastTower;
         public event Action TriedBuyStrongTower;
@@ -30,8 +30,8 @@ namespace _Project.Scripts.Builds
         private void Start()
         {
             Hide();
-            ChangeView(_tMPFastTower, _canBuyFast);
-            ChangeView(_tMPStrongTower, _canBuyStrong);
+            ChangeView(_tMPFastTower, _canBuyFastTower);
+            ChangeView(_tMPStrongTower, _canBuyStrongTower);
             _buttonFastTower.onClick.AddListener(ClickBuyFastTower);
             _buttonStrongTower.onClick.AddListener(ClickBuyStrongTower);
         }
@@ -66,10 +66,10 @@ namespace _Project.Scripts.Builds
 
         public void SetCanBuyFast(bool value)
         {
-            if (_canBuyFast == value)
+            if (_canBuyFastTower == value)
                 return;
 
-            _canBuyFast = value;
+            _canBuyFastTower = value;
             ChangeView(_tMPFastTower, value);
         }
 
@@ -84,12 +84,12 @@ namespace _Project.Scripts.Builds
             tMpTower.color = value ? Color.green : Color.red;
         }
 
-        public void SetCanBuyStrong(bool value)
+        public void SetCanBuyStrongTower(bool value)
         {
-            if (_canBuyStrong == value)
+            if (_canBuyStrongTower == value)
                 return;
 
-            _canBuyStrong = value;
+            _canBuyStrongTower = value;
             ChangeView(_tMPStrongTower, value);
         }
     }

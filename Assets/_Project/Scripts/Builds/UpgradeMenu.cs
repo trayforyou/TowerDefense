@@ -21,7 +21,7 @@ namespace _Project.Scripts.Builds
 
         public event Action TriedUpHealth;
         public event Action TriedUpSpeed;
-        public event Action TriedUpStrong;
+        public event Action TriedUpForce;
 
         [field: SerializeField] public bool IsActive { get; private set; }
 
@@ -37,14 +37,14 @@ namespace _Project.Scripts.Builds
             ChangeView(_tMPStronger, false);
             _buttonFaster.onClick.AddListener(TryUpSpeed);
             _buttonHealthier.onClick.AddListener(TryUpHealth);
-            _buttonStronger.onClick.AddListener(TryUpStrong);
+            _buttonStronger.onClick.AddListener(TryUpForce);
         }
 
         private void OnDestroy()
         {
             _buttonFaster.onClick.RemoveListener(TryUpSpeed);
             _buttonHealthier.onClick.RemoveListener(TryUpHealth);
-            _buttonStronger.onClick.RemoveListener(TryUpStrong);
+            _buttonStronger.onClick.RemoveListener(TryUpForce);
         }
 
         public void Show()
@@ -67,7 +67,7 @@ namespace _Project.Scripts.Builds
         {
             ChangeCostUpgradeHealth(cost);
             ChangeCostUpgradeSpeed(cost);
-            ChangeCostUpgradeStrong(cost);
+            ChangeCostUpgradeForce(cost);
         }
 
         public void ChangeCostUpgradeHealth(int cost) =>
@@ -76,7 +76,7 @@ namespace _Project.Scripts.Builds
         public void ChangeCostUpgradeSpeed(int cost) =>
             _tMPFaster.text = cost + CURRENCY_SYMBOL;
 
-        public void ChangeCostUpgradeStrong(int cost) =>
+        public void ChangeCostUpgradeForce(int cost) =>
             _tMPStronger.text = cost + CURRENCY_SYMBOL;
 
         public void SetCanUpHealth(bool value) =>
@@ -85,7 +85,7 @@ namespace _Project.Scripts.Builds
         public void SetCanUpSpeed(bool value) =>
             ChangeView(_tMPFaster, value);
 
-        public void SetCanUpStrong(bool value) =>
+        public void SetCanUpForce(bool value) =>
             ChangeView(_tMPStronger, value);
 
         private void TryUpHealth() =>
@@ -94,8 +94,8 @@ namespace _Project.Scripts.Builds
         private void TryUpSpeed() =>
             TriedUpSpeed?.Invoke();
 
-        private void TryUpStrong() =>
-            TriedUpStrong?.Invoke();
+        private void TryUpForce() =>
+            TriedUpForce?.Invoke();
 
         private void ChangeView(TextMeshProUGUI tMpTower, bool value) =>
             tMpTower.color = value ? Color.green : Color.red;

@@ -12,8 +12,8 @@ namespace _Project.Scripts.Builds.Shooters
         private int _damage;
         private float _speed;
 
-        public event Action<Bullet> Releasing; 
-        
+        public event Action<Bullet> Releasing;
+
         private void Awake()
         {
             _collider = GetComponent<SphereCollider>();
@@ -36,10 +36,10 @@ namespace _Project.Scripts.Builds.Shooters
         {
             StartCoroutine(FlyBullet(target, startPosition));
         }
-        
+
         private IEnumerator FlyBullet(Enemy target, Vector3 startPoint)
         {
-            bool isEnemyAlive = true;
+            bool isKilledCurentEnemy = false;
             transform.position = startPoint;
             Vector3 lastTargetPosition = target.AimPoint.position;
             bool isBulletFlying = true;
@@ -47,8 +47,7 @@ namespace _Project.Scripts.Builds.Shooters
 
             while (isBulletFlying)
             {
-
-                if (target != null && target.isActiveAndEnabled && isEnemyAlive)
+                if (target != null && target.IsAlive && !isKilledCurentEnemy)
                 {
                     lastTargetPosition = target.AimPoint.position;
                     transform.position = Vector3.MoveTowards(transform.position,
@@ -56,7 +55,7 @@ namespace _Project.Scripts.Builds.Shooters
                 }
                 else
                 {
-                    isEnemyAlive = false;
+                    isKilledCurentEnemy = true;
 
                     transform.position = Vector3.MoveTowards(transform.position, lastTargetPosition,
                         _speed * Time.deltaTime);

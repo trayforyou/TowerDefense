@@ -16,7 +16,6 @@ namespace _Project.Scripts.Builds
         [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private LayerMask _castleLayer;
 
-        private readonly HashSet<Vector3> _buildPositions = new();
         private CastleUpper _castleUpper;
         private TowerBuilder _towerBuilder;
         private Castle _castle;
@@ -29,8 +28,6 @@ namespace _Project.Scripts.Builds
         {
             _castleUpper = GetComponent<CastleUpper>();
             _towerBuilder = GetComponent<TowerBuilder>();
-
-            _towerBuilder.BuildingTower += AddNewPosition;
         }
 
         private void Start() =>
@@ -49,9 +46,6 @@ namespace _Project.Scripts.Builds
             }
         }
 
-        private void OnDestroy() => 
-            _towerBuilder.BuildingTower -= AddNewPosition;
-
         public void SetParameters(GameConfig config, Wallet wallet, Castle castle)
         {
             if (wallet == null || config == null || castle == null)
@@ -62,7 +56,7 @@ namespace _Project.Scripts.Builds
             _castle = castle;
 
             _castleUpper.Initialize(_config, _wallet, _castle);
-            _towerBuilder.Initialize(_wallet, _config);
+            _towerBuilder.Initialize(_wallet, _config, _castle);
         }
 
         public void Stop()
@@ -71,9 +65,6 @@ namespace _Project.Scripts.Builds
             _castleUpper.TurnOff();
             _towerBuilder.TurnOff();
         }
-
-        private void AddNewPosition(Vector3 position) =>
-            _buildPositions.Add(position);
 
         private void HandleClick()
         {
@@ -85,23 +76,7 @@ namespace _Project.Scripts.Builds
             }
             else if (Physics.Raycast(ray, out hit, Mathf.Infinity, _groundLayer))
             {
-                Vector3 clickedPoint = hit.point;
-
-                float distance = Vector3.Distance(clickedPoint, _castle.transform.position);
-
-                if (distance < _config.MinDistanceForBuilding)
-                    return;
-
-                foreach (Vector3 buildPosition in _buildPositions)
-                {
-                    distance = Vector3.Distance(clickedPoint, buildPosition);
-
-                    if (distance < _config.MinDistanceForBuilding)
-                        return;
-                }
-
-                _buildPosition = clickedPoint;
-                _towerBuilder.Activate(_buildPosition);
+                _towerBuilder.Activate(hit.point);
             }
         }
     }

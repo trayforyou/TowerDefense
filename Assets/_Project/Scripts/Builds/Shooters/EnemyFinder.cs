@@ -74,7 +74,7 @@ namespace _Project.Scripts.Builds.Shooters
             {
                 if (enemyCollider.TryGetComponent(out Enemy enemy))
                 {
-                    if (!enemy.isActiveAndEnabled)
+                    if (!enemy.IsAlive)
                         continue;
 
                     float sqrDistance = Vector3.SqrMagnitude(transform.position - enemy.transform.position);

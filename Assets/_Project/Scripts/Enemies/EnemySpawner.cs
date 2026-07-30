@@ -27,7 +27,7 @@ namespace _Project.Scripts.Enemies
         public event Action<int> StartedNewWave;
 
         public void Initialize(Castle castle, GameConfig config)
-        {        
+        {
             _config = config;
             _castle = castle;
             _enemiesCount = _config.EnemiesPerWave;
@@ -69,7 +69,7 @@ namespace _Project.Scripts.Enemies
                 tempEnemy.GoToTarget();
             }
 
-            while (_enemiesPool.CountActive > 0)
+            while (_currentEnemiesCount > 0)
                 yield return null;
 
             _enemiesCount = (int)(_enemiesCount * _config.MultiplierEnemiesPerWave);

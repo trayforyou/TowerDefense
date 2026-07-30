@@ -49,7 +49,7 @@ namespace _Project.Scripts.Enemies
 
         private void RegisterKill()
         {
-            _wallet.AddMoneys(_config.MoneysPerKill);
+            _wallet.AddMoney(_config.MoneyPerKill);
             EnemiesDeaths++;
         }
 

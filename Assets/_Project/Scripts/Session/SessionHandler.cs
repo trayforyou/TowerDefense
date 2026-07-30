@@ -20,8 +20,6 @@ namespace _Project.Scripts.Session
 
         private Saver _saver;
         private SpawnerCurator _spawnerCurator;
-        private Coroutine _coroutine;
-        private int _waveNumber;
         private Wallet _wallet;
         
         private void Start()
@@ -49,7 +47,7 @@ namespace _Project.Scripts.Session
             _spawnerCurator.TimeChanged += _sessionViewer.ChangeWaveTime;
             _spawnerCurator.ChangedEnemiesCount += _sessionViewer.ChangeEnemiesCount;
             _castle.ValueChanged += _sessionViewer.ChangeHealthInfo;
-            _wallet.ValueChanged += _sessionViewer.ChangeCountMoneys;
+            _wallet.ValueChanged += _sessionViewer.ChangeCountMoney;
             _spawnerCurator.InitializedEnemiesCount += _sessionViewer.InitializeEnemiesCount;
             _castle.Died += End;
             _endMenu.ButtonRestartClicked += RestartSession;
@@ -62,7 +60,7 @@ namespace _Project.Scripts.Session
             _spawnerCurator.TimeChanged -= _sessionViewer.ChangeWaveTime;
             _spawnerCurator.ChangedEnemiesCount -= _sessionViewer.ChangeEnemiesCount;
             _castle.ValueChanged -= _sessionViewer.ChangeHealthInfo;
-            _wallet.ValueChanged -= _sessionViewer.ChangeCountMoneys;
+            _wallet.ValueChanged -= _sessionViewer.ChangeCountMoney;
             _spawnerCurator.InitializedEnemiesCount -= _sessionViewer.InitializeEnemiesCount;
             _castle.Died -= End;
             _endMenu.ButtonRestartClicked -= RestartSession;
@@ -76,20 +74,20 @@ namespace _Project.Scripts.Session
             _interactHandler.Stop();
             _sessionViewer.Hide();
 
-            int reward = _spawnerCurator.WaveNumber * _config.MoneysPerWave +
-                         _spawnerCurator.EnemiesDeaths * _config.MoneysPerKill;
+            int reward = _spawnerCurator.WaveNumber * _config.MoneyPerWave +
+                         _spawnerCurator.EnemiesDeaths * _config.MoneyPerKill;
             
-            AddMetaMoneys(reward);
+            AddMetaMoney(reward);
     
             _endMenu.SetValue(_spawnerCurator.WaveNumber, _spawnerCurator.EnemiesDeaths, reward);
             _endMenu.Show();
         }
 
-        private void AddMetaMoneys(int count)
+        private void AddMetaMoney(int count)
         {
             SaveData data = _saver.Load();
-            int metaMoneys = data.MetaCurrency + count;
-            _saver.Save(new SaveData(metaMoneys));
+            int metaMoney = data.MetaCurrency + count;
+            _saver.Save(new SaveData(metaMoney));
         }
 
         private void GoToMenu()

@@ -62,7 +62,7 @@ namespace _Project.Scripts.Builds.Castles
         public void UpHealth() =>
             _health.TryUpgrade();
 
-        public void UpStrong(int damage) =>
+        public void UpForce(int damage) =>
             _gun.SetDamage(damage);
 
         public void UpSpeed(float delay) =>
