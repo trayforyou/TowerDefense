@@ -10,7 +10,7 @@ namespace _Project.Scripts.Enemies
     public class Mover : MonoBehaviour
     {
         private NavMeshAgent _agent;
-        private GameConfig _config;
+        private EnemiesConfig _config;
         private Transform _target;
         private Coroutine _coroutine;
 
@@ -20,7 +20,7 @@ namespace _Project.Scripts.Enemies
         private void Awake() =>
             _agent = GetComponent<NavMeshAgent>();
 
-        public void SetParams(Transform target, GameConfig config)
+        public void SetParams(Transform target, EnemiesConfig config)
         {
             _target = target;
             _config = config;

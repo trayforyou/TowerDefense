@@ -8,7 +8,7 @@ namespace _Project.Scripts.Enemies
 {
     public class EnemyAttacker : MonoBehaviour
     {
-        private GameConfig _config;
+        private EnemiesConfig _config;
         private Castle _castle;
         private float _sqrStopDistance;
         private Transform _transform;
@@ -16,7 +16,7 @@ namespace _Project.Scripts.Enemies
         public event Action Attacking;
         public event Action NeedingRun;
 
-        public void Initialize(GameConfig config, Castle castle, float sqrStopDistance, Transform enemy)
+        public void Initialize(EnemiesConfig config, Castle castle, float sqrStopDistance, Transform enemy)
         {
             _config = config;
             _castle = castle;
@@ -30,7 +30,7 @@ namespace _Project.Scripts.Enemies
             StartCoroutine(StartAttackCoroutine());
         }
 
-        public void Stop() => 
+        public void Stop() =>
             StopAllCoroutines();
 
         private IEnumerator StartAttackCoroutine()

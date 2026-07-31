@@ -2,7 +2,6 @@
 using System.Collections;
 using _Project.Scripts.Builds.Castles;
 using _Project.Scripts.ScriptableObjects;
-using _Project.Scripts.Session;
 using UnityEngine;
 
 namespace _Project.Scripts.Enemies
@@ -11,21 +10,20 @@ namespace _Project.Scripts.Enemies
     {
         [SerializeField] private EnemySpawner _spawner;
 
-        private GameConfig _config;
+        private EnemiesConfig _config;
         private Coroutine _coroutine;
-        private Wallet _wallet;
 
         public int WaveNumber { get; private set; }
         public int EnemiesDeaths { get; private set; }
 
+        public event Action RegisteredKill;
         public event Action<int> TimeChanged;
         public event Action<int> WaveChanged;
         public event Action<int> ChangedEnemiesCount;
         public event Action<int> InitializedEnemiesCount;
 
-        public void Initialize(Castle castle, GameConfig config, Wallet wallet)
+        public void Initialize(Castle castle, EnemiesConfig config)
         {
-            _wallet = wallet;
             _config = config;
             _spawner.Initialize(castle, config);
             SubscribeAll();
@@ -36,7 +34,7 @@ namespace _Project.Scripts.Enemies
 
         public void StartWave()
         {
-            WaveChanged?.Invoke(++WaveNumber);   
+            WaveChanged?.Invoke(++WaveNumber);
             _spawner.StartWave();
         }
 
@@ -49,7 +47,7 @@ namespace _Project.Scripts.Enemies
 
         private void RegisterKill()
         {
-            _wallet.AddMoney(_config.MoneyPerKill);
+            RegisteredKill?.Invoke();
             EnemiesDeaths++;
         }
 

@@ -8,16 +8,12 @@ namespace _Project.Scripts.Builds.Castles
     {
         [SerializeField] private UpgradeMenu _upgradeMenu;
 
-        private Upgrade _upgrade;
-
         private Wallet _wallet;
         private Castle _castle;
-        private GameConfig _config;
-
+        private CastleConfig _config;
         private Upgrade _healthUpgrade;
         private Upgrade _forceUpgrade;
         private Upgrade _speedUpgrade;
-
         private float _currentDelay;
         private int _currentDamage;
 
@@ -29,7 +25,7 @@ namespace _Project.Scripts.Builds.Castles
         public void TurnOff() =>
             _upgradeMenu.Hide();
 
-        public void Initialize(GameConfig config, Wallet wallet, Castle castle)
+        public void Initialize(CastleConfig config, Wallet wallet, Castle castle)
         {
             _config = config;
             _wallet = wallet;

@@ -11,7 +11,6 @@ namespace _Project.Scripts.Builds.Castles
     {
         private ParticleSystem _particles;
         private CastleHealth _health;
-        private GameConfig _config;
         private Gun _gun;
 
         public event HealthChangedEventHandler ValueChanged;
@@ -29,15 +28,6 @@ namespace _Project.Scripts.Builds.Castles
             _health.Died -= Die;
         }
 
-        private void Die()
-        {
-            _gun.Stop();
-            Died?.Invoke();
-        }
-
-        private void ChangedHealthValue(int points, int maxPoints) =>
-            ValueChanged?.Invoke(points, maxPoints);
-
         public void TakeDamage(int damage)
         {
             if (_health == null)
@@ -47,15 +37,11 @@ namespace _Project.Scripts.Builds.Castles
             _health.TakeDamage(damage);
         }
 
-        public void SetConfig(GameConfig config)
+        public void SetConfig(CastleConfig config, ShooterConfig shooterConfig)
         {
-            if (_config != null)
-                return;
-
-            _config = config;
-            _gun.Initialize(_config, _config.RadiusRangeCastle, _config.StartDelayShootCastle,
-                _config.StartDamageCastle);
-            CreateHealth();
+            _gun.Initialize(shooterConfig, config.RadiusRangeCastle, config.StartDelayShootCastle,
+                config.StartDamageCastle);
+            CreateHealth(config);
             ValueChanged?.Invoke(_health.MaxPoints, _health.MaxPoints);
         }
 
@@ -68,12 +54,18 @@ namespace _Project.Scripts.Builds.Castles
         public void UpSpeed(float delay) =>
             _gun.SetShootDelay(delay);
 
-        private void CreateHealth()
+        private void Die()
         {
-            if (_config == null)
-                throw new ArgumentException("Config is null");
+            _gun.Stop();
+            Died?.Invoke();
+        }
 
-            _health = new CastleHealth(_config.StartHealthCastle, _config.UpgradeMultiplier);
+        private void ChangedHealthValue(int points, int maxPoints) =>
+            ValueChanged?.Invoke(points, maxPoints);
+        
+        private void CreateHealth(CastleConfig config)
+        {
+            _health = new CastleHealth(config.StartHealthCastle, config.UpgradeMultiplier);
             _health.ValueChanged += ChangedHealthValue;
             _health.Died += Die;
             _health.RefreshInfo();

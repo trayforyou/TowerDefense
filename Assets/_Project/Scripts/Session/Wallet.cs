@@ -8,10 +8,9 @@ namespace _Project.Scripts.Session
 
         public event Action<int> ValueChanged;
 
-        public void RefreshInfo() => 
+        public void RefreshInfo() =>
             ValueChanged?.Invoke(_count);
         
-
         public void AddMoney(int count)
         {
             _count += count;

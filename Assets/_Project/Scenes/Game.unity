@@ -8411,9 +8411,15 @@ MonoBehaviour:
   _sessionViewer: {fileID: 2033830352}
   _endMenu: {fileID: 1435184917}
   _castle: {fileID: 981011939}
-  _config: {fileID: 11400000, guid: 6ac96d1cbf4d4c1459176035ba09add3, type: 2}
   _mainMenuScene: Menu
   _interactHandler: {fileID: 572343749}
+  _strongTowerConfig: {fileID: 11400000, guid: 1f7887d075237b046a86beefb907c213, type: 2}
+  _fastTowerConfig: {fileID: 11400000, guid: 1a3cc6306c681e8488f5ad589897d70c, type: 2}
+  _enemiesConfig: {fileID: 11400000, guid: ca304a67c4071c14782f7a854ec06530, type: 2}
+  _shooterConfig: {fileID: 11400000, guid: 195bf222db7522f42bb5924cb7db6cdf, type: 2}
+  _castleConfig: {fileID: 11400000, guid: a499782172d7d37479a06928a38bcef0, type: 2}
+  _moneyConfig: {fileID: 11400000, guid: 8a7c3a467f23a9442a246d6c8302b905, type: 2}
+  _buildConfig: {fileID: 11400000, guid: a5f15d3c0af34ef43bc2d95dc24c3974, type: 2}
 --- !u!4 &727398362
 Transform:
   m_ObjectHideFlags: 0

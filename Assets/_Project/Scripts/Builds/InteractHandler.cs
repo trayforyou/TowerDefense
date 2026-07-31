@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using _Project.Scripts.Builds.Castles;
 using _Project.Scripts.Builds.Towers;
 using _Project.Scripts.ScriptableObjects;
@@ -18,11 +16,9 @@ namespace _Project.Scripts.Builds
 
         private CastleUpper _castleUpper;
         private TowerBuilder _towerBuilder;
-        private Castle _castle;
-        private Wallet _wallet;
-        private GameConfig _config;
         private Camera _mainCamera;
-        private Vector3 _buildPosition;
+        private ShooterConfig _shooterConfig;
+        private CastleConfig _castleConfig;
 
         private void Awake()
         {
@@ -39,24 +35,22 @@ namespace _Project.Scripts.Builds
             {
                 if (Input.GetMouseButtonDown(0))
                 {
-                    if (EventSystem.current.IsPointerOverGameObject()) return;
+                    if (EventSystem.current.IsPointerOverGameObject())
+                        return;
 
                     HandleClick();
                 }
             }
         }
 
-        public void SetParameters(GameConfig config, Wallet wallet, Castle castle)
+        public void SetParameters(CastleConfig castleConfig, ShooterConfig shooterConfig, BuildConfig buildConfig,
+            TowerConfig fastTowerConfig, TowerConfig strongTowerConfig, Wallet wallet, Castle castle)
         {
-            if (wallet == null || config == null || castle == null)
-                throw new ArgumentNullException();
+            _shooterConfig = shooterConfig;
+            _castleConfig = castleConfig;
 
-            _wallet = wallet;
-            _config = config;
-            _castle = castle;
-
-            _castleUpper.Initialize(_config, _wallet, _castle);
-            _towerBuilder.Initialize(_wallet, _config, _castle);
+            _castleUpper.Initialize(_castleConfig, wallet, castle);
+            _towerBuilder.Initialize(_shooterConfig, wallet, buildConfig, fastTowerConfig, strongTowerConfig, castle);
         }
 
         public void Stop()
@@ -71,13 +65,9 @@ namespace _Project.Scripts.Builds
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _castleLayer))
-            {
                 _castleUpper.Activate();
-            }
             else if (Physics.Raycast(ray, out hit, Mathf.Infinity, _groundLayer))
-            {
                 _towerBuilder.Activate(hit.point);
-            }
         }
     }
 }

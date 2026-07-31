@@ -9,9 +9,9 @@ namespace _Project.Scripts.Builds.Shooters
     {
         private readonly ObjectPool<Bullet> _bulletsPool;
         private int _currentDamage;
-        private float _bulletSpeed;
+        private readonly float _bulletSpeed;
 
-        public BulletsStorage(Bullet bulletPrefab, GameConfig config, int damage)
+        public BulletsStorage(Bullet bulletPrefab, ShooterConfig config, int damage)
         {
             _currentDamage = damage;
             _bulletSpeed = config.BulletSpeed;
@@ -35,7 +35,7 @@ namespace _Project.Scripts.Builds.Shooters
         public void Release(Bullet bullet) =>
             _bulletsPool.Release(bullet);
 
-        public void ChangeDamage(int damage) => 
+        public void ChangeDamage(int damage) =>
             _currentDamage = damage;
 
         private void ReleaseBullet(Bullet bullet)

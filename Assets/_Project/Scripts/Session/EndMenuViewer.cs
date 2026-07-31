@@ -20,7 +20,7 @@ namespace _Project.Scripts.Session
 
         public event Action ButtonRestartClicked;
         public event Action ButtonMenuClicked;
-        
+
         private void Awake()
         {
             _wavesText = _waves.text;
@@ -28,7 +28,7 @@ namespace _Project.Scripts.Session
             _moneyPerSessionText = _moneyPerSession.text;
             _restart.onClick.AddListener(RestartScene);
             _menu.onClick.AddListener(GoToMenu);
-            
+
             Hide();
         }
 
@@ -59,10 +59,10 @@ namespace _Project.Scripts.Session
             _canvasGroup.blocksRaycasts = false;
         }
 
-        private void RestartScene() => 
+        private void RestartScene() =>
             ButtonRestartClicked?.Invoke();
 
-        private void GoToMenu() => 
+        private void GoToMenu() =>
             ButtonMenuClicked?.Invoke();
     }
 }

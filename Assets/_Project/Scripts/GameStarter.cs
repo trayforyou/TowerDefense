@@ -7,7 +7,7 @@ namespace _Project.Scripts
     {
         [SerializeField] private MainMenu _startMenu;
         [SerializeField] private string _gameSceneName = "Game";
-        
+
         private void Awake() =>
             _startMenu.TriedLoadGame += LoadGame;
 

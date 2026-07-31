@@ -12,7 +12,6 @@ namespace _Project.Scripts
         [SerializeField] private TextMeshProUGUI _metaCoins;
 
         private Saver _saver;
-        private string _metaCoinsText;
 
         public event Action TriedLoadGame;
 

@@ -34,11 +34,13 @@ namespace _Project.Scripts
                 Points -= damage;
                 ValueChange();
             }
-            
-            if(Points <= 0)
+
+            if (Points <= 0)
                 Died?.Invoke();
         }
 
-        protected virtual void ValueChange() {}
+        protected virtual void ValueChange()
+        {
+        }
     }
 }

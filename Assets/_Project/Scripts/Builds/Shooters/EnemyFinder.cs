@@ -8,21 +8,20 @@ namespace _Project.Scripts.Builds.Shooters
 {
     public class EnemyFinder : MonoBehaviour
     {
-        private GameConfig _config;
         private float _sqrRadius;
         private float _range;
         private bool _isEnabled = true;
         private Collider[] _collidersBuffer;
-        private int _bufferSize = 20;
+        private ShooterConfig _shooterConfig;
 
         public event Action<Enemy> FoundEnemy;
 
-        public void Initialize(float radius, GameConfig config)
+        public void Initialize(float radius, ShooterConfig config)
         {
-            _collidersBuffer = new Collider[_bufferSize]; // TO DO Должен подставляться из конфига
+            _collidersBuffer = new Collider[config.FindBufferSize];
             _range = radius;
             _sqrRadius = radius * radius;
-            _config = config;
+            _shooterConfig = config;
         }
 
         public void Find()
@@ -46,7 +45,7 @@ namespace _Project.Scripts.Builds.Shooters
 
         private IEnumerator StartFindNearestEnemy()
         {
-            var wait = new WaitForSeconds(_config.FindDelay);
+            var wait = new WaitForSeconds(_shooterConfig.FindDelay);
             Enemy target;
 
             while (_isEnabled)

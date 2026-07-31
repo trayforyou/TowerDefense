@@ -15,11 +15,14 @@ namespace _Project.Scripts.Builds.Towers
         [SerializeField] private Tower _fastTowerPrefab;
 
         private readonly List<Tower> _towers = new();
+        private TowerConfig _strongTowerConfig;
+        private TowerConfig _fastTowerConfig;
         private Castle _castle;
-        private GameConfig _config;
+        private BuildConfig _buildingConfig;
         private BuildValidator _validator;
         private Wallet _wallet;
         private Vector3 _buildPosition;
+        private ShooterConfig _shooterConfig;
 
         public bool IsActive => _buildMenu.IsActive;
 
@@ -29,13 +32,17 @@ namespace _Project.Scripts.Builds.Towers
         public void TurnOff() =>
             _buildMenu.Hide();
 
-        public void Initialize(Wallet wallet, GameConfig config, Castle castle)
-        { 
-            _validator = new BuildValidator(castle, config.MinDistanceForBuilding);
+        public void Initialize(ShooterConfig shooterConfig, Wallet wallet, BuildConfig buildConfig,
+            TowerConfig fastTowerConfig, TowerConfig strongTowerConfig, Castle castle)
+        {
+            _fastTowerConfig = fastTowerConfig;
+            _strongTowerConfig = strongTowerConfig;
+            _validator = new BuildValidator(castle, buildConfig.MinDistanceForBuilding);
+            _shooterConfig = shooterConfig;
             _castle = castle;
-            _config = config;
+            _buildingConfig = buildConfig;
             _wallet = wallet;
-            _buildMenu.SetCostTowers(_config.FastTowerCost, _config.StrongTowerCost);
+            _buildMenu.SetCostTowers(_buildingConfig.FastTowerCost, _buildingConfig.StrongTowerCost);
             SubscribeAll();
         }
 
@@ -70,35 +77,33 @@ namespace _Project.Scripts.Builds.Towers
 
         private void BuildStrongTower()
         {
-            if (_wallet.TryTakeMoney(_config.StrongTowerCost))
-                BuildTower(_strongTowerPrefab, _config.RadiusRangeStrongTower, _config.DelayShootStrongTower,
-                    _config.DamageStrongTower);
+            if (_wallet.TryTakeMoney(_buildingConfig.StrongTowerCost))
+                BuildTower(_strongTowerPrefab, _strongTowerConfig);
             else
                 _buildMenu.Hide();
         }
 
         private void BuildFastTower()
         {
-            if (_wallet.TryTakeMoney(_config.FastTowerCost))
-                BuildTower(_fastTowerPrefab, _config.RadiusRangeFastTower, _config.DelayShootFastTower,
-                    _config.DamageFastTower);
+            if (_wallet.TryTakeMoney(_buildingConfig.FastTowerCost))
+                BuildTower(_fastTowerPrefab, _fastTowerConfig);
             else
                 _buildMenu.Hide();
         }
 
         private void ChangeOpportunitiesBuy(int count)
         {
-            _buildMenu.SetCanBuyFast(count >= _config.FastTowerCost);
-            _buildMenu.SetCanBuyStrongTower(count >= _config.StrongTowerCost);
+            _buildMenu.SetCanBuyFast(count >= _buildingConfig.FastTowerCost);
+            _buildMenu.SetCanBuyStrongTower(count >= _buildingConfig.StrongTowerCost);
         }
 
-        private void BuildTower(Tower prefab, float range, float shootDelay, int damage)
+        private void BuildTower(Tower prefab, TowerConfig towerConfig)
         {
             if (prefab == null)
                 throw new NullReferenceException(nameof(prefab));
 
             Tower tempTower = (Instantiate(prefab, _buildPosition, Quaternion.identity));
-            tempTower.Initialize(_config, range, shootDelay, damage);
+            tempTower.Initialize(_shooterConfig, towerConfig);
             _towers.Add(tempTower);
 
             _buildMenu.Hide();

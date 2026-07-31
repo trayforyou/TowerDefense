@@ -12,7 +12,8 @@ namespace _Project.Scripts.Builds.Shooters
         private WaitForSeconds _currentDelay;
         private Coroutine _attackCoroutine;
 
-        public void Initialize(GameConfig config, int damage, float shootDelay, Bullet bulletPrefab, Vector3 shootPoint)
+        public void Initialize(ShooterConfig config, int damage, float shootDelay, Bullet bulletPrefab,
+            Vector3 shootPoint)
         {
             _bulletsPool = new BulletsStorage(bulletPrefab, config, damage);
             _currentDelay = new WaitForSeconds(shootDelay);
@@ -45,7 +46,7 @@ namespace _Project.Scripts.Builds.Shooters
             {
                 tempBullet = _bulletsPool.Get();
                 tempBullet.Releasing += Release;
-                tempBullet.Shoot(_shootPoint,currentTarget);
+                tempBullet.Shoot(_shootPoint, currentTarget);
 
                 yield return _currentDelay;
             }

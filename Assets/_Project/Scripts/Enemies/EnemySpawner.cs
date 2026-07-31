@@ -18,7 +18,7 @@ namespace _Project.Scripts.Enemies
         private ObjectPool<Enemy> _enemiesPool;
         private readonly HashSet<Enemy> _enemies = new();
         private Coroutine _coroutine;
-        private GameConfig _config;
+        private EnemiesConfig _config;
         private int _enemiesCount;
         private int _currentEnemiesCount;
         public event Action EnemyDied;
@@ -26,7 +26,7 @@ namespace _Project.Scripts.Enemies
         public event Action<int> ChangedAliveEnemies;
         public event Action<int> StartedNewWave;
 
-        public void Initialize(Castle castle, GameConfig config)
+        public void Initialize(Castle castle, EnemiesConfig config)
         {
             _config = config;
             _castle = castle;

@@ -13,7 +13,7 @@ namespace _Project.Scripts.Enemies
     {
         private static readonly int IsRun = Animator.StringToHash("IsRun");
         private static readonly int Attack = Animator.StringToHash("Attack");
-        
+
         private Mover _mover;
         private Health _health;
         private Animator _animator;
@@ -37,28 +37,28 @@ namespace _Project.Scripts.Enemies
         private void OnEnable()
         {
             IsAlive = true;
-            
+
             _particles.Stop();
-            
-            if(_health is not null)
+
+            if (_health is not null)
                 SubscribeAll();
         }
 
-        private void OnDisable() => 
+        private void OnDisable() =>
             UnsubscribeAll();
 
-        public void SetParams(Castle target, GameConfig config)
+        public void SetParams(Castle target, EnemiesConfig config)
         {
             _health = new Health(config.EnemyHealth);
             float sqrStopDistance = config.EnemyStopDistance * config.EnemyStopDistance;
-            
+
             SubscribeAll();
-            
-            _attacker.Initialize(config,target,sqrStopDistance,transform);
+
+            _attacker.Initialize(config, target, sqrStopDistance, transform);
             _mover.SetParams(target.transform, config);
         }
-        
-        public void GoToTarget() => 
+
+        public void GoToTarget() =>
             _mover.GoToTarget();
 
         public void Stop()
@@ -70,7 +70,7 @@ namespace _Project.Scripts.Enemies
             UnsubscribeAll();
         }
 
-        public void ResetHealth() => 
+        public void ResetHealth() =>
             _health.Reset();
 
         public void TakeDamage(int damage)
@@ -87,7 +87,7 @@ namespace _Project.Scripts.Enemies
             _attacker.Attacking -= AnimateAttack;
             _attacker.NeedingRun -= GoToTarget;
         }
-        
+
         private void SubscribeAll()
         {
             _mover.HasCome += StartAttack;
@@ -96,7 +96,7 @@ namespace _Project.Scripts.Enemies
             _attacker.Attacking += AnimateAttack;
             _attacker.NeedingRun += GoToTarget;
         }
-        
+
         private void StartAttack()
         {
             _animator.SetBool(IsRun, false);
@@ -109,11 +109,11 @@ namespace _Project.Scripts.Enemies
             _health.Died -= Die;
             Died?.Invoke(this);
         }
-        
-        private void AnimateRun() => 
+
+        private void AnimateRun() =>
             _animator.SetBool(IsRun, true);
-        
-        private void AnimateAttack() => 
+
+        private void AnimateAttack() =>
             _animator.SetTrigger(Attack);
     }
 }

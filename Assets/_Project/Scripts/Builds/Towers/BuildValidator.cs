@@ -6,8 +6,8 @@ namespace _Project.Scripts.Builds.Towers
 {
     public class BuildValidator
     {
-        private Castle _castle;
-        private float _minDistanceForBuilding;
+        private readonly Castle _castle;
+        private readonly float _minDistanceForBuilding;
 
         public BuildValidator(Castle castle, float minDistanceForBuilding)
         {

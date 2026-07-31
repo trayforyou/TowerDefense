@@ -24,7 +24,7 @@ namespace _Project.Scripts.Builds.Shooters
         private void OnDestroy() =>
             _enemyFinder.FoundEnemy -= StartShoot;
 
-        public void Initialize(GameConfig config, float range, float shootDelay, int damage)
+        public void Initialize(ShooterConfig config, float range, float shootDelay, int damage)
         {
             _enemyFinder.Initialize(range, config);
             _shooter.Initialize(config, damage, shootDelay, _bulletPrefab, _shootPoint.transform.position);
@@ -32,6 +32,12 @@ namespace _Project.Scripts.Builds.Shooters
             _enemyFinder.FoundEnemy += StartShoot;
             _enemyFinder.Find();
         }
+        
+        public void SetShootDelay(float delay) =>
+            _shooter.SetShootDelay(delay);
+
+        public void SetDamage(int damage) =>
+            _shooter.SetDamage(damage);
 
         public void Stop()
         {
@@ -59,11 +65,5 @@ namespace _Project.Scripts.Builds.Shooters
 
         private void RefreshTarget() =>
             _enemyFinder.Find();
-
-        public void SetShootDelay(float delay) => 
-            _shooter.SetShootDelay(delay);
-
-        public void SetDamage(int damage) => 
-            _shooter.SetDamage(damage);
     }
 }
