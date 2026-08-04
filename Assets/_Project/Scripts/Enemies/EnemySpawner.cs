@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Builds.Castles;
+using _Project.Scripts.Enemies.SpawnPoints;
 using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -12,7 +13,6 @@ namespace _Project.Scripts.Enemies
     public class EnemySpawner : MonoBehaviour
     {
         [SerializeField] private Enemy _enemyPrefab;
-        [SerializeField] private List<SpawnPoint> _spawnPoints;
 
         private Castle _castle;
         private ObjectPool<Enemy> _enemiesPool;
@@ -21,6 +21,8 @@ namespace _Project.Scripts.Enemies
         private EnemiesConfig _config;
         private int _enemiesCount;
         private int _currentEnemiesCount;
+        private PointGenerator _pointGenerator;
+
         public event Action EnemyDied;
         public event Action WaveEnded;
         public event Action<int> ChangedAliveEnemies;
@@ -31,6 +33,7 @@ namespace _Project.Scripts.Enemies
             _config = config;
             _castle = castle;
             _enemiesCount = _config.EnemiesPerWave;
+            _pointGenerator = new PointGenerator(_config.SpawnOffset, Camera.main, 0);
         }
 
         public void StartWave()
@@ -64,7 +67,7 @@ namespace _Project.Scripts.Enemies
                 yield return wait;
 
                 tempEnemy = _enemiesPool.Get();
-                tempEnemy.transform.position = GetRandomSpawnPoint();
+                tempEnemy.transform.position = _pointGenerator.GetRandom();
 
                 tempEnemy.GoToTarget();
             }
@@ -120,12 +123,6 @@ namespace _Project.Scripts.Enemies
         {
             enemy.ResetHealth();
             enemy.gameObject.SetActive(true);
-        }
-
-        private Vector3 GetRandomSpawnPoint()
-        {
-            SpawnPoint spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Count)];
-            return spawnPoint.transform.position;
         }
     }
 }

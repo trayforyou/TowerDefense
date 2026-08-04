@@ -15,11 +15,11 @@ MonoBehaviour:
   <MinEnemyPoolSize>k__BackingField: 5
   <MaxEnemyPoolSize>k__BackingField: 15
   <WavesDelay>k__BackingField: 15
-  <EnemySpawnDelay>k__BackingField: 1
+  <EnemySpawnDelay>k__BackingField: 5
   <EnemySpeed>k__BackingField: 0.5
   <EnemyAttackDelay>k__BackingField: 1
   <EnemyDamage>k__BackingField: 1
-  <EnemyHealth>k__BackingField: 20
+  <EnemyHealth>k__BackingField: 3
   <EnemiesPerWave>k__BackingField: 5
   <EnemyStopDistance>k__BackingField: 1
   <MultiplierEnemiesPerWave>k__BackingField: 1.2

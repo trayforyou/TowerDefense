@@ -8,12 +8,16 @@ namespace _Project.Scripts.Builds.Castles
     {
         [SerializeField] private UpgradeMenu _upgradeMenu;
 
+        private Upgrade _upgrade;
+
         private Wallet _wallet;
         private Castle _castle;
-        private CastleConfig _config;
+        private CastleConfig _castleConfig;
+
         private Upgrade _healthUpgrade;
         private Upgrade _forceUpgrade;
         private Upgrade _speedUpgrade;
+
         private float _currentDelay;
         private int _currentDamage;
 
@@ -25,38 +29,38 @@ namespace _Project.Scripts.Builds.Castles
         public void TurnOff() =>
             _upgradeMenu.Hide();
 
-        public void Initialize(CastleConfig config, Wallet wallet, Castle castle)
+        public void Initialize(CastleConfig castleConfig, Wallet wallet, Castle castle)
         {
-            _config = config;
+            _castleConfig = castleConfig;
             _wallet = wallet;
             _castle = castle;
-            _currentDelay = config.StartDelayShootCastle;
-            _currentDamage = config.StartDamageCastle;
+            _currentDelay = castleConfig.StartDelayShootCastle;
+            _currentDamage = castleConfig.StartDamageCastle;
 
-            _healthUpgrade = new Upgrade(config.UpgradeCastleCost, config.MaxCastleLevel, config.CostMultiplier,
+            _healthUpgrade = new Upgrade(castleConfig.UpgradeCastleCost, castleConfig.MaxCastleLevel, castleConfig.CostMultiplier,
                 () => _castle.UpHealth(),
                 cost => _upgradeMenu.ChangeCostUpgradeHealth(cost));
 
-            _forceUpgrade = new Upgrade(config.UpgradeCastleCost, config.MaxCastleLevel, config.CostMultiplier,
+            _forceUpgrade = new Upgrade(castleConfig.UpgradeCastleCost, castleConfig.MaxCastleLevel, castleConfig.CostMultiplier,
                 () =>
                 {
                     int tempDamage = _currentDamage;
-                    _currentDamage = (int)(_currentDamage * _config.UpgradeMultiplier);
+                    _currentDamage = (int)(_currentDamage * _castleConfig.UpgradeMultiplier);
                     if (tempDamage == _currentDamage)
                         _currentDamage++;
                     _castle.UpForce(_currentDamage);
                 },
                 cost => _upgradeMenu.ChangeCostUpgradeForce(cost));
 
-            _speedUpgrade = new Upgrade(config.UpgradeCastleCost, config.MaxCastleLevel, config.CostMultiplier,
+            _speedUpgrade = new Upgrade(castleConfig.UpgradeCastleCost, castleConfig.MaxCastleLevel, castleConfig.CostMultiplier,
                 () =>
                 {
-                    _currentDelay /= _config.UpgradeMultiplier;
+                    _currentDelay /= _castleConfig.UpgradeMultiplier;
                     _castle.UpSpeed(_currentDelay);
                 },
                 cost => _upgradeMenu.ChangeCostUpgradeSpeed(cost));
 
-            _upgradeMenu.SetStartCost(config.UpgradeCastleCost);
+            _upgradeMenu.SetStartCost(castleConfig.UpgradeCastleCost);
 
             SubscribeAll();
         }

@@ -5,6 +5,7 @@ namespace _Project.Scripts.ScriptableObjects
     [CreateAssetMenu(fileName = "EnemiesConfig", menuName = "Scriptable Objects/EnemiesConfig")]
     public class EnemiesConfig : ScriptableObject
     {
+        [field: SerializeField] public float SpawnOffset { get; private set; } = 0.5f;
         [field: SerializeField] public int MinEnemyPoolSize { get; private set; } = 5;
         [field: SerializeField] public int MaxEnemyPoolSize { get; private set; } = 15;
         [field: SerializeField] public int WavesDelay { get; private set; } = 15;
