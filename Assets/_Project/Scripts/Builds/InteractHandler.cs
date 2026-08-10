@@ -1,35 +1,42 @@
 using _Project.Scripts.Builds.Castles;
 using _Project.Scripts.Builds.Towers;
-using _Project.Scripts.ScriptableObjects;
-using _Project.Scripts.Session;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace _Project.Scripts.Builds
 {
-    [RequireComponent(typeof(CastleUpper))]
-    [RequireComponent(typeof(TowerBuilder))]
-    public class InteractHandler : MonoBehaviour
+    public class InteractHandler
     {
-        [SerializeField] private LayerMask _groundLayer;
-        [SerializeField] private LayerMask _castleLayer;
-
+        private LayerMask _groundLayer;
+        private LayerMask _castleLayer;
         private CastleUpper _castleUpper;
         private TowerBuilder _towerBuilder;
         private Camera _mainCamera;
-        private ShooterConfig _shooterConfig;
-        private CastleConfig _castleConfig;
+        private InputDispatcher _inputDispatcher;
 
-        private void Awake()
+        public InteractHandler(LayerMask groundLayer, LayerMask castleLayer, CastleUpper castleUpper,
+            TowerBuilder towerBuilder, Camera mainCamera, InputDispatcher inputDispatcher)
         {
-            _castleUpper = GetComponent<CastleUpper>();
-            _towerBuilder = GetComponent<TowerBuilder>();
+            _inputDispatcher = inputDispatcher;
+            _mainCamera = mainCamera;
+            _castleUpper = castleUpper;
+            _towerBuilder = towerBuilder;
+            _groundLayer = groundLayer;
+            _castleLayer = castleLayer;
+            inputDispatcher.OnPrimaryClick += TryHandleClick;
         }
 
-        private void Start() =>
-            _mainCamera = Camera.main;
+        public void Stop()
+        {
+            _towerBuilder.StopAttack();
+            _castleUpper.TurnOff();
+            _towerBuilder.TurnOff();
+        }
 
-        private void Update()
+        public void UnSubscribe() =>
+            _inputDispatcher.OnPrimaryClick -= TryHandleClick;
+
+        private void TryHandleClick()
         {
             if (_towerBuilder.IsActive == false && _castleUpper.IsActive == false)
             {
@@ -41,23 +48,6 @@ namespace _Project.Scripts.Builds
                     HandleClick();
                 }
             }
-        }
-
-        public void SetParameters(CastleConfig castleConfig, ShooterConfig shooterConfig, BuildConfig buildConfig,
-            TowerConfig fastTowerConfig, TowerConfig strongTowerConfig, Wallet wallet, Castle castle)
-        {
-            _shooterConfig = shooterConfig;
-            _castleConfig = castleConfig;
-
-            _castleUpper.Initialize(_castleConfig, wallet, castle);
-            _towerBuilder.Initialize(_shooterConfig, wallet, buildConfig, fastTowerConfig, strongTowerConfig, castle);
-        }
-
-        public void Stop()
-        {
-            _towerBuilder.StopAttack();
-            _castleUpper.TurnOff();
-            _towerBuilder.TurnOff();
         }
 
         private void HandleClick()

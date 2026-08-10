@@ -12,10 +12,10 @@ namespace _Project.Scripts.Builds
 
         [SerializeField] private Button _buttonHealthier;
         [SerializeField] private Button _buttonFaster;
-        [SerializeField] private Button _buttonStronger;
+        [SerializeField] private Button _buttonForce;
         [SerializeField] private TextMeshProUGUI _tMPHealthier;
         [SerializeField] private TextMeshProUGUI _tMPFaster;
-        [SerializeField] private TextMeshProUGUI _tMPStronger;
+        [SerializeField] private TextMeshProUGUI _tMPForce;
 
         private CanvasGroup _canvasGroup;
 
@@ -34,17 +34,17 @@ namespace _Project.Scripts.Builds
 
             ChangeView(_tMPHealthier, false);
             ChangeView(_tMPFaster, false);
-            ChangeView(_tMPStronger, false);
+            ChangeView(_tMPForce, false);
             _buttonFaster.onClick.AddListener(TryUpSpeed);
             _buttonHealthier.onClick.AddListener(TryUpHealth);
-            _buttonStronger.onClick.AddListener(TryUpForce);
+            _buttonForce.onClick.AddListener(TryUpForce);
         }
 
         private void OnDestroy()
         {
             _buttonFaster.onClick.RemoveListener(TryUpSpeed);
             _buttonHealthier.onClick.RemoveListener(TryUpHealth);
-            _buttonStronger.onClick.RemoveListener(TryUpForce);
+            _buttonForce.onClick.RemoveListener(TryUpForce);
         }
 
         public void Show()
@@ -77,7 +77,7 @@ namespace _Project.Scripts.Builds
             _tMPFaster.text = cost + CURRENCY_SYMBOL;
 
         public void ChangeCostUpgradeForce(int cost) =>
-            _tMPStronger.text = cost + CURRENCY_SYMBOL;
+            _tMPForce.text = cost + CURRENCY_SYMBOL;
 
         public void SetCanUpHealth(bool value) =>
             ChangeView(_tMPHealthier, value);
@@ -86,7 +86,7 @@ namespace _Project.Scripts.Builds
             ChangeView(_tMPFaster, value);
 
         public void SetCanUpForce(bool value) =>
-            ChangeView(_tMPStronger, value);
+            ChangeView(_tMPForce, value);
 
         private void TryUpHealth() =>
             TriedUpHealth?.Invoke();

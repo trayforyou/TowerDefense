@@ -1,18 +1,19 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using _Project.Scripts.Builds.Castles;
 using _Project.Scripts.Enemies.SpawnPoints;
 using _Project.Scripts.ScriptableObjects;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
-using Random = UnityEngine.Random;
+using static UnityEngine.Object;
 
 namespace _Project.Scripts.Enemies
 {
-    public class EnemySpawner : MonoBehaviour
+    public class EnemySpawner : IDisposable
     {
-        [SerializeField] private Enemy _enemyPrefab;
+        private Enemy _prefab;
 
         private Castle _castle;
         private ObjectPool<Enemy> _enemiesPool;
@@ -22,62 +23,68 @@ namespace _Project.Scripts.Enemies
         private int _enemiesCount;
         private int _currentEnemiesCount;
         private PointGenerator _pointGenerator;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public event Action EnemyDied;
         public event Action WaveEnded;
         public event Action<int> ChangedAliveEnemies;
         public event Action<int> StartedNewWave;
 
-        public void Initialize(Castle castle, EnemiesConfig config)
+        public EnemySpawner(Castle castle, EnemiesConfig config, Enemy prefab)
         {
+            _prefab = prefab;
             _config = config;
             _castle = castle;
             _enemiesCount = _config.EnemiesPerWave;
             _pointGenerator = new PointGenerator(_config.SpawnOffset, Camera.main, 0);
+            InitializePool();
         }
 
         public void StartWave()
         {
-            if (_coroutine != null)
-                StopCoroutine(_coroutine);
+            ClearToken();
+            _cancellationTokenSource = new CancellationTokenSource();
+            StartSpawning(_cancellationTokenSource.Token).Forget();
+        }
 
-            _coroutine = StartCoroutine(StartSpawning());
+        private void ClearToken()
+        {
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
         }
 
         public void Stop()
         {
-            StopAllCoroutines();
+            ClearToken();
 
             foreach (Enemy enemy in _enemies)
                 enemy.Stop();
         }
 
-        private IEnumerator StartSpawning()
+        private async UniTaskVoid StartSpawning(CancellationToken token)
         {
-            InitializePool();
-
-            Enemy tempEnemy;
-
-            var wait = new WaitForSeconds(_config.EnemySpawnDelay);
-            _currentEnemiesCount = _enemiesCount;
-            StartedNewWave?.Invoke(_currentEnemiesCount);
-
-            for (int i = 0; i < _enemiesCount; i++)
+            try
             {
-                yield return wait;
+                Enemy tempEnemy;
 
-                tempEnemy = _enemiesPool.Get();
-                tempEnemy.transform.position = _pointGenerator.GetRandom();
+                int wait = (int)(_config.EnemySpawnDelay * 1000);
+                _currentEnemiesCount = _enemiesCount;
+                StartedNewWave?.Invoke(_currentEnemiesCount);
 
-                tempEnemy.GoToTarget();
+                for (int i = 0; i < _enemiesCount; i++)
+                {
+                    await UniTask.Delay(wait, cancellationToken: token);
+
+                    tempEnemy = _enemiesPool.Get();
+                    tempEnemy.transform.position = _pointGenerator.GetRandom();
+
+                    tempEnemy.GoToTarget();
+                }
             }
-
-            while (_currentEnemiesCount > 0)
-                yield return null;
-
-            _enemiesCount = (int)(_enemiesCount * _config.MultiplierEnemiesPerWave);
-
-            WaveEnded?.Invoke();
+            catch (OperationCanceledException)
+            {
+            }
         }
 
         private void InitializePool()
@@ -100,6 +107,12 @@ namespace _Project.Scripts.Enemies
             EnemyDied?.Invoke();
             ChangedAliveEnemies?.Invoke(--_currentEnemiesCount);
             enemy.gameObject.SetActive(false);
+
+            if (_currentEnemiesCount == 0)
+            {
+                _enemiesCount = (int)(_enemiesCount * _config.MultiplierEnemiesPerWave);
+                WaveEnded?.Invoke();
+            }
         }
 
         private void DestroyEnemy(Enemy enemy)
@@ -111,7 +124,7 @@ namespace _Project.Scripts.Enemies
 
         private Enemy CreateEnemy()
         {
-            var enemy = Instantiate(_enemyPrefab);
+            var enemy = Instantiate(_prefab);
             _enemies.Add(enemy);
             enemy.SetParams(_castle, _config);
             enemy.Died += _enemiesPool.Release;
@@ -124,5 +137,8 @@ namespace _Project.Scripts.Enemies
             enemy.ResetHealth();
             enemy.gameObject.SetActive(true);
         }
+
+        public void Dispose() =>
+            Stop();
     }
 }

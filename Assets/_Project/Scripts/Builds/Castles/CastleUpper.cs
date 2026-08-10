@@ -4,10 +4,9 @@ using UnityEngine;
 
 namespace _Project.Scripts.Builds.Castles
 {
-    public class CastleUpper : MonoBehaviour
+    public class CastleUpper
     {
-        [SerializeField] private UpgradeMenu _upgradeMenu;
-
+        private UpgradeMenu _upgradeMenu;
         private Upgrade _upgrade;
 
         private Wallet _wallet;
@@ -23,14 +22,12 @@ namespace _Project.Scripts.Builds.Castles
 
         public bool IsActive => _upgradeMenu.IsActive;
 
-        private void OnDestroy() =>
-            UnSubscribeAll();
-
         public void TurnOff() =>
             _upgradeMenu.Hide();
 
-        public void Initialize(CastleConfig castleConfig, Wallet wallet, Castle castle)
+        public CastleUpper(CastleConfig castleConfig, Wallet wallet, Castle castle, UpgradeMenu upgradeMenu)
         {
+            _upgradeMenu  = upgradeMenu;
             _castleConfig = castleConfig;
             _wallet = wallet;
             _castle = castle;
@@ -83,7 +80,7 @@ namespace _Project.Scripts.Builds.Castles
             _wallet.ValueChanged += ChangeOpportunitiesBuy;
         }
 
-        private void UnSubscribeAll()
+        public void UnSubscribeAll()
         {
             _upgradeMenu.TriedUpHealth -= UpCastleHealth;
             _upgradeMenu.TriedUpForce -= UpCastleForce;

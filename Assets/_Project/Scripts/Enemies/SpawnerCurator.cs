@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections;
+using System.Threading;
 using _Project.Scripts.Builds.Castles;
 using _Project.Scripts.ScriptableObjects;
-using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 namespace _Project.Scripts.Enemies
 {
-    public class SpawnerCurator : MonoBehaviour
+    public class SpawnerCurator : IDisposable
     {
-        [SerializeField] private EnemySpawner _spawner;
-
+        private EnemySpawner _spawner;
         private EnemiesConfig _config;
-        private Coroutine _coroutine;
+        private CancellationTokenSource _waveCts;
 
         public int WaveNumber { get; private set; }
         public int EnemiesDeaths { get; private set; }
@@ -22,27 +21,27 @@ namespace _Project.Scripts.Enemies
         public event Action<int> ChangedEnemiesCount;
         public event Action<int> InitializedEnemiesCount;
 
-        public void Initialize(Castle castle, EnemiesConfig config)
+        public SpawnerCurator(EnemiesConfig config, EnemySpawner spawner)
         {
+            _spawner = spawner;
             _config = config;
-            _spawner.Initialize(castle, config);
             SubscribeAll();
-        }
-
-        private void OnDestroy() =>
-            UnSubscribeAll();
-
-        public void StartWave()
-        {
-            WaveChanged?.Invoke(++WaveNumber);
-            _spawner.StartWave();
         }
 
         public void Stop()
         {
             _spawner.Stop();
-            StopAllCoroutines();
+            CancelWaveTimer();
             UnSubscribeAll();
+        }
+        
+        public void Dispose() => 
+            Stop();
+
+        public void StartWave()
+        {
+            WaveChanged?.Invoke(++WaveNumber);
+            _spawner.StartWave();
         }
 
         private void RegisterKill()
@@ -53,26 +52,41 @@ namespace _Project.Scripts.Enemies
 
         private void ReloadWave()
         {
-            if (_coroutine != null)
-                StopCoroutine(_coroutine);
-
-            _coroutine = StartCoroutine(WaitWave());
+            CancelWaveTimer();
+            _waveCts = new CancellationTokenSource();
+            WaitWaveAsync(_waveCts.Token).Forget();
         }
 
-        private IEnumerator WaitWave()
+        private void CancelWaveTimer()
         {
-            var oneSecond = new WaitForSeconds(1);
-            int currentTime = _config.WavesDelay;
+            _waveCts?.Cancel();
+            _waveCts?.Dispose();
+            _waveCts = null;
+        }
 
-            while (currentTime >= 0)
+        private async UniTaskVoid WaitWaveAsync(CancellationToken cancellationToken)
+        {
+            try
             {
-                TimeChanged?.Invoke(currentTime);
-                yield return oneSecond;
-                currentTime--;
-            }
+                int currentTime = _config.WavesDelay;
+                int oneSecond = 1000;
 
-            WaveChanged?.Invoke(++WaveNumber);
-            _spawner.StartWave();
+                while (currentTime >= 0 && cancellationToken.IsCancellationRequested == false)
+                {
+                    TimeChanged?.Invoke(currentTime);
+                    await UniTask.Delay(oneSecond, cancellationToken: cancellationToken);
+                    currentTime--;
+                }
+
+                if (cancellationToken.IsCancellationRequested == false)
+                {
+                    WaveChanged?.Invoke(++WaveNumber);
+                    _spawner.StartWave();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
 
         private void ChangeEnemiesCount(int count) =>

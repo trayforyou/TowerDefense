@@ -1,45 +1,44 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using _Project.Scripts.Builds.Castles;
 using _Project.Scripts.ScriptableObjects;
 using _Project.Scripts.Session;
 using UnityEngine;
+using static UnityEngine.Object;
 
 namespace _Project.Scripts.Builds.Towers
 {
-    public class TowerBuilder : MonoBehaviour
+    public class TowerBuilder
     {
-        [SerializeField] private BuildMenu _buildMenu;
-        [SerializeField] private Tower _strongTowerPrefab;
-        [SerializeField] private Tower _fastTowerPrefab;
-
         private readonly List<Tower> _towers = new();
         private TowerConfig _strongTowerConfig;
         private TowerConfig _fastTowerConfig;
-        private Castle _castle;
         private BuildConfig _buildingConfig;
         private BuildValidator _validator;
         private Wallet _wallet;
         private Vector3 _buildPosition;
         private ShooterConfig _shooterConfig;
 
-        public bool IsActive => _buildMenu.IsActive;
+        private BuildMenu _buildMenu;
+        private Tower _strongTowerPrefab;
+        private Tower _fastTowerPrefab;
 
-        private void OnDestroy() =>
-            UnsubscribeAll();
+        public bool IsActive => _buildMenu.IsActive;
 
         public void TurnOff() =>
             _buildMenu.Hide();
 
-        public void Initialize(ShooterConfig shooterConfig, Wallet wallet, BuildConfig buildConfig,
-            TowerConfig fastTowerConfig, TowerConfig strongTowerConfig, Castle castle)
+        public TowerBuilder(ShooterConfig shooterConfig, Wallet wallet, BuildConfig buildConfig,
+            TowerConfig fastTowerConfig, TowerConfig strongTowerConfig, BuildValidator validator, Tower fastTowerPrefab,
+            Tower strongTowerPrefab, BuildMenu buildMenu)
         {
+            _fastTowerPrefab = fastTowerPrefab;
+            _strongTowerPrefab = strongTowerPrefab;
+            _buildMenu = buildMenu;
             _fastTowerConfig = fastTowerConfig;
             _strongTowerConfig = strongTowerConfig;
-            _validator = new BuildValidator(castle, buildConfig.MinDistanceForBuilding);
+            _validator = validator;
             _shooterConfig = shooterConfig;
-            _castle = castle;
             _buildingConfig = buildConfig;
             _wallet = wallet;
             _buildMenu.SetCostTowers(_buildingConfig.FastTowerCost, _buildingConfig.StrongTowerCost);
@@ -68,7 +67,7 @@ namespace _Project.Scripts.Builds.Towers
             _buildMenu.TriedBuyStrongTower += BuildStrongTower;
         }
 
-        private void UnsubscribeAll()
+        public void UnSubscribeAll()
         {
             _buildMenu.TriedBuyFastTower -= BuildFastTower;
             _buildMenu.TriedBuyStrongTower -= BuildStrongTower;
@@ -104,6 +103,7 @@ namespace _Project.Scripts.Builds.Towers
 
             Tower tempTower = (Instantiate(prefab, _buildPosition, Quaternion.identity));
             tempTower.Initialize(_shooterConfig, towerConfig);
+
             _towers.Add(tempTower);
 
             _buildMenu.Hide();
