@@ -6,7 +6,7 @@ namespace _Project.Scripts.ScriptableObjects
     public class TowerConfig : ScriptableObject
     {
         [field: SerializeField] public float ShootDelay{ get; private set; } = 0.8f;
-        [field: SerializeField] public float RangeAttack { get; private set; } = 1;
+        [field: SerializeField] public float RadiusAttack { get; private set; } = 1;
         [field: SerializeField] public int Damage { get; private set; } = 3;
     }
 }

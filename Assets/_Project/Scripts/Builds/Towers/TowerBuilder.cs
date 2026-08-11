@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using _Project.Scripts.Builds.Shooters;
 using _Project.Scripts.ScriptableObjects;
 using _Project.Scripts.Session;
 using UnityEngine;
@@ -11,13 +12,13 @@ namespace _Project.Scripts.Builds.Towers
     public class TowerBuilder
     {
         private readonly List<Tower> _towers = new();
+        private Func<GunParameters, Gun> _createGun;
         private TowerConfig _strongTowerConfig;
         private TowerConfig _fastTowerConfig;
         private BuildConfig _buildingConfig;
         private BuildValidator _validator;
         private Wallet _wallet;
         private Vector3 _buildPosition;
-        private ShooterConfig _shooterConfig;
 
         private BuildMenu _buildMenu;
         private Tower _strongTowerPrefab;
@@ -28,17 +29,17 @@ namespace _Project.Scripts.Builds.Towers
         public void TurnOff() =>
             _buildMenu.Hide();
 
-        public TowerBuilder(ShooterConfig shooterConfig, Wallet wallet, BuildConfig buildConfig,
+        public TowerBuilder(Wallet wallet, BuildConfig buildConfig,
             TowerConfig fastTowerConfig, TowerConfig strongTowerConfig, BuildValidator validator, Tower fastTowerPrefab,
-            Tower strongTowerPrefab, BuildMenu buildMenu)
+            Tower strongTowerPrefab, BuildMenu buildMenu, Func<GunParameters, Gun> createGun)
         {
+            _createGun = createGun;
             _fastTowerPrefab = fastTowerPrefab;
             _strongTowerPrefab = strongTowerPrefab;
             _buildMenu = buildMenu;
             _fastTowerConfig = fastTowerConfig;
             _strongTowerConfig = strongTowerConfig;
             _validator = validator;
-            _shooterConfig = shooterConfig;
             _buildingConfig = buildConfig;
             _wallet = wallet;
             _buildMenu.SetCostTowers(_buildingConfig.FastTowerCost, _buildingConfig.StrongTowerCost);
@@ -102,7 +103,9 @@ namespace _Project.Scripts.Builds.Towers
                 throw new NullReferenceException(nameof(prefab));
 
             Tower tempTower = (Instantiate(prefab, _buildPosition, Quaternion.identity));
-            tempTower.Initialize(_shooterConfig, towerConfig);
+
+            tempTower.Initialize(_createGun.Invoke(new GunParameters(towerConfig.Damage, towerConfig.ShootDelay,
+                towerConfig.RadiusAttack, _buildPosition)));
 
             _towers.Add(tempTower);
 

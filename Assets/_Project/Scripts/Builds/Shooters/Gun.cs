@@ -1,33 +1,26 @@
+using System;
 using _Project.Scripts.Enemies;
-using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 
 namespace _Project.Scripts.Builds.Shooters
 {
-    [RequireComponent(typeof(EnemyFinder))]
-    [RequireComponent(typeof(Shooter))]
-    public class Gun : MonoBehaviour
+    public class Gun : IDisposable
     {
-        [SerializeField] private Bullet _bulletPrefab;
-        [SerializeField] private Transform _shootPoint;
-
         private Enemy _currentTarget;
         private EnemyFinder _enemyFinder;
         private Shooter _shooter;
 
-        private void Awake()
+        public void Dispose()
         {
-            _enemyFinder = GetComponent<EnemyFinder>();
-            _shooter = GetComponent<Shooter>();
+            _enemyFinder.FoundEnemy -= StartShoot;
+            _enemyFinder.Dispose();
+            _shooter.Dispose();
         }
 
-        private void OnDestroy() =>
-            _enemyFinder.FoundEnemy -= StartShoot;
-
-        public void Initialize(ShooterConfig config, float range, float shootDelay, int damage)
+        public Gun(Shooter shooter, EnemyFinder enemyFinder)
         {
-            _enemyFinder.Initialize(range, config);
-            _shooter.Initialize(config, damage, shootDelay, _bulletPrefab, _shootPoint.transform.position);
+            _enemyFinder = enemyFinder;
+            _shooter = shooter;
 
             _enemyFinder.FoundEnemy += StartShoot;
             _enemyFinder.Find();
@@ -46,7 +39,6 @@ namespace _Project.Scripts.Builds.Shooters
 
             _shooter.Stop();
             _enemyFinder.Stop();
-            StopAllCoroutines();
         }
 
         private void StartShoot(Enemy target)
@@ -65,5 +57,8 @@ namespace _Project.Scripts.Builds.Shooters
 
         private void RefreshTarget() =>
             _enemyFinder.Find();
+
+        public void SetShootPoint(Vector3 shootPoint) => 
+            _shooter.SetShootPoint(shootPoint);
     }
 }

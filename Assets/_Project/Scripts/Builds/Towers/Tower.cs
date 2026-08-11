@@ -1,19 +1,24 @@
+using System;
 using _Project.Scripts.Builds.Shooters;
 using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 
 namespace _Project.Scripts.Builds.Towers
 {
-    [RequireComponent(typeof(Gun))]
     public class Tower : MonoBehaviour
     {
+        [SerializeField] private Transform _shootPoint;
+
         private Gun _gun;
 
-        private void Awake() =>
-            _gun = GetComponent<Gun>();
+        private void OnDestroy() => 
+            _gun.Dispose();
 
-        public void Initialize(ShooterConfig shooterConfig, TowerConfig towerConfig) =>
-            _gun.Initialize(shooterConfig, towerConfig.RangeAttack, towerConfig.ShootDelay, towerConfig.Damage);
+        public void Initialize(Gun gun)
+        {
+            _gun = gun;
+            _gun.SetShootPoint(_shootPoint.position);
+        }
 
         public void Stop() =>
             _gun.Stop();

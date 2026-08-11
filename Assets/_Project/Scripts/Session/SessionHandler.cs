@@ -1,5 +1,6 @@
 using _Project.Scripts.Builds;
 using _Project.Scripts.Builds.Castles;
+using _Project.Scripts.Builds.Shooters;
 using _Project.Scripts.Builds.Towers;
 using _Project.Scripts.Enemies;
 using _Project.Scripts.Savers;
@@ -12,10 +13,12 @@ namespace _Project.Scripts.Session
     [RequireComponent(typeof(InputDispatcher))]
     public class SessionHandler : MonoBehaviour
     {
+        [SerializeField] private Bullet _bulletPrefab;
         [SerializeField] private Enemy _enemyPrefab;
         [SerializeField] private Tower _fastTowerPrefab;
         [SerializeField] private Tower _strongTowerPrefab;
         [SerializeField] private BuildMenu _buildMenu;
+        [SerializeField] private Castle _castlePrefab;
 
         [SerializeField] private UpgradeMenu _upgradeMenu;
         [SerializeField] private LayerMask _groundLayer;
@@ -48,17 +51,18 @@ namespace _Project.Scripts.Session
 
         private void Awake()
         {
-            _mainCamera = Camera.main;
             _inputDispatcher = GetComponent<InputDispatcher>();
-            
-            _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab);
-            _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
+            _mainCamera = Camera.main;
             _saver = new Saver();
             _wallet = new Wallet();
-            _towerBuilder = new TowerBuilder(_shooterConfig, _wallet, _buildConfig, _fastTowerConfig,
-                _strongTowerConfig, _buildValidator, _fastTowerPrefab, _strongTowerPrefab, _buildMenu);
-            _castleUpper = new CastleUpper(_castleConfig, _wallet, _castle, _upgradeMenu);
+
+            _castle = CastleSpawner.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
+            _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab);
+            _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
             _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);
+            _towerBuilder = new TowerBuilder(_wallet, _buildConfig, _fastTowerConfig,
+                _strongTowerConfig, _buildValidator, _fastTowerPrefab, _strongTowerPrefab, _buildMenu, CreateGun);
+            _castleUpper = new CastleUpper(_castleConfig, _wallet, _castle, _upgradeMenu);
             _interactHandler = new InteractHandler(_groundLayer, _castleLayer, _castleUpper,
                 _towerBuilder, _mainCamera, _inputDispatcher);
         }
@@ -67,7 +71,13 @@ namespace _Project.Scripts.Session
         {
             SubscribeAll();
 
-            _castle.SetConfig(_castleConfig, _shooterConfig);
+            Shooter tempShooter = new Shooter(_shooterConfig, _castleConfig.StartDamageCastle,
+                _castleConfig.StartDelayShootCastle, _bulletPrefab);
+            EnemyFinder tempEnemyFinder = new EnemyFinder(_castleConfig.RadiusRangeCastle, _shooterConfig,
+                _castle.transform.position);
+            Gun tempGun = new Gun(tempShooter, tempEnemyFinder);
+
+            _castle.SetConfig(_castleConfig, tempGun);
             _sessionViewer.Show();
             _spawnerCurator.StartWave();
             _wallet.RefreshInfo();
@@ -75,6 +85,10 @@ namespace _Project.Scripts.Session
 
         private void OnDestroy() =>
             UnSubscribeAll();
+
+        private Gun CreateGun(GunParameters parameters) =>
+            new(new Shooter(_shooterConfig, parameters.Damage, parameters.ShootDelay, _bulletPrefab),
+                new EnemyFinder(parameters.Radius, _shooterConfig, parameters.CenterFindPosition));
 
         private void SubscribeAll()
         {

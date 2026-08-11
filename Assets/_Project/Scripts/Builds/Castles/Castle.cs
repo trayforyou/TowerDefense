@@ -5,10 +5,11 @@ using UnityEngine;
 
 namespace _Project.Scripts.Builds.Castles
 {
-    [RequireComponent(typeof(Gun))]
     [RequireComponent(typeof(ParticleSystem))]
     public class Castle : MonoBehaviour
     {
+        [SerializeField]private Transform _shootPoint;
+        
         private ParticleSystem _particles;
         private CastleHealth _health;
         private Gun _gun;
@@ -16,14 +17,12 @@ namespace _Project.Scripts.Builds.Castles
         public event HealthChangedEventHandler ValueChanged;
         public event Action Died;
 
-        private void Awake()
-        {
-            _gun = GetComponent<Gun>();
+        private void Awake() => 
             _particles = GetComponent<ParticleSystem>();
-        }
 
         private void OnDestroy()
         {
+            _gun.Dispose();
             _health.ValueChanged -= ChangedHealthValue;
             _health.Died -= Die;
         }
@@ -37,10 +36,11 @@ namespace _Project.Scripts.Builds.Castles
             _health.TakeDamage(damage);
         }
 
-        public void SetConfig(CastleConfig config, ShooterConfig shooterConfig)
+        public void SetConfig(CastleConfig config, Gun gun)
         {
-            _gun.Initialize(shooterConfig, config.RadiusRangeCastle, config.StartDelayShootCastle,
-                config.StartDamageCastle);
+            _gun = gun;
+            _gun.SetShootPoint(_shootPoint.position);
+            
             CreateHealth(config);
             ValueChanged?.Invoke(_health.MaxPoints, _health.MaxPoints);
         }

@@ -1,23 +1,27 @@
 ﻿using System;
-using System.Collections;
+using System.Threading;
 using _Project.Scripts.Enemies;
 using _Project.Scripts.ScriptableObjects;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace _Project.Scripts.Builds.Shooters
 {
-    public class EnemyFinder : MonoBehaviour
+    public class EnemyFinder : IDisposable
     {
         private float _sqrRadius;
         private float _range;
         private bool _isEnabled = true;
         private Collider[] _collidersBuffer;
         private ShooterConfig _shooterConfig;
+        private Vector3 _position;
+        private CancellationTokenSource _tokenSource;
 
         public event Action<Enemy> FoundEnemy;
 
-        public void Initialize(float radius, ShooterConfig config)
+        public EnemyFinder(float radius, ShooterConfig config, Vector3 position)
         {
+            _position = position;
             _collidersBuffer = new Collider[config.FindBufferSize];
             _range = radius;
             _sqrRadius = radius * radius;
@@ -34,37 +38,49 @@ namespace _Project.Scripts.Builds.Shooters
                 return;
             }
 
-            StartCoroutine(StartFindNearestEnemy());
+            TokenCleaner.Clear(ref _tokenSource);
+            _tokenSource = new CancellationTokenSource();
+            StartFindNearestEnemy(_tokenSource.Token).Forget();
         }
 
         public void Stop() =>
             _isEnabled = false;
 
-        private void OnDestroy() =>
-            StopAllCoroutines();
-
-        private IEnumerator StartFindNearestEnemy()
+        public void Dispose()
         {
-            var wait = new WaitForSeconds(_shooterConfig.FindDelay);
-            Enemy target;
+            Stop();
+            TokenCleaner.Clear(ref _tokenSource);
+        }
 
-            while (_isEnabled)
+        private async UniTaskVoid StartFindNearestEnemy(CancellationToken token)
+        {
+            try
             {
-                target = FindNearestEnemy();
+                int wait = (int)(_shooterConfig.FindDelay * 1000);
+                Enemy target;
 
-                if (target != null)
+                while (_isEnabled)
                 {
-                    FoundEnemy?.Invoke(target);
-                    break;
-                }
+                    target = FindNearestEnemy();
 
-                yield return wait;
+                    if (target != null)
+                    {
+                        FoundEnemy?.Invoke(target);
+                        break;
+                    }
+
+                    await UniTask.Delay(wait, cancellationToken: token);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                
             }
         }
 
         private Enemy FindNearestEnemy()
         {
-            int sizeArray = Physics.OverlapSphereNonAlloc(transform.position, _range, _collidersBuffer);
+            int sizeArray = Physics.OverlapSphereNonAlloc(_position, _range, _collidersBuffer);
 
             if (sizeArray == 0)
                 return null;
@@ -79,7 +95,7 @@ namespace _Project.Scripts.Builds.Shooters
                     if (!enemy.IsAlive)
                         continue;
 
-                    float sqrDistance = Vector3.SqrMagnitude(transform.position - enemy.transform.position);
+                    float sqrDistance = Vector3.SqrMagnitude(_position - enemy.transform.position);
 
                     if (sqrDistance <= _sqrRadius && sqrDistance < minSqrDistance)
                     {

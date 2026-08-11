@@ -42,22 +42,16 @@ namespace _Project.Scripts.Enemies
 
         public void StartWave()
         {
-            ClearToken();
+            TokenCleaner.Clear(ref _cancellationTokenSource);
             _cancellationTokenSource = new CancellationTokenSource();
             StartSpawning(_cancellationTokenSource.Token).Forget();
         }
-
-        private void ClearToken()
-        {
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
-            _cancellationTokenSource = null;
-        }
-
+        
+            
         public void Stop()
         {
-            ClearToken();
-
+            TokenCleaner.Clear(ref _cancellationTokenSource);
+            
             foreach (Enemy enemy in _enemies)
                 enemy.Stop();
         }
