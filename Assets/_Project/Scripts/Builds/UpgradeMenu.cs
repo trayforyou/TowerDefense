@@ -1,16 +1,13 @@
 using System;
-using _Project.Scripts.Builds.Castles;
+using _Project.Scripts.Session;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.Builds
 {
-    [RequireComponent(typeof(CanvasGroup))]
-    public class UpgradeMenu : MonoBehaviour
+    public class UpgradeMenu : GameInteractionMenu, IUIElement
     {
-        private const string CURRENCY_SYMBOL = "$";
-
         [SerializeField] private Button _buttonHealthier;
         [SerializeField] private Button _buttonFaster;
         [SerializeField] private Button _buttonForce;
@@ -18,83 +15,62 @@ namespace _Project.Scripts.Builds
         [SerializeField] private TextMeshProUGUI _tMPFaster;
         [SerializeField] private TextMeshProUGUI _tMPForce;
 
-        private CanvasGroup _canvasGroup;
-
         public event Action TriedUpHealth;
         public event Action TriedUpSpeed;
         public event Action TriedUpForce;
 
-        [field: SerializeField] public bool IsActive { get; private set; }
-
-        private void Awake() =>
-            _canvasGroup = GetComponent<CanvasGroup>();
-
-        private void Start()
+        protected override void Start()
         {
-            Hide();
+            base.Start();
 
-            ChangeView(_tMPHealthier, false);
-            ChangeView(_tMPFaster, false);
-            ChangeView(_tMPForce, false);
-            _buttonFaster.onClick.AddListener(TryUpSpeed);
-            _buttonHealthier.onClick.AddListener(TryUpHealth);
-            _buttonForce.onClick.AddListener(TryUpForce);
+            SetAvailabilityView(_tMPHealthier, false);
+            SetAvailabilityView(_tMPFaster, false);
+            SetAvailabilityView(_tMPForce, false);
+
+            SubscribeButton(_buttonHealthier, OnTryUpHealth);
+            SubscribeButton(_buttonFaster, OnTryUpSpeed);
+            SubscribeButton(_buttonForce, OnTryUpForce);
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
-            _buttonFaster.onClick.RemoveListener(TryUpSpeed);
-            _buttonHealthier.onClick.RemoveListener(TryUpHealth);
-            _buttonForce.onClick.RemoveListener(TryUpForce);
-        }
-
-        public void Show()
-        {
-            _canvasGroup.Show();
-            IsActive = true;
-        }
-
-        public void Hide()
-        {
-            _canvasGroup.Hide();
-            IsActive = false;
+            UnsubscribeButton(_buttonHealthier, OnTryUpHealth);
+            UnsubscribeButton(_buttonFaster, OnTryUpSpeed);
+            UnsubscribeButton(_buttonForce, OnTryUpForce);
         }
 
         public void SetStartCost(int cost)
         {
-            ChangeCostUpgradeHealth(cost);
-            ChangeCostUpgradeSpeed(cost);
-            ChangeCostUpgradeForce(cost);
+            SetCostText(_tMPHealthier, cost);
+            SetCostText(_tMPFaster, cost);
+            SetCostText(_tMPForce, cost);
         }
 
-        public void ChangeCostUpgradeHealth(int cost) =>
-            _tMPHealthier.text = cost + CURRENCY_SYMBOL;
+        public void ChangeCostUpgradeHealth(int cost) => 
+            SetCostText(_tMPHealthier, cost);
+        
+        public void ChangeCostUpgradeSpeed(int cost) => 
+            SetCostText(_tMPFaster, cost);
+        
+        public void ChangeCostUpgradeForce(int cost) => 
+            SetCostText(_tMPForce, cost);
 
-        public void ChangeCostUpgradeSpeed(int cost) =>
-            _tMPFaster.text = cost + CURRENCY_SYMBOL;
+        public void SetCanUpHealth(bool value) => 
+            SetAvailabilityView(_tMPHealthier, value);
+        
+        public void SetCanUpSpeed(bool value) => 
+            SetAvailabilityView(_tMPFaster, value);
+        
+        public void SetCanUpForce(bool value) => 
+            SetAvailabilityView(_tMPForce, value);
 
-        public void ChangeCostUpgradeForce(int cost) =>
-            _tMPForce.text = cost + CURRENCY_SYMBOL;
-
-        public void SetCanUpHealth(bool value) =>
-            ChangeView(_tMPHealthier, value);
-
-        public void SetCanUpSpeed(bool value) =>
-            ChangeView(_tMPFaster, value);
-
-        public void SetCanUpForce(bool value) =>
-            ChangeView(_tMPForce, value);
-
-        private void TryUpHealth() =>
+        private void OnTryUpHealth() => 
             TriedUpHealth?.Invoke();
-
-        private void TryUpSpeed() =>
+        
+        private void OnTryUpSpeed() => 
             TriedUpSpeed?.Invoke();
-
-        private void TryUpForce() =>
+        
+        private void OnTryUpForce() => 
             TriedUpForce?.Invoke();
-
-        private void ChangeView(TextMeshProUGUI tMpTower, bool value) =>
-            tMpTower.color = value ? Color.green : Color.red;
     }
 }

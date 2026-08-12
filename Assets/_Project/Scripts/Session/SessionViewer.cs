@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Project.Scripts.Session
 {
-    public class SessionViewer : MonoBehaviour
+    public class SessionViewer : MonoBehaviour, IUIElement
     {
         [SerializeField] private TextMeshProUGUI _wavesCount;
         [SerializeField] private TextMeshProUGUI _moneyInfo;

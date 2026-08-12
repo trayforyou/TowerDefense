@@ -13,19 +13,20 @@ namespace _Project.Scripts.Session
     [RequireComponent(typeof(InputDispatcher))]
     public class SessionHandler : MonoBehaviour
     {
+        [SerializeField] private BuildMenu _buildMenuPrefab;
+        [SerializeField] private UpgradeMenu _upgradeMenuPrefab;
+        [SerializeField] private EndMenuViewer _endMenuPrefab;
+        [SerializeField] private SessionViewer _sessionViewerPrefab;
         [SerializeField] private Bullet _bulletPrefab;
         [SerializeField] private Enemy _enemyPrefab;
         [SerializeField] private Tower _fastTowerPrefab;
         [SerializeField] private Tower _strongTowerPrefab;
-        [SerializeField] private BuildMenu _buildMenu;
         [SerializeField] private Castle _castlePrefab;
-
-        [SerializeField] private UpgradeMenu _upgradeMenu;
+        
         [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private LayerMask _castleLayer;
 
-        [SerializeField] private SessionViewer _sessionViewer;
-        [SerializeField] private EndMenuViewer _endMenu;
+        [SerializeField] private Canvas _canvas;
         [SerializeField] private Castle _castle;
         [SerializeField] private string _mainMenuScene = "Menu";
 
@@ -43,7 +44,11 @@ namespace _Project.Scripts.Session
         private Saver _saver;
         private SpawnerCurator _spawnerCurator;
         private Wallet _wallet;
-
+        private UICreator _uICreator;
+        private BuildMenu _buildMenu;
+        private UpgradeMenu _upgradeMenu;
+        private SessionViewer _sessionViewer;
+        private EndMenuViewer _endMenu;
         private CastleUpper _castleUpper;
         private TowerBuilder _towerBuilder;
         private BuildValidator _buildValidator;
@@ -55,8 +60,15 @@ namespace _Project.Scripts.Session
             _mainCamera = Camera.main;
             _saver = new Saver();
             _wallet = new Wallet();
-
+            _uICreator = new UICreator(_canvas);
+            
             _castle = CastleSpawner.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
+
+            _buildMenu = (BuildMenu)_uICreator.Create(_buildMenuPrefab);
+            _upgradeMenu = (UpgradeMenu)_uICreator.Create(_upgradeMenuPrefab);
+            _sessionViewer = (SessionViewer)_uICreator.Create(_sessionViewerPrefab);
+            _endMenu = (EndMenuViewer)_uICreator.Create(_endMenuPrefab);
+            
             _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab);
             _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
             _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace _Project.Scripts.Session
 {
-    public class EndMenuViewer : MonoBehaviour
+    public class EndMenuViewer : MonoBehaviour, IUIElement
     {
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private Button _restart;
