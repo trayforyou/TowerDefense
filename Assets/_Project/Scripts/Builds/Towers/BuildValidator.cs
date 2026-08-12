@@ -9,20 +9,25 @@ namespace _Project.Scripts.Builds.Towers
         private readonly Castle _castle;
         private readonly float _minDistanceForBuilding;
 
+        private HashSet<Tower> _towers = new();
+        
         public BuildValidator(Castle castle, float minDistanceForBuilding)
         {
             _minDistanceForBuilding = minDistanceForBuilding;
             _castle = castle;
         }
 
-        public bool TryValidateBuildPoint(Vector3 buildPosition, List<Tower> towers)
+        public void AddTower(Tower tower) => 
+            _towers.Add(tower);
+
+        public bool TryValidateBuildPoint(Vector3 buildPosition)
         {
             float distance = Vector3.Distance(buildPosition, _castle.transform.position);
 
             if (distance < _minDistanceForBuilding)
                 return false;
 
-            foreach (Tower tower in towers)
+            foreach (Tower tower in _towers)
             {
                 distance = Vector3.Distance(tower.transform.position, buildPosition);
 

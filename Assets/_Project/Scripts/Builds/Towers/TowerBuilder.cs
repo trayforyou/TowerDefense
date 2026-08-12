@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using _Project.Scripts.Builds.Shooters;
 using _Project.Scripts.ScriptableObjects;
 using _Project.Scripts.Session;
@@ -48,7 +47,7 @@ namespace _Project.Scripts.Builds.Towers
 
         public void Activate(Vector3 buildPosition)
         {
-            if (_validator.TryValidateBuildPoint(buildPosition, _towers.ToList()))
+            if (_validator.TryValidateBuildPoint(buildPosition))
             {
                 _buildPosition = buildPosition;
                 _buildMenu.Show();
@@ -103,7 +102,8 @@ namespace _Project.Scripts.Builds.Towers
                 throw new NullReferenceException(nameof(prefab));
 
             Tower tempTower = (Instantiate(prefab, _buildPosition, Quaternion.identity));
-
+            
+            _validator.AddTower(tempTower);
             tempTower.Initialize(_createGun.Invoke(new GunParameters(towerConfig.Damage, towerConfig.ShootDelay,
                 towerConfig.RadiusAttack, _buildPosition)));
 
