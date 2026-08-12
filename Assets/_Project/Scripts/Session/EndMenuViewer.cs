@@ -1,4 +1,5 @@
 using System;
+using _Project.Scripts.Builds.Castles;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,12 +39,8 @@ namespace _Project.Scripts.Session
             _menu.onClick.RemoveListener(GoToMenu);
         }
 
-        public void Show()
-        {
-            _canvasGroup.alpha = 1;
-            _canvasGroup.interactable = true;
-            _canvasGroup.blocksRaycasts = true;
-        }
+        public void Show() => 
+            _canvasGroup.Show();
 
         public void SetValue(int waves, int enemies, int currency)
         {
@@ -52,12 +49,8 @@ namespace _Project.Scripts.Session
             _moneyPerSession.text = _moneyPerSessionText + currency;
         }
 
-        private void Hide()
-        {
-            _canvasGroup.alpha = 0;
-            _canvasGroup.interactable = false;
-            _canvasGroup.blocksRaycasts = false;
-        }
+        private void Hide() => 
+            _canvasGroup.Hide();
 
         private void RestartScene() =>
             ButtonRestartClicked?.Invoke();

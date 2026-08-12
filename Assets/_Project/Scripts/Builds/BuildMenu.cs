@@ -1,4 +1,5 @@
 using System;
+using _Project.Scripts.Builds.Castles;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -44,17 +45,13 @@ namespace _Project.Scripts.Builds
 
         public void Show()
         {
-            _canvasGroup.alpha = 1;
-            _canvasGroup.interactable = true;
-            _canvasGroup.blocksRaycasts = true;
+            _canvasGroup.Show();
             IsActive = true;
         }
 
         public void Hide()
         {
-            _canvasGroup.alpha = 0;
-            _canvasGroup.interactable = false;
-            _canvasGroup.blocksRaycasts = false;
+            _canvasGroup.Hide();
             IsActive = false;
         }
 
