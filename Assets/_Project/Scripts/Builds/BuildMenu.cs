@@ -56,10 +56,10 @@ namespace _Project.Scripts.Builds
             SetAvailabilityView(_tMPStrongTower, value);
         }
 
-        private void OnClickBuyFastTower() => 
+        private void OnClickBuyFastTower() =>
             TriedBuyFastTower?.Invoke();
-        
-        private void OnClickBuyStrongTower() => 
+
+        private void OnClickBuyStrongTower() =>
             TriedBuyStrongTower?.Invoke();
     }
 }

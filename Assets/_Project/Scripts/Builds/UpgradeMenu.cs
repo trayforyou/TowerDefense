@@ -46,31 +46,31 @@ namespace _Project.Scripts.Builds
             SetCostText(_tMPForce, cost);
         }
 
-        public void ChangeCostUpgradeHealth(int cost) => 
+        public void ChangeCostUpgradeHealth(int cost) =>
             SetCostText(_tMPHealthier, cost);
-        
-        public void ChangeCostUpgradeSpeed(int cost) => 
+
+        public void ChangeCostUpgradeSpeed(int cost) =>
             SetCostText(_tMPFaster, cost);
-        
-        public void ChangeCostUpgradeForce(int cost) => 
+
+        public void ChangeCostUpgradeForce(int cost) =>
             SetCostText(_tMPForce, cost);
 
-        public void SetCanUpHealth(bool value) => 
+        public void SetCanUpHealth(bool value) =>
             SetAvailabilityView(_tMPHealthier, value);
-        
-        public void SetCanUpSpeed(bool value) => 
+
+        public void SetCanUpSpeed(bool value) =>
             SetAvailabilityView(_tMPFaster, value);
-        
-        public void SetCanUpForce(bool value) => 
+
+        public void SetCanUpForce(bool value) =>
             SetAvailabilityView(_tMPForce, value);
 
-        private void OnTryUpHealth() => 
+        private void OnTryUpHealth() =>
             TriedUpHealth?.Invoke();
-        
-        private void OnTryUpSpeed() => 
+
+        private void OnTryUpSpeed() =>
             TriedUpSpeed?.Invoke();
-        
-        private void OnTryUpForce() => 
+
+        private void OnTryUpForce() =>
             TriedUpForce?.Invoke();
     }
 }

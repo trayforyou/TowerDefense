@@ -1,9 +1,8 @@
-﻿using _Project.Scripts.Builds.Castles;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace _Project
+namespace _Project.Scripts
 {
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class GameInteractionMenu : MonoBehaviour

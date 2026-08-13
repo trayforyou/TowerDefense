@@ -18,13 +18,13 @@ namespace _Project.Scripts
         private void Awake()
         {
             _saver = new Saver();
-            
             SaveData data = _saver.Load();
             _metaCoins.text += data.MetaCurrency;
+            
             _start.onClick.AddListener(ClickButton);
         }
 
-        private void OnDestroy() => 
+        private void OnDestroy() =>
             _start.onClick.RemoveListener(ClickButton);
 
         private void ClickButton() =>

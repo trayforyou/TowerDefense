@@ -10,17 +10,17 @@ namespace _Project.Scripts.Builds
         private LayerMask _groundLayer;
         private LayerMask _castleLayer;
         private CastleUpper _castleUpper;
-        private TowerBuilder _towerBuilder;
+        private BuildHandler _buildHandler;
         private Camera _mainCamera;
         private InputDispatcher _inputDispatcher;
 
         public InteractHandler(LayerMask groundLayer, LayerMask castleLayer, CastleUpper castleUpper,
-            TowerBuilder towerBuilder, Camera mainCamera, InputDispatcher inputDispatcher)
+            BuildHandler buildHandler, Camera mainCamera, InputDispatcher inputDispatcher)
         {
             _inputDispatcher = inputDispatcher;
             _mainCamera = mainCamera;
             _castleUpper = castleUpper;
-            _towerBuilder = towerBuilder;
+            _buildHandler = buildHandler;
             _groundLayer = groundLayer;
             _castleLayer = castleLayer;
             inputDispatcher.OnPrimaryClick += TryHandleClick;
@@ -28,9 +28,9 @@ namespace _Project.Scripts.Builds
 
         public void Stop()
         {
-            _towerBuilder.StopAttack();
+            _buildHandler.StopAttack();
             _castleUpper.TurnOff();
-            _towerBuilder.TurnOff();
+            _buildHandler.TurnOff();
         }
 
         public void UnSubscribe() =>
@@ -38,7 +38,7 @@ namespace _Project.Scripts.Builds
 
         private void TryHandleClick()
         {
-            if (_towerBuilder.IsActive == false && _castleUpper.IsActive == false)
+            if (_buildHandler.IsActive == false && _castleUpper.IsActive == false)
             {
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -57,7 +57,7 @@ namespace _Project.Scripts.Builds
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _castleLayer))
                 _castleUpper.Activate();
             else if (Physics.Raycast(ray, out hit, Mathf.Infinity, _groundLayer))
-                _towerBuilder.Activate(hit.point);
+                _buildHandler.Activate(hit.point);
         }
     }
 }

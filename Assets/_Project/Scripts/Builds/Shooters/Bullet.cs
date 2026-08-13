@@ -22,7 +22,7 @@ namespace _Project.Scripts.Builds.Shooters
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out Enemies.Enemy enemy))
+            if (other.TryGetComponent(out Enemy enemy))
                 enemy.TakeDamage(_damage);
         }
 
@@ -39,7 +39,7 @@ namespace _Project.Scripts.Builds.Shooters
 
         private IEnumerator FlyBullet(Enemy target, Vector3 startPoint)
         {
-            bool isKilledCurentEnemy = false;
+            bool isKilledCurrentEnemy = false;
             transform.position = startPoint;
             Vector3 lastTargetPosition = target.AimPoint.position;
             bool isBulletFlying = true;
@@ -47,7 +47,7 @@ namespace _Project.Scripts.Builds.Shooters
 
             while (isBulletFlying)
             {
-                if (target != null && target.IsAlive && !isKilledCurentEnemy)
+                if (target != null && target.IsAlive && !isKilledCurrentEnemy)
                 {
                     lastTargetPosition = target.AimPoint.position;
                     transform.position = Vector3.MoveTowards(transform.position,
@@ -55,7 +55,7 @@ namespace _Project.Scripts.Builds.Shooters
                 }
                 else
                 {
-                    isKilledCurentEnemy = true;
+                    isKilledCurrentEnemy = true;
 
                     transform.position = Vector3.MoveTowards(transform.position, lastTargetPosition,
                         _speed * Time.deltaTime);

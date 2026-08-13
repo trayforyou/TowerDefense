@@ -1,6 +1,4 @@
-using System;
 using _Project.Scripts.Builds.Shooters;
-using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 
 namespace _Project.Scripts.Builds.Towers
@@ -11,7 +9,7 @@ namespace _Project.Scripts.Builds.Towers
 
         private Gun _gun;
 
-        private void OnDestroy() => 
+        private void OnDestroy() =>
             _gun.Dispose();
 
         public void Initialize(Gun gun)

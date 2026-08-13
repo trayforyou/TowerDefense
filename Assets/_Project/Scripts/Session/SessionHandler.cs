@@ -22,7 +22,7 @@ namespace _Project.Scripts.Session
         [SerializeField] private Tower _fastTowerPrefab;
         [SerializeField] private Tower _strongTowerPrefab;
         [SerializeField] private Castle _castlePrefab;
-        
+
         [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private LayerMask _castleLayer;
 
@@ -50,9 +50,11 @@ namespace _Project.Scripts.Session
         private SessionViewer _sessionViewer;
         private EndMenuViewer _endMenu;
         private CastleUpper _castleUpper;
-        private TowerBuilder _towerBuilder;
+        private BuildHandler _buildHandler;
         private BuildValidator _buildValidator;
         private EnemySpawner _enemiesSpawner;
+        private TowerBuilder _strongBuilder;
+        private TowerBuilder _fastBuilder;
 
         private void Awake()
         {
@@ -61,22 +63,25 @@ namespace _Project.Scripts.Session
             _saver = new Saver();
             _wallet = new Wallet();
             _uICreator = new UICreator(_canvas);
-            
+
             _castle = CastleSpawner.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
 
             _buildMenu = (BuildMenu)_uICreator.Create(_buildMenuPrefab);
+            _buildMenu.SetCostTowers(_buildConfig.FastTowerCost, _buildConfig.StrongTowerCost);
             _upgradeMenu = (UpgradeMenu)_uICreator.Create(_upgradeMenuPrefab);
             _sessionViewer = (SessionViewer)_uICreator.Create(_sessionViewerPrefab);
             _endMenu = (EndMenuViewer)_uICreator.Create(_endMenuPrefab);
-            
             _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab);
             _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
             _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);
-            _towerBuilder = new TowerBuilder(_wallet, _buildConfig, _fastTowerConfig,
-                _strongTowerConfig, _buildValidator, _fastTowerPrefab, _strongTowerPrefab, _buildMenu, CreateGun);
+            _strongBuilder = new TowerBuilder(_strongTowerPrefab, _strongTowerConfig, _wallet,
+                _buildConfig.StrongTowerCost, _buildValidator, CreateGun);
+            _fastBuilder = new TowerBuilder(_fastTowerPrefab, _fastTowerConfig, _wallet, _buildConfig.FastTowerCost,
+                _buildValidator, CreateGun);
+            _buildHandler = new BuildHandler(_wallet, _buildValidator, _buildMenu, _strongBuilder, _fastBuilder);
             _castleUpper = new CastleUpper(_castleConfig, _wallet, _castle, _upgradeMenu);
             _interactHandler = new InteractHandler(_groundLayer, _castleLayer, _castleUpper,
-                _towerBuilder, _mainCamera, _inputDispatcher);
+                _buildHandler, _mainCamera, _inputDispatcher);
         }
 
         private void Start()
@@ -118,7 +123,7 @@ namespace _Project.Scripts.Session
 
         private void UnSubscribeAll()
         {
-            _towerBuilder.UnSubscribeAll();
+            _buildHandler.UnSubscribeAll();
             _interactHandler.UnSubscribe();
             _castleUpper.UnSubscribeAll();
             _spawnerCurator.WaveChanged -= _sessionViewer.ChangeWaveNumber;

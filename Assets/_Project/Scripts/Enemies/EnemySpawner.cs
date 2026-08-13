@@ -14,7 +14,6 @@ namespace _Project.Scripts.Enemies
     public class EnemySpawner : IDisposable
     {
         private Enemy _prefab;
-
         private Castle _castle;
         private ObjectPool<Enemy> _enemiesPool;
         private readonly HashSet<Enemy> _enemies = new();

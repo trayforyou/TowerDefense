@@ -10,14 +10,14 @@ namespace _Project.Scripts.Builds.Towers
         private readonly float _minDistanceForBuilding;
 
         private HashSet<Tower> _towers = new();
-        
+
         public BuildValidator(Castle castle, float minDistanceForBuilding)
         {
             _minDistanceForBuilding = minDistanceForBuilding;
             _castle = castle;
         }
 
-        public void AddTower(Tower tower) => 
+        public void AddTower(Tower tower) =>
             _towers.Add(tower);
 
         public bool TryValidateBuildPoint(Vector3 buildPosition)

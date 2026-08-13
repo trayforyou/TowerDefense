@@ -6,9 +6,9 @@ namespace _Project.Scripts.Session
 {
     public class UICreator
     {
-        private Canvas _canvas;
-        
-        public UICreator(Canvas canvas) => 
+        private readonly Canvas _canvas;
+
+        public UICreator(Canvas canvas) =>
             _canvas = canvas;
 
         public IUIElement Create(Component component)
@@ -20,5 +20,3 @@ namespace _Project.Scripts.Session
         }
     }
 }
-
-    

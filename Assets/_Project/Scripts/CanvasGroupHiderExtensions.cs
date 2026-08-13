@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Project.Scripts.Builds.Castles
+namespace _Project.Scripts
 {
     public static class CanvasGroupHiderExtensions
     {

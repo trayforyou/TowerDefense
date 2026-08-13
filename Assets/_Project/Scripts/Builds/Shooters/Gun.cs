@@ -25,7 +25,7 @@ namespace _Project.Scripts.Builds.Shooters
             _enemyFinder.FoundEnemy += StartShoot;
             _enemyFinder.Find();
         }
-        
+
         public void SetShootDelay(float delay) =>
             _shooter.SetShootDelay(delay);
 
@@ -58,7 +58,7 @@ namespace _Project.Scripts.Builds.Shooters
         private void RefreshTarget() =>
             _enemyFinder.Find();
 
-        public void SetShootPoint(Vector3 shootPoint) => 
+        public void SetShootPoint(Vector3 shootPoint) =>
             _shooter.SetShootPoint(shootPoint);
     }
 }

@@ -74,7 +74,6 @@ namespace _Project.Scripts.Builds.Shooters
             }
             catch (OperationCanceledException)
             {
-                
             }
         }
 
