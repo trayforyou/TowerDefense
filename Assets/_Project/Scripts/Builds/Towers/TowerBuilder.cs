@@ -19,7 +19,7 @@ namespace _Project.Scripts.Builds.Towers
 
         public event Action<Tower> Builded;
 
-        public TowerBuilder(Tower prefab, TowerConfig config, Wallet wallet, int cost, BuildValidator validator,
+        public TowerBuilder(Tower prefab, TowerConfig config, Wallet wallet, int cost,
             Func<GunParameters, Gun> createGun)
         {
             Cost = cost;

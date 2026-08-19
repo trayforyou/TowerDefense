@@ -12,7 +12,6 @@ namespace _Project.Scripts.Builds.Shooters
         private BulletsStorage _bulletsPool;
         private Vector3 _shootPoint;
         private int _currentDelay;
-        private Coroutine _attackCoroutine;
         private CancellationTokenSource _tokenSource;
 
         public Shooter(ShooterConfig config, int damage, float shootDelay, Bullet bulletPrefab)

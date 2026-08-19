@@ -4,7 +4,7 @@ using static UnityEngine.Object;
 
 namespace _Project.Scripts.Builds.Castles
 {
-    public static class CastleSpawner
+    public static class CastlePlacer
     {
         public static Castle PlaceAtScreenCenter(Castle castle, Camera camera, LayerMask groundLayer)
         {

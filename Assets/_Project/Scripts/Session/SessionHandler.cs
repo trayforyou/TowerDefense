@@ -64,7 +64,7 @@ namespace _Project.Scripts.Session
             _wallet = new Wallet();
             _uICreator = new UICreator(_canvas);
 
-            _castle = CastleSpawner.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
+            _castle = CastlePlacer.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
 
             _buildMenu = (BuildMenu)_uICreator.Create(_buildMenuPrefab);
             _buildMenu.SetCostTowers(_buildConfig.FastTowerCost, _buildConfig.StrongTowerCost);
@@ -75,9 +75,8 @@ namespace _Project.Scripts.Session
             _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
             _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);
             _strongBuilder = new TowerBuilder(_strongTowerPrefab, _strongTowerConfig, _wallet,
-                _buildConfig.StrongTowerCost, _buildValidator, CreateGun);
-            _fastBuilder = new TowerBuilder(_fastTowerPrefab, _fastTowerConfig, _wallet, _buildConfig.FastTowerCost,
-                _buildValidator, CreateGun);
+                _buildConfig.StrongTowerCost, CreateGun);
+            _fastBuilder = new TowerBuilder(_fastTowerPrefab, _fastTowerConfig, _wallet, _buildConfig.FastTowerCost, CreateGun);
             _buildHandler = new BuildHandler(_wallet, _buildValidator, _buildMenu, _strongBuilder, _fastBuilder);
             _castleUpper = new CastleUpper(_castleConfig, _wallet, _castle, _upgradeMenu);
             _interactHandler = new InteractHandler(_groundLayer, _castleLayer, _castleUpper,

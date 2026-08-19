@@ -17,7 +17,6 @@ namespace _Project.Scripts.Enemies
         private Castle _castle;
         private ObjectPool<Enemy> _enemiesPool;
         private readonly HashSet<Enemy> _enemies = new();
-        private Coroutine _coroutine;
         private EnemiesConfig _config;
         private int _enemiesCount;
         private int _currentEnemiesCount;

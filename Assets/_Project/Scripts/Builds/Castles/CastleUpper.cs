@@ -6,7 +6,6 @@ namespace _Project.Scripts.Builds.Castles
     public class CastleUpper
     {
         private UpgradeMenu _upgradeMenu;
-        private Upgrade _upgrade;
 
         private Wallet _wallet;
         private Castle _castle;
