@@ -27,7 +27,6 @@ namespace _Project.Scripts.Session
         [SerializeField] private LayerMask _castleLayer;
 
         [SerializeField] private Canvas _canvas;
-        [SerializeField] private Castle _castle;
         [SerializeField] private string _mainMenuScene = "Menu";
 
         [SerializeField] private TowerConfig _strongTowerConfig;
@@ -39,10 +38,11 @@ namespace _Project.Scripts.Session
         [SerializeField] private BuildConfig _buildConfig;
 
         private InputDispatcher _inputDispatcher;
-        private Camera _mainCamera;
         private InteractHandler _interactHandler;
-        private Saver _saver;
         private SpawnerCurator _spawnerCurator;
+        private Camera _mainCamera;
+        private Castle _castle;
+        private Saver _saver;
         private Wallet _wallet;
         private UICreator _uICreator;
         private BuildMenu _buildMenu;
@@ -64,7 +64,8 @@ namespace _Project.Scripts.Session
             _wallet = new Wallet();
             _uICreator = new UICreator(_canvas);
 
-            _castle = CastlePlacer.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
+            CastlePlacer castlePlacer = new CastlePlacer();
+            _castle = castlePlacer.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
 
             _buildMenu = (BuildMenu)_uICreator.Create(_buildMenuPrefab);
             _buildMenu.SetCostTowers(_buildConfig.FastTowerCost, _buildConfig.StrongTowerCost);

@@ -40,13 +40,10 @@ namespace _Project.Scripts.Builds
         {
             if (_buildHandler.IsActive == false && _castleUpper.IsActive == false)
             {
-                if (Input.GetMouseButtonDown(0))
-                {
                     if (EventSystem.current.IsPointerOverGameObject())
                         return;
 
                     HandleClick();
-                }
             }
         }
 

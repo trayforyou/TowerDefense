@@ -4,9 +4,9 @@ using static UnityEngine.Object;
 
 namespace _Project.Scripts.Builds.Castles
 {
-    public static class CastlePlacer
+    public class CastlePlacer
     {
-        public static Castle PlaceAtScreenCenter(Castle castle, Camera camera, LayerMask groundLayer)
+        public Castle PlaceAtScreenCenter(Castle castle, Camera camera, LayerMask groundLayer)
         {
             if (castle == null || camera == null)
                 throw new NullReferenceException();

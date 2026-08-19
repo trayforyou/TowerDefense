@@ -12,6 +12,7 @@ namespace _Project.Scripts.Builds.Shooters
 
         public void Dispose()
         {
+            Stop();
             _enemyFinder.FoundEnemy -= StartShoot;
             _enemyFinder.Dispose();
             _shooter.Dispose();
