@@ -39,25 +39,21 @@ namespace _Project.Scripts.Enemies.SpawnPoints
                 case UpSide:
                     x = _bounds.max.x;
                     z = Random.Range(_bounds.min.z, _bounds.max.z);
-                    Debug.Log("сверху");
                     break;
 
                 case DownSide:
                     x = _bounds.min.x;
                     z = Random.Range(_bounds.min.z, _bounds.max.z);
-                    Debug.Log("снизу");
                     break;
 
                 case LeftSide:
                     x = Random.Range(_bounds.min.x, _bounds.max.x);
                     z = _bounds.max.z;
-                    Debug.Log("слева");
                     break;
 
                 case RightSide:
                     x = Random.Range(_bounds.min.x, _bounds.max.x);
                     z = _bounds.min.z;
-                    Debug.Log("справа");
                     break;
 
                 default:
