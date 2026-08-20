@@ -16,13 +16,15 @@ namespace _Project.Scripts.Builds.Towers
         private Func<GunParameters, Gun> _createGun;
 
         public readonly int Cost;
+        private readonly FiringSwitch _firingSwitch;
 
         public event Action<Tower> Builded;
 
         public TowerBuilder(Tower prefab, TowerConfig config, Wallet wallet, int cost,
-            Func<GunParameters, Gun> createGun)
+            Func<GunParameters, Gun> createGun, FiringSwitch firingSwitch)
         {
             Cost = cost;
+            _firingSwitch  = firingSwitch;
             _createGun = createGun;
             _config = config;
             _prefab = prefab;
@@ -38,7 +40,7 @@ namespace _Project.Scripts.Builds.Towers
                 tempTower = (Instantiate(_prefab, buildPosition, Quaternion.identity));
 
                 tempTower.Initialize(_createGun.Invoke(new GunParameters(_config.Damage, _config.ShootDelay,
-                    _config.RadiusAttack, buildPosition)));
+                    _config.RadiusAttack, buildPosition)), _firingSwitch);
             }
 
             Builded?.Invoke(tempTower);

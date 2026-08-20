@@ -1,5 +1,4 @@
 using System;
-using _Project.Scripts.Savers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,15 +10,11 @@ namespace _Project.Scripts
         [SerializeField] private Button _start;
         [SerializeField] private TextMeshProUGUI _metaCoins;
 
-        private Saver _saver;
-
         public event Action TriedLoadGame;
 
-        private void Awake()
+        public void Initialize(int metaCoins)
         {
-            _saver = new Saver();
-            SaveData data = _saver.Load();
-            _metaCoins.text += data.MetaCurrency;
+            _metaCoins.text += metaCoins;
             
             _start.onClick.AddListener(ClickButton);
         }

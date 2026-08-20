@@ -26,13 +26,6 @@ namespace _Project.Scripts.Builds
             inputDispatcher.OnPrimaryClick += TryHandleClick;
         }
 
-        public void Stop()
-        {
-            _buildHandler.StopAttack();
-            _castleUpper.TurnOff();
-            _buildHandler.TurnOff();
-        }
-
         public void UnSubscribe() =>
             _inputDispatcher.OnPrimaryClick -= TryHandleClick;
 

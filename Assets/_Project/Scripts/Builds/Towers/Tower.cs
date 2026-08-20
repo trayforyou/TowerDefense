@@ -8,17 +8,27 @@ namespace _Project.Scripts.Builds.Towers
         [SerializeField] private Transform _shootPoint;
 
         private Gun _gun;
+        private FiringSwitch _firingSwitch;
 
-        private void OnDestroy() =>
-            _gun.Dispose();
-
-        public void Initialize(Gun gun)
+        private void OnDestroy()
         {
-            _gun = gun;
-            _gun.SetShootPoint(_shootPoint.position);
+            _firingSwitch.OnStopFire -= Stop;
+            _gun.Dispose();
         }
 
-        public void Stop() =>
+        public void Initialize(Gun gun, FiringSwitch firingSwitch)
+        {
+            _firingSwitch = firingSwitch;
+            _gun = gun;
+            _gun.SetShootPoint(_shootPoint.position);
+            
+            _firingSwitch.OnStopFire += Stop;
+        }
+
+        private void Stop()
+        {
+            _firingSwitch.OnStopFire -= Stop;
             _gun.Stop();
+        }
     }
 }

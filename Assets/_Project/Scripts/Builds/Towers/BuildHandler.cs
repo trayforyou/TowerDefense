@@ -40,12 +40,6 @@ namespace _Project.Scripts.Builds.Towers
             }
         }
 
-        public void StopAttack()
-        {
-            foreach (var tower in _towers)
-                tower.Stop();
-        }
-
         private void SubscribeAll()
         {
             _wallet.ValueChanged += ChangeOpportunitiesBuy;

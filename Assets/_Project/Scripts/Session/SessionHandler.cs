@@ -55,6 +55,7 @@ namespace _Project.Scripts.Session
         private EnemySpawner _enemiesSpawner;
         private TowerBuilder _strongBuilder;
         private TowerBuilder _fastBuilder;
+        private FiringSwitch _firingSwitch;
 
         private void Awake()
         {
@@ -75,9 +76,10 @@ namespace _Project.Scripts.Session
             _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab);
             _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
             _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);
+            _firingSwitch = new FiringSwitch();
             _strongBuilder = new TowerBuilder(_strongTowerPrefab, _strongTowerConfig, _wallet,
-                _buildConfig.StrongTowerCost, CreateGun);
-            _fastBuilder = new TowerBuilder(_fastTowerPrefab, _fastTowerConfig, _wallet, _buildConfig.FastTowerCost, CreateGun);
+                _buildConfig.StrongTowerCost, CreateGun, _firingSwitch );
+            _fastBuilder = new TowerBuilder(_fastTowerPrefab, _fastTowerConfig, _wallet, _buildConfig.FastTowerCost, CreateGun,_firingSwitch);
             _buildHandler = new BuildHandler(_wallet, _buildValidator, _buildMenu, _strongBuilder, _fastBuilder);
             _castleUpper = new CastleUpper(_castleConfig, _wallet, _castle, _upgradeMenu);
             _interactHandler = new InteractHandler(_groundLayer, _castleLayer, _castleUpper,
@@ -144,8 +146,10 @@ namespace _Project.Scripts.Session
         private void End()
         {
             _castle.Died -= End;
+            _firingSwitch.TurnOff();
             _spawnerCurator.Stop();
-            _interactHandler.Stop();
+            _castleUpper.TurnOff();
+            _buildHandler.TurnOff();
             _sessionViewer.Hide();
 
             int reward = _spawnerCurator.WaveNumber * _moneyConfig.MoneyPerWave +
