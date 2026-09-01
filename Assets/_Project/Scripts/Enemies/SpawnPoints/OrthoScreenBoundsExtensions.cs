@@ -2,9 +2,9 @@
 
 namespace _Project.Scripts.Enemies.SpawnPoints
 {
-    public static class OrthoScreenBounds
+    public static class OrthoScreenBoundsExtensions
     {
-        private static (float halfW, float halfH) GetHalfExtents(Camera cam)
+        private static (float halfW, float halfH) GetHalfExtents(this Camera cam)
         {
             float halfH = cam.orthographicSize;
             float halfW = halfH * cam.aspect;
@@ -12,9 +12,9 @@ namespace _Project.Scripts.Enemies.SpawnPoints
             return (halfW, halfH);
         }
 
-        public static Bounds GetVisibleBounds(Camera cam, float groundY)
+        public static Bounds GetVisibleBounds(this Camera cam, float groundY)
         {
-            var (halfW, halfH) = GetHalfExtents(cam);
+            var (halfW, halfH) = cam.GetHalfExtents();
 
             Vector3 cameraPosition = cam.transform.position;
 

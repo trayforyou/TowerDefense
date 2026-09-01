@@ -38,7 +38,7 @@ namespace _Project.Scripts.Builds.Shooters
                 return;
             }
 
-            TokenCleaner.Clear(ref _tokenSource);
+            _tokenSource.Clear();
             _tokenSource = new CancellationTokenSource();
             StartFindNearestEnemy(_tokenSource.Token).Forget();
         }
@@ -49,7 +49,8 @@ namespace _Project.Scripts.Builds.Shooters
         public void Dispose()
         {
             Stop();
-            TokenCleaner.Clear(ref _tokenSource);
+            _tokenSource.Clear();
+            _tokenSource = null;
         }
 
         private async UniTaskVoid StartFindNearestEnemy(CancellationToken token)

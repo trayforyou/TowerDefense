@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed7d5ef06fe049bfb3d342c4fa09bfc5, type: 3}
   m_Name: EnemiesConfig
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.ScriptableObjects.EnemiesConfig
+  <SpawnOffset>k__BackingField: 0.5
   <MinEnemyPoolSize>k__BackingField: 5
   <MaxEnemyPoolSize>k__BackingField: 15
   <WavesDelay>k__BackingField: 15
@@ -19,7 +20,7 @@ MonoBehaviour:
   <EnemySpeed>k__BackingField: 0.5
   <EnemyAttackDelay>k__BackingField: 1
   <EnemyDamage>k__BackingField: 1
-  <EnemyHealth>k__BackingField: 3
+  <EnemyHealth>k__BackingField: 8
   <EnemiesPerWave>k__BackingField: 5
   <EnemyStopDistance>k__BackingField: 1
   <MultiplierEnemiesPerWave>k__BackingField: 1.2

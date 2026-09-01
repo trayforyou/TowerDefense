@@ -26,7 +26,7 @@ namespace _Project.Scripts.Builds.Shooters
             if(_shootPoint == Vector3.zero)
                 throw new NullReferenceException(nameof(_shootPoint));
             
-            TokenCleaner.Clear(ref _tokenSource);
+            _tokenSource.Clear();
             _tokenSource = new CancellationTokenSource();
             StartAttack(_tokenSource.Token, enemy).Forget();
         }
@@ -35,7 +35,7 @@ namespace _Project.Scripts.Builds.Shooters
             Stop();
 
         public void Stop() => 
-            TokenCleaner.Clear(ref _tokenSource);
+            _tokenSource.Clear();
 
         public void SetShootDelay(float newDelay) =>
             _currentDelay = (int)(newDelay * 1000);

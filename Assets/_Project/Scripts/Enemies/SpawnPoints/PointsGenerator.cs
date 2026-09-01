@@ -2,7 +2,7 @@
 
 namespace _Project.Scripts.Enemies.SpawnPoints
 {
-    public class PointGenerator
+    public class PointsGenerator
     {
         private const int UpSide = 0;
         private const int DownSide = 1;
@@ -12,7 +12,7 @@ namespace _Project.Scripts.Enemies.SpawnPoints
         private Bounds _bounds;
         private readonly float _y;
 
-        public PointGenerator(float offset, Camera camera, float groundY)
+        public PointsGenerator(float offset, Camera camera, float groundY)
         {
             _y = groundY;
             FindBounds(camera, offset, groundY);
@@ -20,7 +20,7 @@ namespace _Project.Scripts.Enemies.SpawnPoints
 
         private void FindBounds(Camera camera, float offset, float groundY)
         {
-            _bounds = OrthoScreenBounds.GetVisibleBounds(camera, groundY);
+            _bounds = camera.GetVisibleBounds(groundY);
             _bounds.size += new Vector3(offset * 2, 0, offset * 2);
         }
 

@@ -63,8 +63,6 @@ namespace _Project.Scripts.Enemies
 
         public void Stop()
         {
-            StopAllCoroutines();
-
             _animator.SetBool(IsRun, false);
             _attacker.Stop();
             UnsubscribeAll();

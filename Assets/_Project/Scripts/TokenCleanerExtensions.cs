@@ -2,13 +2,12 @@
 
 namespace _Project.Scripts
 {
-    public static class TokenCleaner
+    public static class TokenCleanerExtensions
     {
-        public static void Clear(ref CancellationTokenSource token)
+        public static void Clear(this CancellationTokenSource token)
         {
             token?.Cancel();
             token?.Dispose();
-            token = null;
         }
     }
 }

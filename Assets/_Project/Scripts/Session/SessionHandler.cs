@@ -73,7 +73,7 @@ namespace _Project.Scripts.Session
             _upgradeMenu = (UpgradeMenu)_uICreator.Create(_upgradeMenuPrefab);
             _sessionViewer = (SessionViewer)_uICreator.Create(_sessionViewerPrefab);
             _endMenu = (EndMenuViewer)_uICreator.Create(_endMenuPrefab);
-            _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab);
+            _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab,_mainCamera);
             _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
             _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);
             _firingSwitch = new FiringSwitch();

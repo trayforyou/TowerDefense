@@ -19,4 +19,4 @@ MonoBehaviour:
   <RadiusRangeCastle>k__BackingField: 10
   <StartDelayShootCastle>k__BackingField: 1
   <StartDamageCastle>k__BackingField: 1
-  <StartHealthCastle>k__BackingField: 25
+  <StartHealthCastle>k__BackingField: 5

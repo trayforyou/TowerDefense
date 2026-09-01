@@ -20,7 +20,7 @@ namespace _Project.Scripts.Enemies
         private EnemiesConfig _config;
         private int _enemiesCount;
         private int _currentEnemiesCount;
-        private PointGenerator _pointGenerator;
+        private PointsGenerator _pointsGenerator;
         private CancellationTokenSource _cancellationTokenSource;
 
         public event Action EnemyDied;
@@ -28,19 +28,19 @@ namespace _Project.Scripts.Enemies
         public event Action<int> ChangedAliveEnemies;
         public event Action<int> StartedNewWave;
 
-        public EnemySpawner(Castle castle, EnemiesConfig config, Enemy prefab)
+        public EnemySpawner(Castle castle, EnemiesConfig config, Enemy prefab, Camera mainCamera)
         {
             _prefab = prefab;
             _config = config;
             _castle = castle;
             _enemiesCount = _config.EnemiesPerWave;
-            _pointGenerator = new PointGenerator(_config.SpawnOffset, Camera.main, 0);
+            _pointsGenerator = new PointsGenerator(_config.SpawnOffset, mainCamera, 0);
             InitializePool();
         }
 
         public void StartWave()
         {
-            TokenCleaner.Clear(ref _cancellationTokenSource);
+            _cancellationTokenSource.Clear();
             _cancellationTokenSource = new CancellationTokenSource();
             StartSpawning(_cancellationTokenSource.Token).Forget();
         }
@@ -48,7 +48,7 @@ namespace _Project.Scripts.Enemies
             
         public void Stop()
         {
-            TokenCleaner.Clear(ref _cancellationTokenSource);
+            _cancellationTokenSource.Clear();
             
             foreach (Enemy enemy in _enemies)
                 enemy.Stop();
@@ -69,7 +69,7 @@ namespace _Project.Scripts.Enemies
                     await UniTask.Delay(wait, cancellationToken: token);
 
                     tempEnemy = _enemiesPool.Get();
-                    tempEnemy.transform.position = _pointGenerator.GetRandom();
+                    tempEnemy.transform.position = _pointsGenerator.GetRandom();
 
                     tempEnemy.GoToTarget();
                 }
