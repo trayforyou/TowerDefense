@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using _Project.Scripts.Builds;
 using _Project.Scripts.Builds.Castles;
 using _Project.Scripts.Builds.Shooters;
@@ -6,11 +8,9 @@ using _Project.Scripts.Enemies;
 using _Project.Scripts.Savers;
 using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace _Project.Scripts.Session
 {
-    [RequireComponent(typeof(InputDispatcher))]
     public class SessionHandler : MonoBehaviour
     {
         [SerializeField] private BuildMenu _buildMenuPrefab;
@@ -27,7 +27,6 @@ namespace _Project.Scripts.Session
         [SerializeField] private LayerMask _castleLayer;
 
         [SerializeField] private Canvas _canvas;
-        [SerializeField] private string _mainMenuScene = "Menu";
 
         [SerializeField] private TowerConfig _strongTowerConfig;
         [SerializeField] private TowerConfig _fastTowerConfig;
@@ -37,6 +36,7 @@ namespace _Project.Scripts.Session
         [SerializeField] private MoneyConfig _moneyConfig;
         [SerializeField] private BuildConfig _buildConfig;
 
+        private HashSet<IDisposable> _disposables;
         private InputDispatcher _inputDispatcher;
         private InteractHandler _interactHandler;
         private SpawnerCurator _spawnerCurator;
@@ -56,11 +56,14 @@ namespace _Project.Scripts.Session
         private TowerBuilder _strongBuilder;
         private TowerBuilder _fastBuilder;
         private FiringSwitch _firingSwitch;
+        private SceneChanger _sceneChanger;
 
         private void Awake()
         {
-            _inputDispatcher = GetComponent<InputDispatcher>();
+            _disposables = new();
             _mainCamera = Camera.main;
+            _inputDispatcher = new InputDispatcher();
+            _disposables.Add(_inputDispatcher);
             _saver = new Saver();
             _wallet = new Wallet();
             _uICreator = new UICreator(_canvas);
@@ -68,22 +71,29 @@ namespace _Project.Scripts.Session
             CastlePlacer castlePlacer = new CastlePlacer();
             _castle = castlePlacer.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
 
+            _sceneChanger = new SceneChanger();
             _buildMenu = (BuildMenu)_uICreator.Create(_buildMenuPrefab);
             _buildMenu.SetCostTowers(_buildConfig.FastTowerCost, _buildConfig.StrongTowerCost);
             _upgradeMenu = (UpgradeMenu)_uICreator.Create(_upgradeMenuPrefab);
             _sessionViewer = (SessionViewer)_uICreator.Create(_sessionViewerPrefab);
             _endMenu = (EndMenuViewer)_uICreator.Create(_endMenuPrefab);
-            _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab,_mainCamera);
+            _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab, _mainCamera);
+            _disposables.Add(_enemiesSpawner);
             _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
+            _disposables.Add(_spawnerCurator);
             _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);
             _firingSwitch = new FiringSwitch();
             _strongBuilder = new TowerBuilder(_strongTowerPrefab, _strongTowerConfig, _wallet,
-                _buildConfig.StrongTowerCost, CreateGun, _firingSwitch );
-            _fastBuilder = new TowerBuilder(_fastTowerPrefab, _fastTowerConfig, _wallet, _buildConfig.FastTowerCost, CreateGun,_firingSwitch);
+                _buildConfig.StrongTowerCost, CreateGun, _firingSwitch);
+            _fastBuilder = new TowerBuilder(_fastTowerPrefab, _fastTowerConfig, _wallet, _buildConfig.FastTowerCost,
+                CreateGun, _firingSwitch);
             _buildHandler = new BuildHandler(_wallet, _buildValidator, _buildMenu, _strongBuilder, _fastBuilder);
+            _disposables.Add(_buildHandler);
             _castleUpper = new CastleUpper(_castleConfig, _wallet, _castle, _upgradeMenu);
+            _disposables.Add(_castleUpper);
             _interactHandler = new InteractHandler(_groundLayer, _castleLayer, _castleUpper,
                 _buildHandler, _mainCamera, _inputDispatcher);
+            _disposables.Add(_interactHandler);
         }
 
         private void Start()
@@ -102,8 +112,17 @@ namespace _Project.Scripts.Session
             _wallet.RefreshInfo();
         }
 
-        private void OnDestroy() =>
+        private void OnDestroy()
+        {
             UnSubscribeAll();
+            DisposeAll();
+        }
+
+        private void DisposeAll()
+        {
+            foreach (IDisposable disposable in _disposables) 
+                disposable.Dispose();
+        }
 
         private Gun CreateGun(GunParameters parameters) =>
             new(new Shooter(_shooterConfig, parameters.Damage, parameters.ShootDelay, _bulletPrefab),
@@ -125,9 +144,6 @@ namespace _Project.Scripts.Session
 
         private void UnSubscribeAll()
         {
-            _buildHandler.UnSubscribeAll();
-            _interactHandler.UnSubscribe();
-            _castleUpper.UnSubscribeAll();
             _spawnerCurator.WaveChanged -= _sessionViewer.ChangeWaveNumber;
             _spawnerCurator.TimeChanged -= _sessionViewer.ChangeWaveTime;
             _spawnerCurator.ChangedEnemiesCount -= _sessionViewer.ChangeEnemiesCount;
@@ -171,13 +187,13 @@ namespace _Project.Scripts.Session
         private void GoToMenu()
         {
             _endMenu.ButtonMenuClicked -= GoToMenu;
-            SceneManager.LoadScene(_mainMenuScene);
+            _sceneChanger.GoToMainMenu();
         }
 
         private void RestartSession()
         {
             _endMenu.ButtonRestartClicked -= RestartSession;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            _sceneChanger.RestartScene();
         }
     }
 }

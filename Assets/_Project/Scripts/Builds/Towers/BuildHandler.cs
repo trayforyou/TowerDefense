@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using _Project.Scripts.Session;
 using UnityEngine;
 
 namespace _Project.Scripts.Builds.Towers
 {
-    public class BuildHandler
+    public class BuildHandler : IDisposable
     {
         private readonly List<Tower> _towers = new();
         private BuildValidator _validator;
@@ -49,7 +50,7 @@ namespace _Project.Scripts.Builds.Towers
             _strongTowerBuilder.Builded += ProcessTower;
         }
 
-        public void UnSubscribeAll()
+        private void UnSubscribeAll()
         {
             _buildMenu.TriedBuyFastTower -= BuildFastTower;
             _buildMenu.TriedBuyStrongTower -= BuildStrongTower;
@@ -80,5 +81,8 @@ namespace _Project.Scripts.Builds.Towers
             _buildMenu.SetCanBuyFast(count >= _fastTowerBuilder.Cost);
             _buildMenu.SetCanBuyStrongTower(count >= _strongTowerBuilder.Cost);
         }
+
+        public void Dispose() => 
+            UnSubscribeAll();
     }
 }

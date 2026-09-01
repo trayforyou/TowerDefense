@@ -12,6 +12,7 @@ namespace _Project.Scripts.Enemies
         private Castle _castle;
         private float _sqrStopDistance;
         private Transform _transform;
+        private Coroutine _attackCoroutine;
 
         public event Action Attacking;
         public event Action NeedingRun;
@@ -27,11 +28,14 @@ namespace _Project.Scripts.Enemies
         public void Attack()
         {
             StopAllCoroutines();
-            StartCoroutine(StartAttackCoroutine());
+            _attackCoroutine = StartCoroutine(StartAttackCoroutine());
         }
 
-        public void Stop() =>
-            StopAllCoroutines();
+        public void Stop()
+        {
+            if (_attackCoroutine != null)
+                StopCoroutine(_attackCoroutine);
+        }
 
         private IEnumerator StartAttackCoroutine()
         {

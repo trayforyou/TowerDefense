@@ -1,9 +1,10 @@
+using System;
 using _Project.Scripts.ScriptableObjects;
 using _Project.Scripts.Session;
 
 namespace _Project.Scripts.Builds.Castles
 {
-    public class CastleUpper
+    public class CastleUpper : IDisposable
     {
         private UpgradeMenu _upgradeMenu;
 
@@ -65,6 +66,9 @@ namespace _Project.Scripts.Builds.Castles
 
         public void Activate() =>
             _upgradeMenu.Show();
+        
+        public void Dispose() => 
+            UnSubscribeAll();
 
         private void ChangeOpportunitiesBuy(int count)
         {
@@ -81,7 +85,7 @@ namespace _Project.Scripts.Builds.Castles
             _wallet.ValueChanged += ChangeOpportunitiesBuy;
         }
 
-        public void UnSubscribeAll()
+        private void UnSubscribeAll()
         {
             _upgradeMenu.TriedUpHealth -= UpCastleHealth;
             _upgradeMenu.TriedUpForce -= UpCastleForce;

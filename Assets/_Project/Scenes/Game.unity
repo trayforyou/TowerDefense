@@ -6360,7 +6360,6 @@ GameObject:
   m_Component:
   - component: {fileID: 727398362}
   - component: {fileID: 727398361}
-  - component: {fileID: 727398365}
   m_Layer: 0
   m_Name: SessionHandler
   m_TagString: Untagged
@@ -6396,8 +6395,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _canvas: {fileID: 982798454}
-  _castle: {fileID: 981011939}
-  _mainMenuScene: Menu
   _strongTowerConfig: {fileID: 11400000, guid: 1f7887d075237b046a86beefb907c213, type: 2}
   _fastTowerConfig: {fileID: 11400000, guid: 1a3cc6306c681e8488f5ad589897d70c, type: 2}
   _enemiesConfig: {fileID: 11400000, guid: ca304a67c4071c14782f7a854ec06530, type: 2}
@@ -6420,18 +6417,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &727398365
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727398360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80bd9278e4114952b5e61cb180368f57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Builds.InputDispatcher
 --- !u!1 &729958735
 GameObject:
   m_ObjectHideFlags: 0
@@ -8828,17 +8813,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a41fa278112a405439fa6341c421e1d2, type: 3}
---- !u!114 &981011939 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8952569508953095174, guid: fcabe89e00e7d0d46b83ae63a11d0860, type: 3}
-  m_PrefabInstance: {fileID: 8519552368421980794}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd301f8ac6ffc67498ca0e7b25ef6b16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Castle
 --- !u!1001 &981567133
 PrefabInstance:
   m_ObjectHideFlags: 0
