@@ -6,18 +6,11 @@ namespace _Project.Scripts.Builds.Castles
 {
     public class CastleUpper : IDisposable
     {
-        private UpgradeMenu _upgradeMenu;
-
-        private Wallet _wallet;
-        private Castle _castle;
-        private CastleConfig _castleConfig;
-
-        private Upgrade _healthUpgrade;
-        private Upgrade _forceUpgrade;
-        private Upgrade _speedUpgrade;
-
-        private float _currentDelay;
-        private int _currentDamage;
+        private readonly UpgradeMenu _upgradeMenu;
+        private readonly Upgrade _healthUpgrade;
+        private readonly Upgrade _forceUpgrade;
+        private readonly Upgrade _speedUpgrade;
+        private readonly Wallet _wallet;
 
         public bool IsActive => _upgradeMenu.IsActive;
 
@@ -27,26 +20,24 @@ namespace _Project.Scripts.Builds.Castles
         public CastleUpper(CastleConfig castleConfig, Wallet wallet, Castle castle, UpgradeMenu upgradeMenu)
         {
             _upgradeMenu = upgradeMenu;
-            _castleConfig = castleConfig;
             _wallet = wallet;
-            _castle = castle;
-            _currentDelay = castleConfig.StartDelayShootCastle;
-            _currentDamage = castleConfig.StartDamageCastle;
+            var currentDelay = castleConfig.StartDelayShootCastle;
+            var currentDamage = castleConfig.StartDamageCastle;
 
             _healthUpgrade = new Upgrade(castleConfig.UpgradeCastleCost, castleConfig.MaxCastleLevel,
                 castleConfig.CostMultiplier,
-                () => _castle.UpHealth(),
+                () => castle.UpHealth(),
                 cost => _upgradeMenu.ChangeCostUpgradeHealth(cost));
 
             _forceUpgrade = new Upgrade(castleConfig.UpgradeCastleCost, castleConfig.MaxCastleLevel,
                 castleConfig.CostMultiplier,
                 () =>
                 {
-                    int tempDamage = _currentDamage;
-                    _currentDamage = (int)(_currentDamage * _castleConfig.UpgradeMultiplier);
-                    if (tempDamage == _currentDamage)
-                        _currentDamage++;
-                    _castle.UpForce(_currentDamage);
+                    int tempDamage = currentDamage;
+                    currentDamage = (int)(currentDamage * castleConfig.UpgradeMultiplier);
+                    if (tempDamage == currentDamage)
+                        currentDamage++;
+                    castle.UpForce(currentDamage);
                 },
                 cost => _upgradeMenu.ChangeCostUpgradeForce(cost));
 
@@ -54,8 +45,8 @@ namespace _Project.Scripts.Builds.Castles
                 castleConfig.CostMultiplier,
                 () =>
                 {
-                    _currentDelay /= _castleConfig.UpgradeMultiplier;
-                    _castle.UpSpeed(_currentDelay);
+                    currentDelay /= castleConfig.UpgradeMultiplier;
+                    castle.UpSpeed(currentDelay);
                 },
                 cost => _upgradeMenu.ChangeCostUpgradeSpeed(cost));
 

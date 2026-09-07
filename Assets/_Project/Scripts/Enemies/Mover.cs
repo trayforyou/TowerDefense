@@ -20,6 +20,14 @@ namespace _Project.Scripts.Enemies
         private void Awake() =>
             _agent = GetComponent<NavMeshAgent>();
 
+        public void Stop()
+        { 
+            if (_coroutine != null)
+                StopCoroutine(_coroutine);
+
+            _agent.isStopped = true;
+        }
+
         public void SetParams(Transform target, EnemiesConfig config)
         {
             _target = target;
@@ -41,11 +49,10 @@ namespace _Project.Scripts.Enemies
                     return;
             }
 
-            _agent.destination = _target.position;
-
             if (_coroutine != null)
                 StopCoroutine(_coroutine);
 
+            _agent.destination = _target.position;
             _coroutine = StartCoroutine(RunToTower());
         }
 

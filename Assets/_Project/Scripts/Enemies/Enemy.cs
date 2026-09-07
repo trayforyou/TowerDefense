@@ -63,10 +63,15 @@ namespace _Project.Scripts.Enemies
 
         public void Stop()
         {
+            if (_attacker != null)
+                _attacker.Stop();
+            
             if (_animator != null)
                 _animator.SetBool(IsRun, false);
+
+            if (_mover != null) 
+                _mover.Stop();
             
-            _attacker.Stop();
             UnsubscribeAll();
         }
 

@@ -72,11 +72,11 @@ namespace _Project.Scripts.Session
             _castle = castlePlacer.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
 
             _sceneChanger = new SceneChanger();
-            _buildMenu = (BuildMenu)_uICreator.Create(_buildMenuPrefab);
+            _buildMenu = _uICreator.Create(_buildMenuPrefab);
             _buildMenu.SetCostTowers(_buildConfig.FastTowerCost, _buildConfig.StrongTowerCost);
-            _upgradeMenu = (UpgradeMenu)_uICreator.Create(_upgradeMenuPrefab);
-            _sessionViewer = (SessionViewer)_uICreator.Create(_sessionViewerPrefab);
-            _endMenu = (EndMenuViewer)_uICreator.Create(_endMenuPrefab);
+            _upgradeMenu = _uICreator.Create(_upgradeMenuPrefab);
+            _sessionViewer = _uICreator.Create(_sessionViewerPrefab);
+            _endMenu = _uICreator.Create(_endMenuPrefab);
             _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab, _mainCamera);
             _disposables.Add(_enemiesSpawner);
             _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
@@ -100,11 +100,8 @@ namespace _Project.Scripts.Session
         {
             SubscribeAll();
 
-            Shooter tempShooter = new Shooter(_shooterConfig, _castleConfig.StartDamageCastle,
-                _castleConfig.StartDelayShootCastle, _bulletPrefab);
-            EnemyFinder tempEnemyFinder = new EnemyFinder(_castleConfig.RadiusRangeCastle, _shooterConfig,
-                _castle.transform.position);
-            Gun tempGun = new Gun(tempShooter, tempEnemyFinder);
+            Gun tempGun = CreateGun(new GunParameters(_castleConfig.StartDamageCastle,
+                _castleConfig.StartDelayShootCastle, _castleConfig.RadiusRangeCastle, _castle.transform.position));
 
             _castle.SetConfig(_castleConfig, tempGun);
             _sessionViewer.Show();
@@ -120,7 +117,7 @@ namespace _Project.Scripts.Session
 
         private void DisposeAll()
         {
-            foreach (IDisposable disposable in _disposables) 
+            foreach (IDisposable disposable in _disposables)
                 disposable.Dispose();
         }
 

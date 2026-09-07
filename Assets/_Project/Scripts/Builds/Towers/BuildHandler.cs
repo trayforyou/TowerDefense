@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using _Project.Scripts.Session;
 using UnityEngine;
 
@@ -7,7 +6,6 @@ namespace _Project.Scripts.Builds.Towers
 {
     public class BuildHandler : IDisposable
     {
-        private readonly List<Tower> _towers = new();
         private BuildValidator _validator;
         private TowerBuilder _strongTowerBuilder;
         private TowerBuilder _fastTowerBuilder;
@@ -64,7 +62,6 @@ namespace _Project.Scripts.Builds.Towers
             if (tower != null)
             {
                 _validator.AddTower(tower);
-                _towers.Add(tower);
             }
 
             _buildMenu.Hide();

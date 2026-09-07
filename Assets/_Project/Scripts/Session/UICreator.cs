@@ -11,12 +11,12 @@ namespace _Project.Scripts.Session
         public UICreator(Canvas canvas) =>
             _canvas = canvas;
 
-        public IUIElement Create(Component component)
+        public T Create<T>(T component) where T : Component, IUIElement
         {
-            if (component is not IUIElement)
-                throw new ArgumentException();
+            if (component == null)
+                throw new ArgumentNullException();
 
-            return (IUIElement)Instantiate(component, _canvas.transform);
+            return Instantiate(component, _canvas.transform);
         }
     }
 }

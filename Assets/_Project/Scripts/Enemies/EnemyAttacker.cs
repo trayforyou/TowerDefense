@@ -17,6 +17,9 @@ namespace _Project.Scripts.Enemies
         public event Action Attacking;
         public event Action NeedingRun;
 
+        private void OnDestroy() => 
+            Stop();
+
         public void Initialize(EnemiesConfig config, Castle castle, float sqrStopDistance, Transform enemy)
         {
             _config = config;
@@ -27,7 +30,8 @@ namespace _Project.Scripts.Enemies
 
         public void Attack()
         {
-            StopAllCoroutines();
+            Stop();
+
             _attackCoroutine = StartCoroutine(StartAttackCoroutine());
         }
 
