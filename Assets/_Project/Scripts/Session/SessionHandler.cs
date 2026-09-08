@@ -1,161 +1,49 @@
-using System;
-using System.Collections.Generic;
-using _Project.Scripts.Builds;
+﻿using System;
 using _Project.Scripts.Builds.Castles;
 using _Project.Scripts.Builds.Shooters;
 using _Project.Scripts.Builds.Towers;
 using _Project.Scripts.Enemies;
-using _Project.Scripts.Savers;
-using _Project.Scripts.ScriptableObjects;
-using UnityEngine;
 
 namespace _Project.Scripts.Session
 {
-    public class SessionHandler : MonoBehaviour
+    public class SessionHandler : IDisposable
     {
-        [SerializeField] private BuildMenu _buildMenuPrefab;
-        [SerializeField] private UpgradeMenu _upgradeMenuPrefab;
-        [SerializeField] private EndMenuViewer _endMenuPrefab;
-        [SerializeField] private SessionViewer _sessionViewerPrefab;
-        [SerializeField] private Bullet _bulletPrefab;
-        [SerializeField] private Enemy _enemyPrefab;
-        [SerializeField] private Tower _fastTowerPrefab;
-        [SerializeField] private Tower _strongTowerPrefab;
-        [SerializeField] private Castle _castlePrefab;
+        private readonly Castle _castle;
+        private readonly FiringSwitch _firingSwitch;
+        private readonly SpawnerCurator _spawnerCurator;
+        private readonly CastleUpper _castleUpper;
+        private readonly BuildHandler _buildHandler;
+        private readonly SessionViewer _sessionViewer;
+        private readonly MetaMoneyBank _bank;
+        private readonly EndMenuViewer _endMenu;
+        private readonly Wallet _wallet;
 
-        [SerializeField] private LayerMask _groundLayer;
-        [SerializeField] private LayerMask _castleLayer;
-
-        [SerializeField] private Canvas _canvas;
-
-        [SerializeField] private TowerConfig _strongTowerConfig;
-        [SerializeField] private TowerConfig _fastTowerConfig;
-        [SerializeField] private EnemiesConfig _enemiesConfig;
-        [SerializeField] private ShooterConfig _shooterConfig;
-        [SerializeField] private CastleConfig _castleConfig;
-        [SerializeField] private MoneyConfig _moneyConfig;
-        [SerializeField] private BuildConfig _buildConfig;
-        [SerializeField] private string _menuSceneName = "Menu";
-
-        private HashSet<IDisposable> _disposables;
-        private InputDispatcher _inputDispatcher;
-        private InteractHandler _interactHandler;
-        private SpawnerCurator _spawnerCurator;
-        private Camera _mainCamera;
-        private Castle _castle;
-        private Saver _saver;
-        private Wallet _wallet;
-        private UICreator _uICreator;
-        private BuildMenu _buildMenu;
-        private UpgradeMenu _upgradeMenu;
-        private SessionViewer _sessionViewer;
-        private EndMenuViewer _endMenu;
-        private CastleUpper _castleUpper;
-        private BuildHandler _buildHandler;
-        private BuildValidator _buildValidator;
-        private EnemySpawner _enemiesSpawner;
-        private TowerBuilder _strongBuilder;
-        private TowerBuilder _fastBuilder;
-        private FiringSwitch _firingSwitch;
-        private SceneChanger _sceneChanger;
-
-        private void Awake()
+        public SessionHandler(Wallet wallet, Castle castle, FiringSwitch firingSwitch, SpawnerCurator spawnerCurator,
+            CastleUpper castleUpper, BuildHandler buildHandler, SessionViewer sessionViewer, MetaMoneyBank bank,
+            EndMenuViewer endMenu)
         {
-            _disposables = new();
-            _mainCamera = Camera.main;
-            _inputDispatcher = new InputDispatcher();
-            _disposables.Add(_inputDispatcher);
-            _saver = new Saver();
-            _wallet = new Wallet();
-            _uICreator = new UICreator(_canvas);
-
-            CastlePlacer castlePlacer = new CastlePlacer();
-            _castle = castlePlacer.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
-
-            _sceneChanger = new SceneChanger(_menuSceneName);
-            _buildMenu = _uICreator.Create(_buildMenuPrefab);
-            _buildMenu.SetCostTowers(_buildConfig.FastTowerCost, _buildConfig.StrongTowerCost);
-            _upgradeMenu = _uICreator.Create(_upgradeMenuPrefab);
-            _sessionViewer = _uICreator.Create(_sessionViewerPrefab);
-            _endMenu = _uICreator.Create(_endMenuPrefab);
-            _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab, _mainCamera);
-            _disposables.Add(_enemiesSpawner);
-            _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
-            _disposables.Add(_spawnerCurator);
-            _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);
-            _firingSwitch = new FiringSwitch();
-            _strongBuilder = new TowerBuilder(_strongTowerPrefab, _strongTowerConfig, _wallet,
-                _buildConfig.StrongTowerCost, CreateGun, _firingSwitch);
-            _fastBuilder = new TowerBuilder(_fastTowerPrefab, _fastTowerConfig, _wallet, _buildConfig.FastTowerCost,
-                CreateGun, _firingSwitch);
-            _buildHandler = new BuildHandler(_wallet, _buildValidator, _buildMenu, _strongBuilder, _fastBuilder);
-            _disposables.Add(_buildHandler);
-            _castleUpper = new CastleUpper(_castleConfig, _wallet, _castle, _upgradeMenu);
-            _disposables.Add(_castleUpper);
-            _interactHandler = new InteractHandler(_groundLayer, _castleLayer, _castleUpper,
-                _buildHandler, _mainCamera, _inputDispatcher);
-            _disposables.Add(_interactHandler);
+            _wallet = wallet;
+            _endMenu = endMenu;
+            _castle = castle;
+            _firingSwitch = firingSwitch;
+            _spawnerCurator = spawnerCurator;
+            _castleUpper = castleUpper;
+            _buildHandler = buildHandler;
+            _sessionViewer = sessionViewer;
+            _bank = bank;
+            
+            SubscribeAll();
         }
 
-        private void Start()
+        public void Start()
         {
-            SubscribeAll();
-
-            Gun tempGun = CreateGun(new GunParameters(_castleConfig.StartDamageCastle,
-                _castleConfig.StartDelayShootCastle, _castleConfig.RadiusRangeCastle, _castle.transform.position));
-
-            _castle.SetConfig(_castleConfig, tempGun);
             _sessionViewer.Show();
             _spawnerCurator.StartWave();
             _wallet.RefreshInfo();
         }
 
-        private void OnDestroy()
-        {
+        public void Dispose() =>
             UnSubscribeAll();
-            DisposeAll();
-        }
-
-        private void DisposeAll()
-        {
-            foreach (IDisposable disposable in _disposables)
-                disposable.Dispose();
-        }
-
-        private Gun CreateGun(GunParameters parameters) =>
-            new(new Shooter(_shooterConfig, parameters.Damage, parameters.ShootDelay, _bulletPrefab),
-                new EnemyFinder(parameters.Radius, _shooterConfig, parameters.CenterFindPosition));
-
-        private void SubscribeAll()
-        {
-            _spawnerCurator.WaveChanged += _sessionViewer.ChangeWaveNumber;
-            _spawnerCurator.TimeChanged += _sessionViewer.ChangeWaveTime;
-            _spawnerCurator.ChangedEnemiesCount += _sessionViewer.ChangeEnemiesCount;
-            _spawnerCurator.InitializedEnemiesCount += _sessionViewer.InitializeEnemiesCount;
-            _spawnerCurator.RegisteredKill += RegisterKill;
-            _castle.ValueChanged += _sessionViewer.ChangeHealthInfo;
-            _wallet.ValueChanged += _sessionViewer.ChangeCountMoney;
-            _castle.Died += End;
-            _endMenu.ButtonRestartClicked += RestartSession;
-            _endMenu.ButtonMenuClicked += GoToMenu;
-        }
-
-        private void UnSubscribeAll()
-        {
-            _spawnerCurator.WaveChanged -= _sessionViewer.ChangeWaveNumber;
-            _spawnerCurator.TimeChanged -= _sessionViewer.ChangeWaveTime;
-            _spawnerCurator.ChangedEnemiesCount -= _sessionViewer.ChangeEnemiesCount;
-            _spawnerCurator.InitializedEnemiesCount -= _sessionViewer.InitializeEnemiesCount;
-            _spawnerCurator.RegisteredKill -= RegisterKill;
-            _castle.ValueChanged -= _sessionViewer.ChangeHealthInfo;
-            _wallet.ValueChanged -= _sessionViewer.ChangeCountMoney;
-            _castle.Died -= End;
-            _endMenu.ButtonRestartClicked -= RestartSession;
-            _endMenu.ButtonMenuClicked -= GoToMenu;
-        }
-
-        private void RegisterKill() =>
-            _wallet.AddMoney(_moneyConfig.MoneyPerKill);
 
         private void End()
         {
@@ -166,32 +54,32 @@ namespace _Project.Scripts.Session
             _buildHandler.TurnOff();
             _sessionViewer.Hide();
 
-            int reward = _spawnerCurator.WaveNumber * _moneyConfig.MoneyPerWave +
-                         _spawnerCurator.EnemiesDeaths * _moneyConfig.MoneyPerKill;
-
-            AddMetaMoney(reward);
+            int reward = _bank.CalculateMoney(_spawnerCurator.WaveNumber, _spawnerCurator.EnemiesDeaths);
 
             _endMenu.SetValue(_spawnerCurator.WaveNumber, _spawnerCurator.EnemiesDeaths, reward);
             _endMenu.Show();
         }
-
-        private void AddMetaMoney(int count)
+        
+        private void SubscribeAll()
         {
-            SaveData data = _saver.Load();
-            int metaMoney = data.MetaCurrency + count;
-            _saver.Save(new SaveData(metaMoney));
+            _castle.Died += End;
+            _spawnerCurator.WaveChanged += _sessionViewer.ChangeWaveNumber;
+            _spawnerCurator.TimeChanged += _sessionViewer.ChangeWaveTime;
+            _spawnerCurator.ChangedEnemiesCount += _sessionViewer.ChangeEnemiesCount;
+            _spawnerCurator.InitializedEnemiesCount += _sessionViewer.InitializeEnemiesCount;
+            _castle.ValueChanged += _sessionViewer.ChangeHealthInfo;
+            _wallet.ValueChanged += _sessionViewer.ChangeCountMoney;
         }
 
-        private void GoToMenu()
+        private void UnSubscribeAll()
         {
-            _endMenu.ButtonMenuClicked -= GoToMenu;
-            _sceneChanger.GoToMainMenu();
-        }
-
-        private void RestartSession()
-        {
-            _endMenu.ButtonRestartClicked -= RestartSession;
-            _sceneChanger.RestartScene();
+            _castle.Died -= End;
+            _spawnerCurator.WaveChanged -= _sessionViewer.ChangeWaveNumber;
+            _spawnerCurator.TimeChanged -= _sessionViewer.ChangeWaveTime;
+            _spawnerCurator.ChangedEnemiesCount -= _sessionViewer.ChangeEnemiesCount;
+            _spawnerCurator.InitializedEnemiesCount -= _sessionViewer.InitializeEnemiesCount;
+            _castle.ValueChanged -= _sessionViewer.ChangeHealthInfo;
+            _wallet.ValueChanged -= _sessionViewer.ChangeCountMoney;
         }
     }
 }
