@@ -6402,6 +6402,7 @@ MonoBehaviour:
   _castleConfig: {fileID: 11400000, guid: a499782172d7d37479a06928a38bcef0, type: 2}
   _moneyConfig: {fileID: 11400000, guid: 8a7c3a467f23a9442a246d6c8302b905, type: 2}
   _buildConfig: {fileID: 11400000, guid: a5f15d3c0af34ef43bc2d95dc24c3974, type: 2}
+  _menuSceneName: Menu
 --- !u!4 &727398362
 Transform:
   m_ObjectHideFlags: 0

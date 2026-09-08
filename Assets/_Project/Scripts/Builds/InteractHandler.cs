@@ -25,15 +25,15 @@ namespace _Project.Scripts.Builds
             _castleLayer = castleLayer;
             inputDispatcher.OnPrimaryClick += TryHandleClick;
         }
-        
+
         private void TryHandleClick()
         {
             if (_buildHandler.IsActive == false && _castleUpper.IsActive == false)
             {
-                    if (_inputDispatcher.IsPointerOverGameObject())
-                        return;
+                if (_inputDispatcher.IsPointerOverGameObject())
+                    return;
 
-                    HandleClick();
+                HandleClick();
             }
         }
 
@@ -47,7 +47,7 @@ namespace _Project.Scripts.Builds
                 _buildHandler.Activate(hit.point);
         }
 
-        public void Dispose() => 
+        public void Dispose() =>
             _inputDispatcher.OnPrimaryClick -= TryHandleClick;
     }
 }

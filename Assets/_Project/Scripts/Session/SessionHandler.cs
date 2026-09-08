@@ -35,6 +35,7 @@ namespace _Project.Scripts.Session
         [SerializeField] private CastleConfig _castleConfig;
         [SerializeField] private MoneyConfig _moneyConfig;
         [SerializeField] private BuildConfig _buildConfig;
+        [SerializeField] private string _menuSceneName = "Menu";
 
         private HashSet<IDisposable> _disposables;
         private InputDispatcher _inputDispatcher;
@@ -71,7 +72,7 @@ namespace _Project.Scripts.Session
             CastlePlacer castlePlacer = new CastlePlacer();
             _castle = castlePlacer.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
 
-            _sceneChanger = new SceneChanger();
+            _sceneChanger = new SceneChanger(_menuSceneName);
             _buildMenu = _uICreator.Create(_buildMenuPrefab);
             _buildMenu.SetCostTowers(_buildConfig.FastTowerCost, _buildConfig.StrongTowerCost);
             _upgradeMenu = _uICreator.Create(_upgradeMenuPrefab);

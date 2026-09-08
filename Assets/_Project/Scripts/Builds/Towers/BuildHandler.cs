@@ -44,8 +44,8 @@ namespace _Project.Scripts.Builds.Towers
             _wallet.ValueChanged += ChangeOpportunitiesBuy;
             _buildMenu.TriedBuyFastTower += BuildFastTower;
             _buildMenu.TriedBuyStrongTower += BuildStrongTower;
-            _fastTowerBuilder.Builded += ProcessTower;
-            _strongTowerBuilder.Builded += ProcessTower;
+            _fastTowerBuilder.Built += ProcessTower;
+            _strongTowerBuilder.Built += ProcessTower;
         }
 
         private void UnSubscribeAll()
@@ -53,8 +53,8 @@ namespace _Project.Scripts.Builds.Towers
             _buildMenu.TriedBuyFastTower -= BuildFastTower;
             _buildMenu.TriedBuyStrongTower -= BuildStrongTower;
             _wallet.ValueChanged -= ChangeOpportunitiesBuy;
-            _fastTowerBuilder.Builded -= ProcessTower;
-            _strongTowerBuilder.Builded -= ProcessTower;
+            _fastTowerBuilder.Built -= ProcessTower;
+            _strongTowerBuilder.Built -= ProcessTower;
         }
 
         private void ProcessTower(Tower tower)
@@ -75,7 +75,7 @@ namespace _Project.Scripts.Builds.Towers
 
         private void ChangeOpportunitiesBuy(int count)
         {
-            _buildMenu.SetCanBuyFast(count >= _fastTowerBuilder.Cost);
+            _buildMenu.SetCanBuyFastTower(count >= _fastTowerBuilder.Cost);
             _buildMenu.SetCanBuyStrongTower(count >= _strongTowerBuilder.Cost);
         }
 

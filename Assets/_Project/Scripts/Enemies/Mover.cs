@@ -21,11 +21,12 @@ namespace _Project.Scripts.Enemies
             _agent = GetComponent<NavMeshAgent>();
 
         public void Stop()
-        { 
+        {
             if (_coroutine != null)
                 StopCoroutine(_coroutine);
 
-            _agent.isStopped = true;
+            if (_agent.isActiveAndEnabled)
+                _agent.isStopped = true;
         }
 
         public void SetParams(Transform target, EnemiesConfig config)
@@ -41,12 +42,12 @@ namespace _Project.Scripts.Enemies
         {
             if (!_agent.isOnNavMesh)
             {
-                float maxDistance = 1.5f;
+                float maxDistance = 2.0f;
 
-                if (NavMesh.SamplePosition(_target.position, out NavMeshHit hit, maxDistance, NavMesh.AllAreas))
-                    _agent.destination = hit.position;
+                if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, maxDistance, NavMesh.AllAreas))
+                    _agent.Warp(hit.position);
                 else
-                    return;
+                    throw new Exception("Агент не на навмеше");
             }
 
             if (_coroutine != null)

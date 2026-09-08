@@ -4,8 +4,11 @@ namespace _Project.Scripts.Session
 {
     public class SceneChanger
     {
-        private string _mainMenuScene = "Menu";
+        private readonly string _mainMenuScene;
         
+        public SceneChanger(string sceneName) => 
+            _mainMenuScene = sceneName;
+
         public void GoToMainMenu() => 
             SceneManager.LoadScene(_mainMenuScene);
 

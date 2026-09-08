@@ -9,16 +9,15 @@ namespace _Project.Scripts.Builds.Towers
 {
     public class TowerBuilder
     {
-        private Tower _prefab;
-        private TowerConfig _config;
-        private Wallet _wallet;
-        private Action<Tower, TowerConfig> _build;
-        private Func<GunParameters, Gun> _createGun;
+        private readonly Func<GunParameters, Gun> _createGun;
+        private readonly TowerConfig _config;
+        private readonly Tower _prefab;
+        private readonly Wallet _wallet;
 
         public readonly int Cost;
         private readonly FiringSwitch _firingSwitch;
 
-        public event Action<Tower> Builded;
+        public event Action<Tower> Built;
 
         public TowerBuilder(Tower prefab, TowerConfig config, Wallet wallet, int cost,
             Func<GunParameters, Gun> createGun, FiringSwitch firingSwitch)
@@ -43,7 +42,7 @@ namespace _Project.Scripts.Builds.Towers
                     _config.RadiusAttack, buildPosition)), _firingSwitch);
             }
 
-            Builded?.Invoke(tempTower);
+            Built?.Invoke(tempTower);
         }
     }
 }

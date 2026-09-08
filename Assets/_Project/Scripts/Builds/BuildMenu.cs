@@ -42,16 +42,20 @@ namespace _Project.Scripts.Builds
             SetCostText(_tMPStrongTower, strongTower);
         }
 
-        public void SetCanBuyFast(bool value)
+        public void SetCanBuyFastTower(bool value)
         {
-            if (_canBuyFastTower == value) return;
+            if (_canBuyFastTower == value)
+                return;
+
             _canBuyFastTower = value;
             SetAvailabilityView(_tMPFastTower, value);
         }
 
         public void SetCanBuyStrongTower(bool value)
         {
-            if (_canBuyStrongTower == value) return;
+            if (_canBuyStrongTower == value)
+                return;
+
             _canBuyStrongTower = value;
             SetAvailabilityView(_tMPStrongTower, value);
         }
