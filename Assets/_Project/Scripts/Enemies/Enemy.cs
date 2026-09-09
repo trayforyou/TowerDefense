@@ -11,14 +11,8 @@ namespace _Project.Scripts.Enemies
     [RequireComponent(typeof(EnemyAttacker))]
     public class Enemy : MonoBehaviour
     {
-        private static readonly int IsRun = Animator.StringToHash("IsRun");
-        private static readonly int Attack = Animator.StringToHash("Attack");
-
-        private Mover _mover;
-        private Health _health;
-        private Animator _animator;
-        private EnemyAttacker _attacker;
-        private ParticleSystem _particles;
+        private EnemyBehaviourHandler _handler;
+        private EnemyAnimator _animator;
 
         public event Action<Enemy> Died;
 
@@ -28,97 +22,53 @@ namespace _Project.Scripts.Enemies
 
         private void Awake()
         {
-            _animator = GetComponent<Animator>();
-            _mover = GetComponent<Mover>();
-            _particles = GetComponent<ParticleSystem>();
-            _attacker = GetComponent<EnemyAttacker>();
+            _animator = new EnemyAnimator(GetComponent<Animator>(), GetComponent<Mover>(),
+                GetComponent<EnemyAttacker>());
+
+            _handler = new EnemyBehaviourHandler(GetComponent<Mover>(), GetComponent<ParticleSystem>(),
+                GetComponent<EnemyAttacker>(),
+                _animator, transform);
         }
 
         private void OnEnable()
         {
             IsAlive = true;
-
-            _particles.Stop();
-
-            if (_health is not null)
-                SubscribeAll();
+            _handler.Died += Die;
+            _handler.Start();
         }
 
-        private void OnDisable() =>
-            UnsubscribeAll();
-
-        public void SetParams(Castle target, EnemiesConfig config)
+        private void OnDisable()
         {
-            _health = new Health(config.EnemyHealth);
-            float sqrStopDistance = config.EnemyStopDistance * config.EnemyStopDistance;
+            _handler.Died -= Die;
+            _handler.TurnOff();
+        }
 
-            SubscribeAll();
-
-            _attacker.Initialize(config, target, sqrStopDistance, transform);
-            _mover.SetParams(target.transform, config);
+        private void OnDestroy()
+        {
+            _handler.Dispose();
+            _animator.Dispose();
         }
 
         public void GoToTarget() =>
-            _mover.GoToTarget();
-
-        public void Stop()
-        {
-            if (_attacker != null)
-                _attacker.Stop();
-            
-            if (_animator != null)
-                _animator.SetBool(IsRun, false);
-
-            if (_mover != null) 
-                _mover.Stop();
-            
-            UnsubscribeAll();
-        }
+            _handler.GoToTarget();
 
         public void ResetHealth() =>
-            _health.Reset();
+            _handler.ResetHealth();
 
-        public void TakeDamage(int damage)
-        {
-            _particles.Play();
-            _health.TakeDamage(damage);
-        }
+        public void TakeDamage(int damage) =>
+            _handler.TakeDamage(damage);
 
-        private void UnsubscribeAll()
-        {
-            _mover.HasCome -= StartAttack;
-            _mover.Running -= AnimateRun;
-            _health.Died -= Die;
-            _attacker.Attacking -= AnimateAttack;
-            _attacker.NeedingRun -= GoToTarget;
-        }
+        public void SetParams(Castle target, EnemiesConfig config) =>
+            _handler.SetParams(target, config);
 
-        private void SubscribeAll()
-        {
-            _mover.HasCome += StartAttack;
-            _mover.Running += AnimateRun;
-            _health.Died += Die;
-            _attacker.Attacking += AnimateAttack;
-            _attacker.NeedingRun += GoToTarget;
-        }
-
-        private void StartAttack()
-        {
-            _animator.SetBool(IsRun, false);
-            _attacker.Attack();
-        }
+        public void Stop() =>
+            _handler?.Stop();
 
         private void Die()
         {
+            _handler.Died -= Die;
             IsAlive = false;
-            _health.Died -= Die;
             Died?.Invoke(this);
         }
-
-        private void AnimateRun() =>
-            _animator.SetBool(IsRun, true);
-
-        private void AnimateAttack() =>
-            _animator.SetTrigger(Attack);
     }
 }
