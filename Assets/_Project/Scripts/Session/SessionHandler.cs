@@ -11,7 +11,7 @@ namespace _Project.Scripts.Session
         private readonly Castle _castle;
         private readonly FiringSwitch _firingSwitch;
         private readonly SpawnerCurator _spawnerCurator;
-        private readonly CastleUpper _castleUpper;
+        private readonly CastleUpHandler _castleUpHandler;
         private readonly BuildHandler _buildHandler;
         private readonly SessionViewer _sessionViewer;
         private readonly MetaMoneyBank _bank;
@@ -19,7 +19,7 @@ namespace _Project.Scripts.Session
         private readonly Wallet _wallet;
 
         public SessionHandler(Wallet wallet, Castle castle, FiringSwitch firingSwitch, SpawnerCurator spawnerCurator,
-            CastleUpper castleUpper, BuildHandler buildHandler, SessionViewer sessionViewer, MetaMoneyBank bank,
+            CastleUpHandler castleUpHandler, BuildHandler buildHandler, SessionViewer sessionViewer, MetaMoneyBank bank,
             EndMenuViewer endMenu)
         {
             _wallet = wallet;
@@ -27,7 +27,7 @@ namespace _Project.Scripts.Session
             _castle = castle;
             _firingSwitch = firingSwitch;
             _spawnerCurator = spawnerCurator;
-            _castleUpper = castleUpper;
+            _castleUpHandler = castleUpHandler;
             _buildHandler = buildHandler;
             _sessionViewer = sessionViewer;
             _bank = bank;
@@ -50,7 +50,7 @@ namespace _Project.Scripts.Session
             _castle.Died -= End;
             _firingSwitch.TurnOff();
             _spawnerCurator.Stop();
-            _castleUpper.TurnOff();
+            _castleUpHandler.TurnOff();
             _buildHandler.TurnOff();
             _sessionViewer.Hide();
 

@@ -1,33 +1,33 @@
-using System;
+﻿using System;
 using _Project.Scripts.ScriptableObjects;
 using _Project.Scripts.Session;
 
 namespace _Project.Scripts.Builds.Castles
 {
-    public class CastleUpper : IDisposable
+    public class CastleUpper
     {
-        private readonly UpgradeMenu _upgradeMenu;
         private readonly Upgrade _healthUpgrade;
         private readonly Upgrade _forceUpgrade;
         private readonly Upgrade _speedUpgrade;
         private readonly Wallet _wallet;
+        private readonly CastleConfig _castleConfig;
 
-        public bool IsActive => _upgradeMenu.IsActive;
+        public event Action OnUpgradeComplete;
 
-        public void TurnOff() =>
-            _upgradeMenu.Hide();
-
-        public CastleUpper(CastleConfig castleConfig, Wallet wallet, Castle castle, UpgradeMenu upgradeMenu)
+        public int UpgradeCastleCost => _castleConfig.UpgradeCastleCost;
+        
+        public CastleUpper(CastleConfig castleConfig, Wallet wallet, Castle castle, Action<int> changeCostUpgradeHealth,
+            Action<int> changeCostUpgradeForce, Action<int> changeCostUpgradeSpeed)
         {
-            _upgradeMenu = upgradeMenu;
             _wallet = wallet;
+            _castleConfig = castleConfig;
             var currentDelay = castleConfig.StartDelayShootCastle;
             var currentDamage = castleConfig.StartDamageCastle;
 
             _healthUpgrade = new Upgrade(castleConfig.UpgradeCastleCost, castleConfig.MaxCastleLevel,
                 castleConfig.CostMultiplier,
-                () => castle.UpHealth(),
-                cost => _upgradeMenu.ChangeCostUpgradeHealth(cost));
+                castle.UpHealth,
+                cost => changeCostUpgradeHealth?.Invoke(cost));
 
             _forceUpgrade = new Upgrade(castleConfig.UpgradeCastleCost, castleConfig.MaxCastleLevel,
                 castleConfig.CostMultiplier,
@@ -39,7 +39,7 @@ namespace _Project.Scripts.Builds.Castles
                         currentDamage++;
                     castle.UpForce(currentDamage);
                 },
-                cost => _upgradeMenu.ChangeCostUpgradeForce(cost));
+                cost => changeCostUpgradeForce?.Invoke(cost));
 
             _speedUpgrade = new Upgrade(castleConfig.UpgradeCastleCost, castleConfig.MaxCastleLevel,
                 castleConfig.CostMultiplier,
@@ -48,55 +48,31 @@ namespace _Project.Scripts.Builds.Castles
                     currentDelay /= castleConfig.UpgradeMultiplier;
                     castle.UpSpeed(currentDelay);
                 },
-                cost => _upgradeMenu.ChangeCostUpgradeSpeed(cost));
-
-            _upgradeMenu.SetStartCost(castleConfig.UpgradeCastleCost);
-
-            SubscribeAll();
+                cost => changeCostUpgradeSpeed?.Invoke(cost));
         }
 
-        public void Activate() =>
-            _upgradeMenu.Show();
+        public int GetHealthUpgradeCost() => 
+            _healthUpgrade.CurrentCost;
         
-        public void Dispose() => 
-            UnSubscribeAll();
+        public int GetForceUpgradeCost() => 
+            _forceUpgrade.CurrentCost;
 
-        private void ChangeOpportunitiesBuy(int count)
-        {
-            _upgradeMenu.SetCanUpHealth(count >= _healthUpgrade.CurrentCost);
-            _upgradeMenu.SetCanUpSpeed(count >= _speedUpgrade.CurrentCost);
-            _upgradeMenu.SetCanUpForce(count >= _forceUpgrade.CurrentCost);
-        }
+        public int GetSpeedUpgradeCost() => 
+            _speedUpgrade.CurrentCost;
 
-        private void SubscribeAll()
-        {
-            _upgradeMenu.TriedUpHealth += UpCastleHealth;
-            _upgradeMenu.TriedUpForce += UpCastleForce;
-            _upgradeMenu.TriedUpSpeed += UpCastleSpeed;
-            _wallet.ValueChanged += ChangeOpportunitiesBuy;
-        }
+        public void UpCastleHealth() =>
+            ProcessUpgrade(_healthUpgrade);
 
-        private void UnSubscribeAll()
-        {
-            _upgradeMenu.TriedUpHealth -= UpCastleHealth;
-            _upgradeMenu.TriedUpForce -= UpCastleForce;
-            _upgradeMenu.TriedUpSpeed -= UpCastleSpeed;
-            _wallet.ValueChanged -= ChangeOpportunitiesBuy;
-        }
+        public void UpCastleForce() =>
+            ProcessUpgrade(_forceUpgrade);
 
+        public void UpCastleSpeed() =>
+            ProcessUpgrade(_speedUpgrade);
+        
         private void ProcessUpgrade(Upgrade upgrade)
         {
             upgrade.TryUpgrade(_wallet);
-            _upgradeMenu.Hide();
+            OnUpgradeComplete?.Invoke();
         }
-
-        private void UpCastleHealth() =>
-            ProcessUpgrade(_healthUpgrade);
-
-        private void UpCastleForce() =>
-            ProcessUpgrade(_forceUpgrade);
-
-        private void UpCastleSpeed() =>
-            ProcessUpgrade(_speedUpgrade);
     }
 }

@@ -9,17 +9,17 @@ namespace _Project.Scripts.Builds
     {
         private readonly LayerMask _groundLayer;
         private readonly LayerMask _castleLayer;
-        private readonly CastleUpper _castleUpper;
+        private readonly CastleUpHandler _castleUpHandler;
         private readonly BuildHandler _buildHandler;
         private readonly Camera _mainCamera;
         private readonly InputDispatcher _inputDispatcher;
 
-        public InteractHandler(LayerMask groundLayer, LayerMask castleLayer, CastleUpper castleUpper,
+        public InteractHandler(LayerMask groundLayer, LayerMask castleLayer, CastleUpHandler castleUpHandler,
             BuildHandler buildHandler, Camera mainCamera, InputDispatcher inputDispatcher)
         {
             _inputDispatcher = inputDispatcher;
             _mainCamera = mainCamera;
-            _castleUpper = castleUpper;
+            _castleUpHandler = castleUpHandler;
             _buildHandler = buildHandler;
             _groundLayer = groundLayer;
             _castleLayer = castleLayer;
@@ -28,7 +28,7 @@ namespace _Project.Scripts.Builds
 
         private void TryHandleClick()
         {
-            if (_buildHandler.IsActive == false && _castleUpper.IsActive == false)
+            if (_buildHandler.IsActive == false && _castleUpHandler.IsActive == false)
             {
                 if (_inputDispatcher.IsPointerOverGameObject())
                     return;
@@ -42,7 +42,7 @@ namespace _Project.Scripts.Builds
             Ray ray = _mainCamera.ScreenPointToRay(_inputDispatcher.GetPointToRay());
 
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _castleLayer))
-                _castleUpper.Activate();
+                _castleUpHandler.Activate();
             else if (Physics.Raycast(ray, out hit, Mathf.Infinity, _groundLayer))
                 _buildHandler.Activate(hit.point);
         }

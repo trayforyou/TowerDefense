@@ -7,7 +7,7 @@ using _Project.Scripts.Builds.Towers;
 using _Project.Scripts.Enemies;
 using _Project.Scripts.Savers;
 using _Project.Scripts.ScriptableObjects;
-using UnityEngine; 
+using UnityEngine;
 
 namespace _Project.Scripts.Session
 {
@@ -37,7 +37,7 @@ namespace _Project.Scripts.Session
         [SerializeField] private BuildConfig _buildConfig;
         [SerializeField] private string _menuSceneName = "Menu";
 
-        private HashSet<IDisposable> _disposables;
+        private List<IDisposable> _disposables;
         private InputDispatcher _inputDispatcher;
         private InteractHandler _interactHandler;
         private SpawnerCurator _spawnerCurator;
@@ -50,7 +50,7 @@ namespace _Project.Scripts.Session
         private UpgradeMenu _upgradeMenu;
         private SessionViewer _sessionViewer;
         private EndMenuViewer _endMenu;
-        private CastleUpper _castleUpper;
+        private CastleUpHandler _castleUpHandler;
         private BuildHandler _buildHandler;
         private BuildValidator _buildValidator;
         private EnemySpawner _enemiesSpawner;
@@ -61,6 +61,7 @@ namespace _Project.Scripts.Session
         private MoneyCollector _moneyCollector;
         private SessionHandler _sessionHandler;
         private MetaMoneyBank _bank;
+        private CastleUpper _castleUpper;
 
         private void Awake()
         {
@@ -71,7 +72,7 @@ namespace _Project.Scripts.Session
             _saver = new Saver();
             _wallet = new Wallet();
             _uICreator = new UICreator(_canvas);
-            _bank = new MetaMoneyBank(_saver,_moneyConfig);
+            _bank = new MetaMoneyBank(_saver, _moneyConfig);
 
             CastlePlacer castlePlacer = new CastlePlacer();
             _castle = castlePlacer.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
@@ -81,13 +82,13 @@ namespace _Project.Scripts.Session
             _upgradeMenu = _uICreator.Create(_upgradeMenuPrefab);
             _sessionViewer = _uICreator.Create(_sessionViewerPrefab);
             _endMenu = _uICreator.Create(_endMenuPrefab);
-            _sceneChanger = new SceneChanger(_endMenu,_menuSceneName);
+            _sceneChanger = new SceneChanger(_endMenu, _menuSceneName);
             _disposables.Add(_sceneChanger);
             _enemiesSpawner = new EnemySpawner(_castle, _enemiesConfig, _enemyPrefab, _mainCamera);
             _disposables.Add(_enemiesSpawner);
             _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
             _disposables.Add(_spawnerCurator);
-            _moneyCollector = new MoneyCollector(_wallet,_moneyConfig,_spawnerCurator);
+            _moneyCollector = new MoneyCollector(_wallet, _moneyConfig, _spawnerCurator);
             _disposables.Add(_moneyCollector);
             _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);
             _firingSwitch = new FiringSwitch();
@@ -97,11 +98,16 @@ namespace _Project.Scripts.Session
                 CreateGun, _firingSwitch);
             _buildHandler = new BuildHandler(_wallet, _buildValidator, _buildMenu, _strongBuilder, _fastBuilder);
             _disposables.Add(_buildHandler);
-            _castleUpper = new CastleUpper(_castleConfig, _wallet, _castle, _upgradeMenu);
-            _disposables.Add(_castleUpper);
-            _sessionHandler = new SessionHandler(_wallet,_castle,_firingSwitch,_spawnerCurator,_castleUpper,_buildHandler,_sessionViewer,_bank,_endMenu);
+            _castleUpper = new CastleUpper(_castleConfig, _wallet, _castle,
+                cost => _upgradeMenu.ChangeCostUpgradeHealth(cost), 
+                cost => _upgradeMenu.ChangeCostUpgradeForce(cost),
+                cost => _upgradeMenu.ChangeCostUpgradeSpeed(cost));
+            _castleUpHandler = new CastleUpHandler(_upgradeMenu,_castleUpper, _wallet);
+            _disposables.Add(_castleUpHandler);
+            _sessionHandler = new SessionHandler(_wallet, _castle, _firingSwitch, _spawnerCurator, _castleUpHandler,
+                _buildHandler, _sessionViewer, _bank, _endMenu);
             _disposables.Add(_sessionHandler);
-            _interactHandler = new InteractHandler(_groundLayer, _castleLayer, _castleUpper,
+            _interactHandler = new InteractHandler(_groundLayer, _castleLayer, _castleUpHandler,
                 _buildHandler, _mainCamera, _inputDispatcher);
             _disposables.Add(_interactHandler);
         }
@@ -115,7 +121,7 @@ namespace _Project.Scripts.Session
             _sessionHandler.Start();
         }
 
-        private void OnDestroy() => 
+        private void OnDestroy() =>
             DisposeAll();
 
         private void DisposeAll()
