@@ -18,6 +18,8 @@ namespace _Project.Scripts.Session
         private readonly EndMenuViewer _endMenu;
         private readonly Wallet _wallet;
 
+        public event Action<int> GameEnded;
+        
         public SessionHandler(Wallet wallet, Castle castle, FiringSwitch firingSwitch, SpawnerCurator spawnerCurator,
             CastleUpHandler castleUpHandler, BuildHandler buildHandler, SessionViewer sessionViewer, MetaMoneyBank bank,
             EndMenuViewer endMenu)
@@ -56,6 +58,8 @@ namespace _Project.Scripts.Session
 
             int reward = _bank.CalculateMoney(_spawnerCurator.WaveNumber, _spawnerCurator.EnemiesDeaths);
 
+            GameEnded?.Invoke(reward);
+            
             _endMenu.SetValue(_spawnerCurator.WaveNumber, _spawnerCurator.EnemiesDeaths, reward);
             _endMenu.Show();
         }
@@ -63,7 +67,7 @@ namespace _Project.Scripts.Session
         private void SubscribeAll()
         {
             _castle.Died += End;
-            _spawnerCurator.WaveChanged += _sessionViewer.ChangeWaveNumber;
+            _spawnerCurator.WaveNumberChanged += _sessionViewer.ChangeWaveNumberNumber;
             _spawnerCurator.TimeChanged += _sessionViewer.ChangeWaveTime;
             _spawnerCurator.ChangedEnemiesCount += _sessionViewer.ChangeEnemiesCount;
             _spawnerCurator.InitializedEnemiesCount += _sessionViewer.InitializeEnemiesCount;
@@ -74,7 +78,7 @@ namespace _Project.Scripts.Session
         private void UnSubscribeAll()
         {
             _castle.Died -= End;
-            _spawnerCurator.WaveChanged -= _sessionViewer.ChangeWaveNumber;
+            _spawnerCurator.WaveNumberChanged -= _sessionViewer.ChangeWaveNumberNumber;
             _spawnerCurator.TimeChanged -= _sessionViewer.ChangeWaveTime;
             _spawnerCurator.ChangedEnemiesCount -= _sessionViewer.ChangeEnemiesCount;
             _spawnerCurator.InitializedEnemiesCount -= _sessionViewer.InitializeEnemiesCount;

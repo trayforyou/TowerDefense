@@ -7,6 +7,28 @@
       "dependencies": {},
       "hash": "ceac8d6946b1125fe782cd171fbcb245b567dbf9"
     },
+    "com.google.external-dependency-manager": {
+      "version": "file:Firebase/com.google.external-dependency-manager-1.2.186.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {}
+    },
+    "com.google.firebase.analytics": {
+      "version": "file:Firebase/com.google.firebase.analytics-13.17.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.google.firebase.app": "13.17.0"
+      }
+    },
+    "com.google.firebase.app": {
+      "version": "file:Firebase/com.google.firebase.app-13.17.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.google.external-dependency-manager": "1.2.186"
+      }
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,

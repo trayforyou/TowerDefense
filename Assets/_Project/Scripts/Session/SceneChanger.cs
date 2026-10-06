@@ -8,6 +8,9 @@ namespace _Project.Scripts.Session
         private readonly string _mainMenuScene;
         private readonly EndMenuViewer _endMenu;
 
+        public event Action SceneRestarted;
+        public event Action ReturnedToMenu;
+        
         public SceneChanger(EndMenuViewer endMenu,string sceneName)
         {
             _endMenu = endMenu;
@@ -20,12 +23,14 @@ namespace _Project.Scripts.Session
         private void ReloadScene()
         {
             _endMenu.ButtonRestartClicked -= ReloadScene;
+            SceneRestarted?.Invoke();
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
         private void GoToMenu()
         {
             _endMenu.ButtonMenuClicked -= GoToMenu;
+            ReturnedToMenu?.Invoke();
             SceneManager.LoadScene(_mainMenuScene);
         }
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "546780905585",
+    "project_id": "towerdefense-cee32",
+    "storage_bucket": "towerdefense-cee32.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:546780905585:android:1e9fbd9107fd84acf09bd0",
+        "android_client_info": {
+          "package_name": "com.tray_for_you.TowerDefense"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA5UWtWu5al5ccni9zYT-zmbl5f70b_sg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

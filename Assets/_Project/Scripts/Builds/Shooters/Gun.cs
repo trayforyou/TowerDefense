@@ -24,8 +24,10 @@ namespace _Project.Scripts.Builds.Shooters
             _shooter = shooter;
 
             _enemyFinder.FoundEnemy += StartShoot;
-            _enemyFinder.Find();
         }
+
+        public void FindAndShoot() => 
+            _enemyFinder.Find();
 
         public void SetShootDelay(float delay) =>
             _shooter.SetShootDelay(delay);

@@ -4,10 +4,9 @@ namespace _Project.Scripts
 {
     public class Health
     {
-        protected int Points;
-
         public event Action Died;
 
+        public int Points { get; protected set; }
         public int MaxPoints { get; protected set; }
 
         public Health(int points)

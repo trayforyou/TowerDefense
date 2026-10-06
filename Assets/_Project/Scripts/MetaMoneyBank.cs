@@ -23,6 +23,12 @@ namespace _Project.Scripts
             return reward;
         }
 
+        public int GetBalance()
+        {
+            SaveData data = _saver.Load();
+            return data.MetaCurrency;
+        }
+
         private void AddMetaMoney(int count)
         {
             SaveData data = _saver.Load();

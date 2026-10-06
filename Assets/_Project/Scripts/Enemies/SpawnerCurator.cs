@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 
 namespace _Project.Scripts.Enemies
 {
+    
     public class SpawnerCurator : IDisposable
     {
         private EnemySpawner _spawner;
@@ -16,7 +17,7 @@ namespace _Project.Scripts.Enemies
 
         public event Action RegisteredKill;
         public event Action<int> TimeChanged;
-        public event Action<int> WaveChanged;
+        public event Action<int> WaveNumberChanged;
         public event Action<int> ChangedEnemiesCount;
         public event Action<int> InitializedEnemiesCount;
 
@@ -39,7 +40,7 @@ namespace _Project.Scripts.Enemies
 
         public void StartWave()
         {
-            WaveChanged?.Invoke(++WaveNumber);
+            WaveNumberChanged?.Invoke(++WaveNumber);
             _spawner.StartWave();
         }
 
@@ -79,7 +80,7 @@ namespace _Project.Scripts.Enemies
 
                 if (cancellationToken.IsCancellationRequested == false)
                 {
-                    WaveChanged?.Invoke(++WaveNumber);
+                    WaveNumberChanged?.Invoke(++WaveNumber);
                     _spawner.StartWave();
                 }
             }
@@ -91,14 +92,19 @@ namespace _Project.Scripts.Enemies
         private void ChangeEnemiesCount(int count) =>
             ChangedEnemiesCount?.Invoke(count);
 
-        private void SetEnemiesCount(int count) =>
+        private void RefreshWaveInfo(int enemyCount)
+        {
+            SetEnemyCount(enemyCount);
+        }
+        
+        private void SetEnemyCount(int count) =>
             InitializedEnemiesCount?.Invoke(count);
 
         private void SubscribeAll()
         {
             _spawner.EnemyDied += RegisterKill;
             _spawner.WaveEnded += ReloadWave;
-            _spawner.StartedNewWave += SetEnemiesCount;
+            _spawner.StartedNewWave += RefreshWaveInfo;
             _spawner.ChangedAliveEnemies += ChangeEnemiesCount;
         }
 
@@ -107,7 +113,7 @@ namespace _Project.Scripts.Enemies
             _spawner.EnemyDied -= RegisterKill;
             _spawner.WaveEnded -= ReloadWave;
             _spawner.ChangedAliveEnemies -= ChangeEnemiesCount;
-            _spawner.StartedNewWave -= SetEnemiesCount;
+            _spawner.StartedNewWave -= RefreshWaveInfo;
         }
     }
 }

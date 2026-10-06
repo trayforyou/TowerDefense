@@ -55,7 +55,7 @@ namespace _Project.Scripts.Session
         public void ChangeCountMoney(int count) =>
             _moneyInfo.text = _moneyText + count;
 
-        public void ChangeWaveNumber(int count) =>
+        public void ChangeWaveNumberNumber(int count) =>
             _wavesCount.text = _wavesCountText + count;
 
         public void ChangeHealthInfo(int currentCount, int maxCount) =>

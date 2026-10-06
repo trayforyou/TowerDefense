@@ -18,11 +18,13 @@ namespace _Project.Scripts.Builds.Towers
 
         public void Initialize(Gun gun, FiringSwitch firingSwitch)
         {
+            _gun = gun; 
             _firingSwitch = firingSwitch;
-            _gun = gun;
+            
             _gun.SetShootPoint(_shootPoint.position);
             
             _firingSwitch.OnStopFire += Stop;
+            _gun.FindAndShoot();
         }
 
         private void Stop()

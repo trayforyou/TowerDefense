@@ -15,8 +15,11 @@ namespace _Project.Scripts.Builds.Castles
         private Gun _gun;
 
         public event HealthChangedEventHandler ValueChanged;
+        public event Action Damaged;
         public event Action Died;
 
+        public int CurrentHealth => _health.Points;
+        
         private void Awake() =>
             _particles = GetComponent<ParticleSystem>();
 
@@ -34,6 +37,8 @@ namespace _Project.Scripts.Builds.Castles
 
             _particles.Play();
             _health.TakeDamage(damage);
+            
+            Damaged?.Invoke();
         }
 
         public void SetConfig(CastleConfig config, Gun gun)
@@ -43,6 +48,8 @@ namespace _Project.Scripts.Builds.Castles
 
             CreateHealth(config);
             ValueChanged?.Invoke(_health.MaxPoints, _health.MaxPoints);
+            
+            _gun.FindAndShoot();
         }
 
         public void UpHealth() =>

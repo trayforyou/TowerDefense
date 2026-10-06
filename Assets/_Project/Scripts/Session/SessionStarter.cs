@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using _Project.Scripts.Analytics;
+using _Project.Scripts.Analytics.Firebase;
 using _Project.Scripts.Builds;
 using _Project.Scripts.Builds.Castles;
 using _Project.Scripts.Builds.Shooters;
@@ -37,6 +39,7 @@ namespace _Project.Scripts.Session
         [SerializeField] private BuildConfig _buildConfig;
         [SerializeField] private string _menuSceneName = "Menu";
 
+        private GameInfoCollector _gameInfoCollector;
         private List<IDisposable> _disposables;
         private InputDispatcher _inputDispatcher;
         private InteractHandler _interactHandler;
@@ -62,6 +65,7 @@ namespace _Project.Scripts.Session
         private SessionHandler _sessionHandler;
         private MetaMoneyBank _bank;
         private CastleUpper _castleUpper;
+        private IGameInfoDispatcher _gameInfoDispatcher;
 
         private void Awake()
         {
@@ -88,6 +92,7 @@ namespace _Project.Scripts.Session
             _disposables.Add(_enemiesSpawner);
             _spawnerCurator = new SpawnerCurator(_enemiesConfig, _enemiesSpawner);
             _disposables.Add(_spawnerCurator);
+            _gameInfoDispatcher = new FirebaseGameInfoDispatcher();
             _moneyCollector = new MoneyCollector(_wallet, _moneyConfig, _spawnerCurator);
             _disposables.Add(_moneyCollector);
             _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);
@@ -99,14 +104,18 @@ namespace _Project.Scripts.Session
             _buildHandler = new BuildHandler(_wallet, _buildValidator, _buildMenu, _strongBuilder, _fastBuilder);
             _disposables.Add(_buildHandler);
             _castleUpper = new CastleUpper(_castleConfig, _wallet, _castle,
-                cost => _upgradeMenu.ChangeCostUpgradeHealth(cost), 
+                cost => _upgradeMenu.ChangeCostUpgradeHealth(cost),
                 cost => _upgradeMenu.ChangeCostUpgradeForce(cost),
                 cost => _upgradeMenu.ChangeCostUpgradeSpeed(cost));
-            _castleUpHandler = new CastleUpHandler(_upgradeMenu,_castleUpper, _wallet);
+            _castleUpHandler = new CastleUpHandler(_upgradeMenu, _castleUpper, _wallet);
             _disposables.Add(_castleUpHandler);
             _sessionHandler = new SessionHandler(_wallet, _castle, _firingSwitch, _spawnerCurator, _castleUpHandler,
                 _buildHandler, _sessionViewer, _bank, _endMenu);
             _disposables.Add(_sessionHandler);
+            _gameInfoCollector = new GameInfoCollector(_gameInfoDispatcher, _spawnerCurator, _enemiesSpawner,
+                _buildValidator, _wallet, _buildHandler, _castle, _sessionHandler, _sceneChanger,
+                _bank);
+            _disposables.Add(_gameInfoCollector);
             _interactHandler = new InteractHandler(_groundLayer, _castleLayer, _castleUpHandler,
                 _buildHandler, _mainCamera, _inputDispatcher);
             _disposables.Add(_interactHandler);

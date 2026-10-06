@@ -10,6 +10,8 @@ namespace _Project.Scripts.Builds.Towers
         private readonly float _minDistanceForBuilding;
 
         private HashSet<Tower> _towers = new();
+        
+        public int TowersBuilt => _towers.Count;
 
         public BuildValidator(Castle castle, float minDistanceForBuilding)
         {

@@ -4,27 +4,27 @@ namespace _Project.Scripts.Session
 {
     public class Wallet
     {
-        private int _count;
-
         public event Action<int> ValueChanged;
+        
+        public int Count { get; private set; }
 
         public void RefreshInfo() =>
-            ValueChanged?.Invoke(_count);
-        
+            ValueChanged?.Invoke(Count);
+
         public void AddMoney(int count)
         {
-            _count += count;
+            Count += count;
 
-            ValueChanged?.Invoke(_count);
+            ValueChanged?.Invoke(Count);
         }
 
         public bool TryTakeMoney(int count)
         {
-            if (_count < count)
+            if (Count < count)
                 return false;
 
-            _count -= count;
-            ValueChanged?.Invoke(_count);
+            Count -= count;
+            ValueChanged?.Invoke(Count);
 
             return true;
         }

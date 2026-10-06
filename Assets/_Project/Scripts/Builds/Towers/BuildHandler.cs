@@ -13,6 +13,10 @@ namespace _Project.Scripts.Builds.Towers
         private Wallet _wallet;
         private Vector3 _buildPosition;
 
+        public event Action<int> TowerBuilt;
+        public event Action TooCloseRejected;
+        public event Action NoMoneyRejected;
+
         public bool IsActive => _buildMenu.IsActive;
 
         public void TurnOff() =>
@@ -37,6 +41,10 @@ namespace _Project.Scripts.Builds.Towers
                 _buildPosition = buildPosition;
                 _buildMenu.Show();
             }
+            else
+            {
+                TooCloseRejected?.Invoke();
+            }
         }
 
         private void SubscribeAll()
@@ -57,21 +65,27 @@ namespace _Project.Scripts.Builds.Towers
             _strongTowerBuilder.Built -= ProcessTower;
         }
 
-        private void ProcessTower(Tower tower)
+        private void ProcessTower(Tower tower, int cost)
         {
             if (tower != null)
-            {
                 _validator.AddTower(tower);
-            }
+
+            TowerBuilt?.Invoke(cost);
 
             _buildMenu.Hide();
         }
 
-        private void BuildFastTower() =>
-            _fastTowerBuilder.Build(_buildPosition);
+        private void BuildFastTower()
+        {
+            if (_fastTowerBuilder.Build(_buildPosition) == false)
+                NoMoneyRejected?.Invoke();
+        }
 
-        private void BuildStrongTower() =>
-            _strongTowerBuilder.Build(_buildPosition);
+        private void BuildStrongTower()
+        {
+            if (_strongTowerBuilder.Build(_buildPosition) == false)
+                NoMoneyRejected?.Invoke();
+        }
 
         private void ChangeOpportunitiesBuy(int count)
         {
@@ -79,7 +93,7 @@ namespace _Project.Scripts.Builds.Towers
             _buildMenu.SetCanBuyStrongTower(count >= _strongTowerBuilder.Cost);
         }
 
-        public void Dispose() => 
+        public void Dispose() =>
             UnSubscribeAll();
     }
 }
