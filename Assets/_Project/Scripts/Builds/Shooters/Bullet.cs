@@ -11,6 +11,7 @@ namespace _Project.Scripts.Builds.Shooters
         private SphereCollider _collider;
         private int _damage;
         private float _speed;
+        private WaitForFixedUpdate _wait;
 
         public event Action<Bullet> Releasing;
 
@@ -18,6 +19,7 @@ namespace _Project.Scripts.Builds.Shooters
         {
             _collider = GetComponent<SphereCollider>();
             _collider.isTrigger = true;
+            _wait = new WaitForFixedUpdate();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -43,7 +45,6 @@ namespace _Project.Scripts.Builds.Shooters
             transform.position = startPoint;
             Vector3 lastTargetPosition = target.AimPoint.position;
             bool isBulletFlying = true;
-            var wait = new WaitForFixedUpdate();
 
             while (isBulletFlying)
             {
@@ -67,7 +68,7 @@ namespace _Project.Scripts.Builds.Shooters
                     }
                 }
 
-                yield return wait;
+                yield return _wait;
             }
         }
     }

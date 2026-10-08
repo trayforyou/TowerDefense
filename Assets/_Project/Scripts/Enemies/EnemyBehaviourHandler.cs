@@ -31,9 +31,8 @@ namespace _Project.Scripts.Enemies
         {
             _health = new Health(config.EnemyHealth);
             float sqrStopDistance = config.EnemyStopDistance * config.EnemyStopDistance;
-            _health.Died += Die;
-
-            SubscribeAll();
+            
+            ResetHealth();
 
             _attacker.Initialize(config, target, sqrStopDistance, _transform);
             _mover.SetParams(target.transform, config);
@@ -42,6 +41,7 @@ namespace _Project.Scripts.Enemies
         public void Start()
         {
             SubscribeAll();
+            
             _particles.Stop();
             _animator.TurnOn();
         }

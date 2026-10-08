@@ -53,7 +53,7 @@ namespace _Project.Scripts.Analytics
             _castle.Damaged -= DamageCastle;
             _sessionHandler.GameEnded -= EndGame;
             _sceneChanger.SceneRestarted -= RestartSession;
-            _sceneChanger.SceneRestarted -= ReturnedToMenu;
+            _sceneChanger.ReturnedToMenu -= ReturnedToMenu;
         }
         
         private void SubscribeAll()
@@ -66,7 +66,7 @@ namespace _Project.Scripts.Analytics
             _castle.Damaged += DamageCastle;
             _sessionHandler.GameEnded += EndGame;
             _sceneChanger.SceneRestarted += RestartSession;
-            _sceneChanger.SceneRestarted += ReturnedToMenu;
+            _sceneChanger.ReturnedToMenu += ReturnedToMenu;
         }
 
         private void ReturnedToMenu() => 

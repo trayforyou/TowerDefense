@@ -13,11 +13,12 @@ namespace _Project.Scripts.Enemies
         private float _sqrStopDistance;
         private Transform _transform;
         private Coroutine _attackCoroutine;
-
+        private WaitForSeconds _wait;
+        
         public event Action Attacking;
         public event Action NeedingRun;
 
-        private void OnDestroy() => 
+        private void OnDestroy() =>
             Stop();
 
         public void Initialize(EnemiesConfig config, Castle castle, float sqrStopDistance, Transform enemy)
@@ -26,6 +27,7 @@ namespace _Project.Scripts.Enemies
             _castle = castle;
             _sqrStopDistance = sqrStopDistance;
             _transform = enemy;
+            _wait = new WaitForSeconds(_config.EnemyAttackDelay);
         }
 
         public void Attack()
@@ -43,7 +45,6 @@ namespace _Project.Scripts.Enemies
 
         private IEnumerator StartAttackCoroutine()
         {
-            var wait = new WaitForSeconds(_config.EnemyAttackDelay);
             float sqrDistance = Vector3.SqrMagnitude(_castle.transform.position - _transform.position);
 
             while (sqrDistance < _sqrStopDistance)
@@ -52,7 +53,7 @@ namespace _Project.Scripts.Enemies
                 Attacking?.Invoke();
                 sqrDistance = Vector3.SqrMagnitude(_castle.transform.position - _transform.position);
 
-                yield return wait;
+                yield return _wait;
             }
 
             NeedingRun?.Invoke();
