@@ -25,15 +25,15 @@ namespace _Project.Scripts
 
         public int GetBalance()
         {
-            SaveData data = _saver.Load();
-            return data.MetaCurrency;
+            SaveDataMoney dataMoney = _saver.LoadDataMoney();
+            return dataMoney.MetaCurrency;
         }
 
         private void AddMetaMoney(int count)
         {
-            SaveData data = _saver.Load();
-            int metaMoney = data.MetaCurrency + count;
-            _saver.Save(new SaveData(metaMoney));
+            SaveDataMoney dataMoney = _saver.LoadDataMoney();
+            int metaMoney = dataMoney.MetaCurrency + count;
+            _saver.SaveMoney(new SaveDataMoney(metaMoney));
         }
     }
 }

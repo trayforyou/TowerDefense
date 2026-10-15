@@ -3,10 +3,12 @@ using System.Threading;
 using _Project.Scripts.Analytics;
 using _Project.Scripts.Analytics.Firebase;
 using _Project.Scripts.Savers;
+using _Project.Scripts.Session;
 using Cysharp.Threading.Tasks;
 using Firebase;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace _Project.Scripts
 {
@@ -15,12 +17,16 @@ namespace _Project.Scripts
         [SerializeField] private MainMenu _startMenu;
         [SerializeField] private string _gameSceneName = "Game";
         [SerializeField] private LoadingScreen _loadingScreen;
+        [SerializeField] private Canvas _canvas;
+        [SerializeField] private MainUpgraderMenu _mainUpgraderMenuPrefab;
 
         private FirebaseCreator _firebaseCreator;
         private FirebaseApp _firebaseApp;
         private MenuInfoCollector _menuInfoCollector;
         private Saver _saver;
+        private MainUpgraderMenu _mainUpgraderMenu;
         private int _metaCurrency;
+        private UpgradeHandler _upgraderHandler;
 
         public event Action<int> OnGameStarted;
 
@@ -44,9 +50,14 @@ namespace _Project.Scripts
             }
             finally
             {
+                UICreator uICreator = new UICreator(_canvas);
+                _mainUpgraderMenu = uICreator.Create(_mainUpgraderMenuPrefab);
+                _mainUpgraderMenu.Initialize();
                 _saver = new Saver();
-                SaveData data = _saver.Load();
-                _metaCurrency = data.MetaCurrency;
+                SaveDataMoney dataMoney = _saver.LoadDataMoney();
+                SaveDataLevels dataLevels = _saver.LoadDataLevels();
+                _upgraderHandler = new UpgradeHandler(_startMenu, _mainUpgraderMenu, dataLevels);
+                _metaCurrency = dataMoney.MetaCurrency;
                 _startMenu.Initialize(_metaCurrency);
                 FirebaseMenuInfoDispatcher menuInfoDispatcher = new FirebaseMenuInfoDispatcher();
                 _menuInfoCollector = new MenuInfoCollector(this, menuInfoDispatcher);

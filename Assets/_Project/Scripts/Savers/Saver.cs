@@ -4,25 +4,38 @@ namespace _Project.Scripts.Savers
 {
     public class Saver
     {
-        private readonly string _key = "data";
+        private readonly string _moneyKey = "money";
+        private readonly string _levelsKey = "levels";
 
-        public void Save(SaveData data)
+        public void SaveMoney(SaveDataMoney dataMoney) =>
+            Save(dataMoney, _moneyKey);
+
+        public void SaveLevels(SaveDataLevels dataLevels) =>
+            Save(dataLevels, _levelsKey);
+        
+        public SaveDataMoney LoadDataMoney() =>
+            Load<SaveDataMoney>(_moneyKey);
+
+        public SaveDataLevels LoadDataLevels() =>
+            Load<SaveDataLevels>(_levelsKey);
+
+        private void Save<T>(T saveData, string key) where T : ISaveData
         {
-            string json = JsonUtility.ToJson(data);
-            PlayerPrefs.SetString(_key, json);
+            string json = JsonUtility.ToJson(saveData);
+            PlayerPrefs.SetString(key, json);
             PlayerPrefs.Save();
         }
 
-        public SaveData Load()
+        private T Load<T>(string key) where T : ISaveData, new()
         {
-            if (PlayerPrefs.HasKey(_key))
+            if (PlayerPrefs.HasKey(key))
             {
-                string json = PlayerPrefs.GetString(_key);
+                string json = PlayerPrefs.GetString(key);
 
-                return JsonUtility.FromJson<SaveData>(json);
+                return JsonUtility.FromJson<T>(json);
             }
 
-            return new SaveData(0);
+            return new T();
         }
     }
 }
