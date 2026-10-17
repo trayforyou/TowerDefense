@@ -1,4 +1,5 @@
-﻿using _Project.Scripts.Savers;
+﻿using System;
+using _Project.Scripts.Savers;
 using _Project.Scripts.ScriptableObjects;
 
 namespace _Project.Scripts
@@ -8,6 +9,10 @@ namespace _Project.Scripts
         private readonly Saver _saver;
         private readonly MoneyConfig _moneyConfig;
 
+        private int _currentValue;
+
+        public event Action<int> OnValueChanged;
+
         public MetaMoneyBank(Saver saver, MoneyConfig moneyConfig)
         {
             _moneyConfig = moneyConfig;
@@ -16,9 +21,11 @@ namespace _Project.Scripts
 
         public int CalculateMoney(int waveCount, int enemiesDeath)
         {
-            int reward = waveCount * _moneyConfig.MoneyPerWave + enemiesDeath * _moneyConfig.MoneyPerKill;
+            if (waveCount < 0 || enemiesDeath < 0)
+                throw new ArgumentOutOfRangeException("waveCount", "waveCount and enemiesDeath must be nonnegative");
 
-            AddMetaMoney(reward);
+            int reward = waveCount * _moneyConfig.MoneyPerWave + enemiesDeath * _moneyConfig.MoneyPerKill;
+            ChangeMoney(reward);
 
             return reward;
         }
@@ -26,14 +33,27 @@ namespace _Project.Scripts
         public int GetBalance()
         {
             SaveDataMoney dataMoney = _saver.LoadDataMoney();
+            _currentValue = dataMoney.MetaCurrency;
+
             return dataMoney.MetaCurrency;
         }
 
-        private void AddMetaMoney(int count)
+        public bool TryGetMoney(int count)
+        {
+            if (_currentValue < count || count <= 0)
+                return false;
+
+            ChangeMoney(-count);
+            return true;
+        }
+
+        private void ChangeMoney(int count)
         {
             SaveDataMoney dataMoney = _saver.LoadDataMoney();
             int metaMoney = dataMoney.MetaCurrency + count;
+            _currentValue = metaMoney;
             _saver.SaveMoney(new SaveDataMoney(metaMoney));
+            OnValueChanged?.Invoke(metaMoney);
         }
     }
 }

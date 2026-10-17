@@ -8,24 +8,15 @@ namespace _Project.Scripts
 {
     public class MainUpgraderMenu : GameInteractionMenu, IUIElement
     {
-        [SerializeField] private Button _castleHP;
-        [SerializeField] private TextMeshProUGUI _castleHPTextLevel;
-        [SerializeField] private TextMeshProUGUI _castleHPTextCost;
-        [SerializeField] private Button _castleAttackSpeed;
-        [SerializeField] private TextMeshProUGUI _castleAttackSpeedTextLevel;
-        [SerializeField] private TextMeshProUGUI _castleAttackSpeedTextCost;
-        [SerializeField] private Button _castleDamage;
-        [SerializeField] private TextMeshProUGUI _castleDamageTextLevel;
-        [SerializeField] private TextMeshProUGUI _castleDamageTextCost;
-        [SerializeField] private Button _towerAttackSpeed;
-        [SerializeField] private TextMeshProUGUI _towerAttackSpeedTextLevel;
-        [SerializeField] private TextMeshProUGUI _towerAttackSpeedTextCost;
-        [SerializeField] private Button _towerDamage;
-        [SerializeField] private TextMeshProUGUI _towerDamageTextLevel;
-        [SerializeField] private TextMeshProUGUI _towerDamageTextCost;
         [SerializeField] private Button _closeMenu;
-        [SerializeField] private TextMeshProUGUI _closeMenuTextLevel;
-        [SerializeField] private TextMeshProUGUI _closeMenuTextCost;
+
+        private CardButton _buttonCastleHealth;
+        private CardButton _buttonCastleSpeed;
+        private CardButton _buttonCastleDamage;
+        private CardButton _buttonTowerSpeed;
+        private CardButton _buttonTowerDamage;
+
+        private MetaMoneyBank _metaMoneyBank;
 
         public event Action OnCloseMenu;
         public event Action OnUpCastleSpeed;
@@ -36,22 +27,57 @@ namespace _Project.Scripts
 
         private void OnDestroy()
         {
-            _castleHP.onClick.RemoveListener(UpHealth);
-            _castleAttackSpeed.onClick.RemoveListener(UpCastleSpeed);
-            _castleDamage.onClick.RemoveListener(UpCastleDamage);
-            _towerAttackSpeed.onClick.RemoveListener(UpTowersSpeed);
-            _towerDamage.onClick.RemoveListener(UpTowersDamage);
-            _closeMenu.onClick.RemoveListener(CloseMenu);
+            UnSubscribeAll();
         }
 
-        public void Initialize()
+        public void Initialize(MetaMoneyBank bank, CardButton buttonCastleHealth, CardButton buttonCastleSpeed,
+            CardButton buttonCastleDamage, CardButton buttonTowerSpeed, CardButton buttonTowerDamage)
         {
-            _castleHP.onClick.AddListener(UpHealth);
-            _castleAttackSpeed.onClick.AddListener(UpCastleSpeed);
-            _castleDamage.onClick.AddListener(UpCastleDamage);
-            _towerAttackSpeed.onClick.AddListener(UpTowersSpeed);
-            _towerDamage.onClick.AddListener(UpTowersDamage);
+            _buttonCastleSpeed = buttonCastleSpeed;
+            _buttonCastleDamage = buttonCastleDamage;
+            _buttonTowerSpeed = buttonTowerSpeed;
+            _buttonTowerDamage = buttonTowerDamage;
+            _buttonCastleHealth = buttonCastleHealth;
+
+            _metaMoneyBank = bank;
+            
+            SubscribeAll();
+        }
+        
+        public void SetCastleHealthLevel(int level)
+        {
+            
+        }
+        
+        private void ChangeOpportunitiesBuy(int count)
+        {
+            _buttonCastleSpeed.SetCanBuy(count >= _buttonCastleSpeed.Cost);
+            _buttonCastleDamage.SetCanBuy(count >= _buttonCastleDamage.Cost);
+            _buttonTowerSpeed.SetCanBuy(count >= _buttonTowerSpeed.Cost);
+            _buttonTowerDamage.SetCanBuy(count >= _buttonTowerDamage.Cost);
+            _buttonCastleHealth.SetCanBuy(count >= _buttonCastleHealth.Cost);
+        }
+        
+        private void SubscribeAll()
+        {
+            _buttonCastleHealth.OnClick += (UpHealth);
+            _buttonCastleSpeed.OnClick += (UpCastleSpeed);
+            _buttonCastleDamage.OnClick += (UpCastleDamage);
+            _buttonTowerSpeed.OnClick += (UpTowersSpeed);
+            _buttonTowerDamage.OnClick += (UpTowersDamage);
             _closeMenu.onClick.AddListener(CloseMenu);
+            _metaMoneyBank.OnValueChanged += ChangeOpportunitiesBuy;
+        }
+
+        private void UnSubscribeAll()
+        {
+            _buttonCastleHealth.OnClick -= (UpHealth);
+            _buttonCastleSpeed.OnClick -= (UpCastleSpeed);
+            _buttonCastleDamage.OnClick -= (UpCastleDamage);
+            _buttonTowerSpeed.OnClick -= (UpTowersSpeed);
+            _buttonTowerDamage.OnClick -= (UpTowersDamage);
+            _closeMenu.onClick.RemoveListener(CloseMenu);
+            _metaMoneyBank.OnValueChanged -= ChangeOpportunitiesBuy;
         }
 
         private void UpTowersDamage() =>
@@ -71,12 +97,5 @@ namespace _Project.Scripts
 
         private void CloseMenu() =>
             OnCloseMenu?.Invoke();
-
-        public void SetValues(int healthCastleLevel, int damageCastleLevel, int speedCastleLevel, int damageTowersLevel,
-            int speedTowersLevel)
-        {
-            throw
-                new NotImplementedException(); // TO DO нужно сделать объявлдение для каждой кнопки (Выделить кнопки в отдельный класс, чтобы не расширялся сильно текст)
-        }
     }
 }

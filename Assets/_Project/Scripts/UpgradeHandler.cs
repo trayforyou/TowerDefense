@@ -5,38 +5,36 @@ namespace _Project.Scripts
     public class UpgradeHandler
     {
         private readonly MainUpgraderMenu _upgraderMenu;
+        private readonly MetaLevelController _levelController;
+        private readonly MainMenu _menu;
 
-        private MainMenu _menu;
         private int _healthCastleLevel;
         private int _damageCastleLevel;
         private int _speedCastleLevel;
         private int _damageTowersLevel;
         private int _speedTowersLevel;
 
-        public UpgradeHandler(MainMenu menu, MainUpgraderMenu upgraderMenu, SaveDataLevels dataLevels)
+        public UpgradeHandler(MainMenu menu, MainUpgraderMenu upgraderMenu, MetaLevelController levelController)
         {
-            _menu = menu;
+            _levelController = levelController;
             _upgraderMenu = upgraderMenu;
-
-            _healthCastleLevel = dataLevels.CastleHealthLevel;
-            _damageCastleLevel = dataLevels.CastleDamageLevel;
-            _speedCastleLevel = dataLevels.CastleSpeedLevel;
-            _damageTowersLevel = dataLevels.TowersDamageLevel;
-            _speedTowersLevel = dataLevels.TowersSpeedLevel;
-
-            SetValue();
+            _menu = menu;
             
             SubscribeAll();
         }
 
-        private void SetValue()
-        {
-            _upgraderMenu.SetValues(_healthCastleLevel, _damageCastleLevel, _speedCastleLevel, _damageTowersLevel,
-                _speedTowersLevel);
-        }
-        
+
         private void SubscribeAll()
         {
+            // _healthCastleLevel = dataLevels.CastleHealthLevel;  // TO DO нужно подписаться на все кнопки в левл контроллере
+            // _damageCastleLevel = dataLevels.CastleDamageLevel;
+            // _speedCastleLevel = dataLevels.CastleSpeedLevel;
+            // _damageTowersLevel = dataLevels.TowersDamageLevel;
+            // _speedTowersLevel = dataLevels.TowersSpeedLevel;
+            //
+
+            _levelController.OnLevelCastleSpeedChanged += ChangeLevelCastleHealth;
+
             _menu.OnClickUpgrade += OpenUpgraderMenu;
 
             _upgraderMenu.OnCloseMenu += CloseMenu;
@@ -59,39 +57,31 @@ namespace _Project.Scripts
             _upgraderMenu.OnUpTowersDamage -= UpTowersDamage;
         }
 
-        private void UpTowersDamage()
+        private void ChangeLevelCastleHealth(int level)
         {
-            throw new System.NotImplementedException();
+            // _upgraderMenu.SetLevel(level);
+            // _upgraderMenu.SetGrowth();
         }
 
-        private void UpTowersSpeed()
-        {
-            throw new System.NotImplementedException();
-        }
+        private void UpTowersDamage() => 
+            _levelController.UpTowerDamage();
 
-        private void UpCastleDamage()
-        {
-            throw new System.NotImplementedException();
-        }
+        private void UpTowersSpeed() => 
+            _levelController.UpTowerSpeed();
 
-        private void UpCastleSpeed()
-        {
-            throw new System.NotImplementedException();
-        }
+        private void UpCastleDamage() => 
+            _levelController.UpCastleDamage();
 
-        private void UpCastleHealth()
-        {
-            throw new System.NotImplementedException();
-        }
+        private void UpCastleSpeed() => 
+            _levelController.UpCastleSpeed();
 
-        private void OpenUpgraderMenu()
-        {
+        private void UpCastleHealth() => 
+            _levelController.UpCastleHealth();
+
+        private void OpenUpgraderMenu() => 
             _upgraderMenu.Show();
-        }
 
-        private void CloseMenu()
-        {
+        private void CloseMenu() => 
             _upgraderMenu.Hide();
-        }
     }
 }
