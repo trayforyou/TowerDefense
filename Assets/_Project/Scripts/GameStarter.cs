@@ -9,6 +9,7 @@ using Cysharp.Threading.Tasks;
 using Firebase;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace _Project.Scripts
 {
@@ -19,6 +20,7 @@ namespace _Project.Scripts
         [SerializeField] private CardButton _buttonCastleDamage;
         [SerializeField] private CardButton _buttonTowerSpeed;
         [SerializeField] private CardButton _buttonTowerDamage;
+        [SerializeField] private Button _closeButton;
 
         [SerializeField] private MainMenu _startMenu;
         [SerializeField] private string _gameSceneName = "Game";
@@ -39,6 +41,7 @@ namespace _Project.Scripts
         private MainUpgraderMenu _mainUpgraderMenu;
         private int _metaCurrency;
         private UpgradeHandler _upgraderHandler;
+        private MainGrowthCalculator _mainGrowthCalculator;
 
         public event Action<int> OnGameStarted;
 
@@ -65,12 +68,12 @@ namespace _Project.Scripts
                 _saver = new Saver();
                 _metaMoneyBank = new MetaMoneyBank(_saver, _moneyConfig);
                 _metaLevelController = new MetaLevelController(_saver, _mainUpgradeConfig, _castleConfig, _towerConfig);
+                _mainGrowthCalculator = new MainGrowthCalculator(_mainUpgradeConfig);
                 UICreator uICreator = new UICreator(_canvas);
                 _mainUpgraderMenu = uICreator.Create(_mainUpgraderMenuPrefab);
                 _mainUpgraderMenu.Initialize(_metaMoneyBank, _buttonCastleHealth, _buttonCastleSpeed,
-                    _buttonCastleDamage, _buttonTowerSpeed, _buttonTowerDamage);
-                SaveDataLevels dataLevels = _saver.LoadDataLevels(); // TO DO вынести в отдельный класс как с метавалютой?
-                _upgraderHandler = new UpgradeHandler(_startMenu, _mainUpgraderMenu,_metaLevelController);
+                    _buttonCastleDamage, _buttonTowerSpeed, _buttonTowerDamage, _closeButton);
+                _upgraderHandler = new UpgradeHandler(_startMenu, _mainUpgraderMenu,_metaLevelController, _mainGrowthCalculator);
                 _startMenu.Initialize(_metaMoneyBank);
                 FirebaseMenuInfoDispatcher menuInfoDispatcher = new FirebaseMenuInfoDispatcher();
                 _menuInfoCollector = new MenuInfoCollector(this, menuInfoDispatcher);

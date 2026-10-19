@@ -1,11 +1,12 @@
-﻿using _Project.Scripts.Savers;
+﻿using System;
 
 namespace _Project.Scripts
 {
-    public class UpgradeHandler
+    public class UpgradeHandler : IDisposable
     {
         private readonly MainUpgraderMenu _upgraderMenu;
         private readonly MetaLevelController _levelController;
+        private readonly MainGrowthCalculator _calculator;
         private readonly MainMenu _menu;
 
         private int _healthCastleLevel;
@@ -14,26 +15,27 @@ namespace _Project.Scripts
         private int _damageTowersLevel;
         private int _speedTowersLevel;
 
-        public UpgradeHandler(MainMenu menu, MainUpgraderMenu upgraderMenu, MetaLevelController levelController)
+        public UpgradeHandler(MainMenu menu, MainUpgraderMenu upgraderMenu, MetaLevelController levelController,
+            MainGrowthCalculator calculator)
         {
+            _calculator = calculator;
             _levelController = levelController;
             _upgraderMenu = upgraderMenu;
             _menu = menu;
-            
+
             SubscribeAll();
         }
 
+        public void Dispose() =>
+            UnSubscribeAll();
 
         private void SubscribeAll()
         {
-            // _healthCastleLevel = dataLevels.CastleHealthLevel;  // TO DO нужно подписаться на все кнопки в левл контроллере
-            // _damageCastleLevel = dataLevels.CastleDamageLevel;
-            // _speedCastleLevel = dataLevels.CastleSpeedLevel;
-            // _damageTowersLevel = dataLevels.TowersDamageLevel;
-            // _speedTowersLevel = dataLevels.TowersSpeedLevel;
-            //
-
-            _levelController.OnLevelCastleSpeedChanged += ChangeLevelCastleHealth;
+            _levelController.OnLevelCastleHealthChanged += ChangeLevelCastleHealth;
+            _levelController.OnLevelCastleSpeedChanged += ChangeLevelCastleSpeed;
+            _levelController.OnLevelCastleDamageChanged += ChangeLevelCastleDamage;
+            _levelController.OnLevelTowerSpeedChanged += ChangeLevelTowerSpeed;
+            _levelController.OnLevelTowerDamageChanged += ChangeLevelTowerDamage;
 
             _menu.OnClickUpgrade += OpenUpgraderMenu;
 
@@ -47,6 +49,12 @@ namespace _Project.Scripts
 
         private void UnSubscribeAll()
         {
+            _levelController.OnLevelCastleHealthChanged -= ChangeLevelCastleHealth;
+            _levelController.OnLevelCastleSpeedChanged -= ChangeLevelCastleSpeed;
+            _levelController.OnLevelCastleDamageChanged -= ChangeLevelCastleDamage;
+            _levelController.OnLevelTowerSpeedChanged -= ChangeLevelTowerSpeed;
+            _levelController.OnLevelTowerDamageChanged -= ChangeLevelTowerDamage;
+
             _menu.OnClickUpgrade -= OpenUpgraderMenu;
 
             _upgraderMenu.OnCloseMenu -= CloseMenu;
@@ -57,31 +65,40 @@ namespace _Project.Scripts
             _upgraderMenu.OnUpTowersDamage -= UpTowersDamage;
         }
 
-        private void ChangeLevelCastleHealth(int level)
-        {
-            // _upgraderMenu.SetLevel(level);
-            // _upgraderMenu.SetGrowth();
-        }
+        private void ChangeLevelCastleHealth(int level) =>
+            _upgraderMenu.SetCastleHealthLevel(level, _calculator.GetCastleHealthMultiply(level));
 
-        private void UpTowersDamage() => 
+        private void ChangeLevelCastleSpeed(int level) => 
+            _upgraderMenu.SetCastleSpeedLevel(level, _calculator.GetCastleSpeedMultiply(level));
+
+        private void ChangeLevelCastleDamage(int level) => 
+            _upgraderMenu.SetCastleDamageLevel(level, _calculator.GetCastleDamageMultiply(level));
+
+        private void ChangeLevelTowerSpeed(int level) => 
+            _upgraderMenu.SetTowerSpeedLevel(level, _calculator.GetTowerSpeedMultiply(level));
+
+        private void ChangeLevelTowerDamage(int level) => 
+            _upgraderMenu.SetTowerDamageLevel(level, _calculator.GetTowerDamageMultiply(level));
+
+        private void UpTowersDamage() =>
             _levelController.UpTowerDamage();
 
-        private void UpTowersSpeed() => 
+        private void UpTowersSpeed() =>
             _levelController.UpTowerSpeed();
 
-        private void UpCastleDamage() => 
+        private void UpCastleDamage() =>
             _levelController.UpCastleDamage();
 
-        private void UpCastleSpeed() => 
+        private void UpCastleSpeed() =>
             _levelController.UpCastleSpeed();
 
-        private void UpCastleHealth() => 
+        private void UpCastleHealth() =>
             _levelController.UpCastleHealth();
 
-        private void OpenUpgraderMenu() => 
+        private void OpenUpgraderMenu() =>
             _upgraderMenu.Show();
 
-        private void CloseMenu() => 
+        private void CloseMenu() =>
             _upgraderMenu.Hide();
     }
 }

@@ -8,8 +8,7 @@ namespace _Project.Scripts
 {
     public class MainUpgraderMenu : GameInteractionMenu, IUIElement
     {
-        [SerializeField] private Button _closeMenu;
-
+        private Button _closeMenu;
         private CardButton _buttonCastleHealth;
         private CardButton _buttonCastleSpeed;
         private CardButton _buttonCastleDamage;
@@ -25,14 +24,15 @@ namespace _Project.Scripts
         public event Action OnUpTowersDamage;
         public event Action OnUpTowersSpeed;
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             UnSubscribeAll();
         }
 
         public void Initialize(MetaMoneyBank bank, CardButton buttonCastleHealth, CardButton buttonCastleSpeed,
-            CardButton buttonCastleDamage, CardButton buttonTowerSpeed, CardButton buttonTowerDamage)
+            CardButton buttonCastleDamage, CardButton buttonTowerSpeed, CardButton buttonTowerDamage, Button  closeMenu)
         {
+            _closeMenu = closeMenu;
             _buttonCastleSpeed = buttonCastleSpeed;
             _buttonCastleDamage = buttonCastleDamage;
             _buttonTowerSpeed = buttonTowerSpeed;
@@ -44,19 +44,39 @@ namespace _Project.Scripts
             SubscribeAll();
         }
         
-        public void SetCastleHealthLevel(int level)
+        public void SetCastleHealthLevel(int level, float growthMultiplier)
         {
             
         }
         
-        private void ChangeOpportunitiesBuy(int count)
+        public void SetCastleSpeedLevel(int level, float growthMultiplier)
         {
-            _buttonCastleSpeed.SetCanBuy(count >= _buttonCastleSpeed.Cost);
-            _buttonCastleDamage.SetCanBuy(count >= _buttonCastleDamage.Cost);
-            _buttonTowerSpeed.SetCanBuy(count >= _buttonTowerSpeed.Cost);
-            _buttonTowerDamage.SetCanBuy(count >= _buttonTowerDamage.Cost);
-            _buttonCastleHealth.SetCanBuy(count >= _buttonCastleHealth.Cost);
+            
         }
+        
+        public void SetCastleDamageLevel(int level, float growthMultiplier)
+        {
+            
+        }
+        
+        public void SetTowerSpeedLevel(int level, float growthMultiplier)
+        {
+            
+        }
+        
+        public void SetTowerDamageLevel(int level, float growthMultiplier)
+        {
+            
+        }
+        
+        // private void ChangeOpportunitiesBuy(int count)
+        // {
+        //     _buttonCastleSpeed.SetCanBuy(count >= _buttonCastleSpeed.Cost);
+        //     _buttonCastleDamage.SetCanBuy(count >= _buttonCastleDamage.Cost);
+        //     _buttonTowerSpeed.SetCanBuy(count >= _buttonTowerSpeed.Cost);
+        //     _buttonTowerDamage.SetCanBuy(count >= _buttonTowerDamage.Cost);
+        //     _buttonCastleHealth.SetCanBuy(count >= _buttonCastleHealth.Cost);
+        // }
         
         private void SubscribeAll()
         {
@@ -66,7 +86,7 @@ namespace _Project.Scripts
             _buttonTowerSpeed.OnClick += (UpTowersSpeed);
             _buttonTowerDamage.OnClick += (UpTowersDamage);
             _closeMenu.onClick.AddListener(CloseMenu);
-            _metaMoneyBank.OnValueChanged += ChangeOpportunitiesBuy;
+            // _metaMoneyBank.OnValueChanged += ChangeOpportunitiesBuy;
         }
 
         private void UnSubscribeAll()
@@ -77,7 +97,7 @@ namespace _Project.Scripts
             _buttonTowerSpeed.OnClick -= (UpTowersSpeed);
             _buttonTowerDamage.OnClick -= (UpTowersDamage);
             _closeMenu.onClick.RemoveListener(CloseMenu);
-            _metaMoneyBank.OnValueChanged -= ChangeOpportunitiesBuy;
+            // _metaMoneyBank.OnValueChanged -= ChangeOpportunitiesBuy;
         }
 
         private void UpTowersDamage() =>
