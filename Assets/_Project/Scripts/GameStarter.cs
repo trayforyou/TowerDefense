@@ -15,25 +15,15 @@ namespace _Project.Scripts
 {
     public class GameStarter : MonoBehaviour
     {
-        [SerializeField] private CardButton _buttonCastleHealth;
-        [SerializeField] private CardButton _buttonCastleSpeed;
-        [SerializeField] private CardButton _buttonCastleDamage;
-        [SerializeField] private CardButton _buttonTowerSpeed;
-        [SerializeField] private CardButton _buttonTowerDamage;
-        [SerializeField] private Button _closeButton;
-
         [SerializeField] private MainMenu _startMenu;
         [SerializeField] private string _gameSceneName = "Game";
         [SerializeField] private LoadingScreen _loadingScreen;
         [SerializeField] private Canvas _canvas;
         [SerializeField] private MainUpgraderMenu _mainUpgraderMenuPrefab;
-        [SerializeField] private MoneyConfig _moneyConfig;
-        [SerializeField] private MainUpgradeConfig _mainUpgradeConfig;
-        [SerializeField] private CastleConfig _castleConfig;
-        [SerializeField] private TowerConfig _towerConfig;
+        [SerializeField] private LevelConfig levelConfig;
 
         private MetaMoneyBank _metaMoneyBank;
-        private MetaLevelController  _metaLevelController;
+        private MetaLevelController _metaLevelController;
         private FirebaseCreator _firebaseCreator;
         private FirebaseApp _firebaseApp;
         private MenuInfoCollector _menuInfoCollector;
@@ -66,14 +56,14 @@ namespace _Project.Scripts
             finally
             {
                 _saver = new Saver();
-                _metaMoneyBank = new MetaMoneyBank(_saver, _moneyConfig);
-                _metaLevelController = new MetaLevelController(_saver, _mainUpgradeConfig, _castleConfig, _towerConfig);
-                _mainGrowthCalculator = new MainGrowthCalculator(_mainUpgradeConfig);
+                _metaMoneyBank = new MetaMoneyBank(_saver);
+                _metaLevelController = new MetaLevelController(_saver);
+                _mainGrowthCalculator = new MainGrowthCalculator(levelConfig);
                 UICreator uICreator = new UICreator(_canvas);
                 _mainUpgraderMenu = uICreator.Create(_mainUpgraderMenuPrefab);
-                _mainUpgraderMenu.Initialize(_metaMoneyBank, _buttonCastleHealth, _buttonCastleSpeed,
-                    _buttonCastleDamage, _buttonTowerSpeed, _buttonTowerDamage, _closeButton);
-                _upgraderHandler = new UpgradeHandler(_startMenu, _mainUpgraderMenu,_metaLevelController, _mainGrowthCalculator);
+                _mainUpgraderMenu.Initialize();
+                _upgraderHandler = new UpgradeHandler(_startMenu, _mainUpgraderMenu, _metaLevelController,
+                    _mainGrowthCalculator, _metaMoneyBank, levelConfig);
                 _startMenu.Initialize(_metaMoneyBank);
                 FirebaseMenuInfoDispatcher menuInfoDispatcher = new FirebaseMenuInfoDispatcher();
                 _menuInfoCollector = new MenuInfoCollector(this, menuInfoDispatcher);
@@ -86,6 +76,7 @@ namespace _Project.Scripts
         {
             _startMenu.TriedLoadGame -= LoadGame;
             _menuInfoCollector?.Dispose();
+            _upgraderHandler?.Dispose();
         }
 
         private void LoadGame()
@@ -93,5 +84,10 @@ namespace _Project.Scripts
             OnGameStarted?.Invoke(_metaCurrency);
             SceneManager.LoadScene(_gameSceneName);
         }
+        
+        
+        //Для тестов
+        
+        
     }
 }

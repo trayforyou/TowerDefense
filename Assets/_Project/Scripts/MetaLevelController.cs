@@ -7,9 +7,6 @@ namespace _Project.Scripts
     public class MetaLevelController
     {
         private readonly Saver _saver;
-        private readonly MainUpgradeConfig _mainUpgradeConfig;
-        private readonly CastleConfig _castleConfig;
-        private readonly TowerConfig _towerConfig;
 
         private int _currentLevelCastleHealth;
         private int _currentLevelCastleSpeed;
@@ -23,13 +20,9 @@ namespace _Project.Scripts
         public event Action<int> OnLevelTowerSpeedChanged;
         public event Action<int> OnLevelTowerDamageChanged;
 
-        public MetaLevelController(Saver saver, MainUpgradeConfig mainUpgradeConfig, CastleConfig castleConfig,
-            TowerConfig towerConfig)
+        public MetaLevelController(Saver saver)
         {
             _saver = saver;
-            _mainUpgradeConfig = mainUpgradeConfig;
-            _castleConfig = castleConfig;
-            _towerConfig = towerConfig;
 
             LoadLevels();
             InvokeAllLevels();

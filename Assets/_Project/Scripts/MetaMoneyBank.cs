@@ -10,17 +10,24 @@ namespace _Project.Scripts
         private readonly MoneyConfig _moneyConfig;
 
         private int _currentValue;
+        private bool _isInitializedConfig = false;
 
         public event Action<int> OnValueChanged;
 
-        public MetaMoneyBank(Saver saver, MoneyConfig moneyConfig)
+        public MetaMoneyBank(Saver saver, MoneyConfig moneyConfig) : this(saver)
         {
+            _isInitializedConfig = true;
             _moneyConfig = moneyConfig;
-            _saver = saver;
         }
+
+        public MetaMoneyBank(Saver saver) =>
+            _saver = saver;
 
         public int CalculateMoney(int waveCount, int enemiesDeath)
         {
+            if (!_isInitializedConfig)
+                return 0;
+
             if (waveCount < 0 || enemiesDeath < 0)
                 throw new ArgumentOutOfRangeException("waveCount", "waveCount and enemiesDeath must be nonnegative");
 

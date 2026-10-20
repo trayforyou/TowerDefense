@@ -3031,24 +3031,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e99f656fda048898dc95efa7382a16b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.MainUpgradeMenu
-  _castleHP: {fileID: 7499817685662938454}
-  _castleHPTextLevel: {fileID: 0}
-  _castleHPTextCost: {fileID: 0}
-  _castleAttackSpeed: {fileID: 0}
-  _castleAttackSpeedTextLevel: {fileID: 0}
-  _castleAttackSpeedTextCost: {fileID: 0}
-  _castleDamage: {fileID: 0}
-  _castleDamageTextLevel: {fileID: 0}
-  _castleDamageTextCost: {fileID: 0}
-  _towerAttackSpeed: {fileID: 0}
-  _towerAttackSpeedTextLevel: {fileID: 0}
-  _towerAttackSpeedTextCost: {fileID: 0}
-  _towerDamage: {fileID: 0}
-  _towerDamageTextLevel: {fileID: 0}
-  _towerDamageTextCost: {fileID: 0}
   _closeMenu: {fileID: 1574130836923526353}
-  _closeMenuTextLevel: {fileID: 0}
-  _closeMenuTextCost: {fileID: 0}
+  _buttonCastleHealth: {fileID: 8358757815945358942}
+  _buttonCastleSpeed: {fileID: 6067713185904620441}
+  _buttonCastleDamage: {fileID: 3034044363522591856}
+  _buttonTowerSpeed: {fileID: 7401245646372339666}
+  _buttonTowerDamage: {fileID: 3809516427484352650}
 --- !u!1 &5694200277300593025
 GameObject:
   m_ObjectHideFlags: 0

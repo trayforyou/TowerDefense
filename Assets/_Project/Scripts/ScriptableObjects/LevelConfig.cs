@@ -3,7 +3,7 @@
 namespace _Project.Scripts.ScriptableObjects
 {
     [CreateAssetMenu(fileName = "LevelConfig", menuName = "Scriptable Objects/LevelConfig")]
-    public class MainUpgradeConfig : ScriptableObject
+    public class LevelConfig : ScriptableObject
     {
         [field: SerializeField] public int CastleHealthUpCost { get; private set; } = 20;
         [field: SerializeField] public int CastleSpeedUpCost { get; private set; } = 15;

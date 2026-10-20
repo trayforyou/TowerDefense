@@ -5,9 +5,9 @@ namespace _Project.Scripts
 {
     public class MainGrowthCalculator
     {
-        private readonly MainUpgradeConfig _config;
+        private readonly LevelConfig _config;
 
-        public MainGrowthCalculator(MainUpgradeConfig config) => 
+        public MainGrowthCalculator(LevelConfig config) => 
             _config = config;
 
         public float GetCastleHealthMultiply(int level) =>

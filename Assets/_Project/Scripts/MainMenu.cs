@@ -20,6 +20,7 @@ namespace _Project.Scripts
         public void Initialize(MetaMoneyBank bank)
         {
             ChangeValue(bank.GetBalance());
+            
             _metaMoneyBank = bank;
 
             _metaMoneyBank.OnValueChanged += ChangeValue;
