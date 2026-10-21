@@ -15,15 +15,20 @@ namespace _Project.Scripts.Builds.Towers
         private readonly TowerConfig _config;
         private readonly Tower _prefab;
         private readonly Wallet _wallet;
+        private readonly FiringSwitch _firingSwitch;
+        private readonly float _mainMultiplierDamage;
+        private readonly float _mainMultiplierDelay;
 
         public readonly int Cost;
-        private readonly FiringSwitch _firingSwitch;
 
         public event OnBuilt Built;
 
         public TowerBuilder(Tower prefab, TowerConfig config, Wallet wallet, int cost,
-            Func<GunParameters, Gun> createGun, FiringSwitch firingSwitch)
+            Func<GunParameters, Gun> createGun, FiringSwitch firingSwitch, float mainMultiplierDamage,
+            float mainMultiplierDelay)
         {
+            _mainMultiplierDamage = mainMultiplierDamage;
+            _mainMultiplierDelay = mainMultiplierDelay;
             Cost = cost;
             _firingSwitch = firingSwitch;
             _createGun = createGun;
@@ -41,9 +46,10 @@ namespace _Project.Scripts.Builds.Towers
                 tempTower = (Instantiate(_prefab, buildPosition, Quaternion.identity));
 
                 tempTower.Initialize(_createGun.Invoke(new GunParameters(_config.Damage, _config.ShootDelay,
-                    _config.RadiusAttack, buildPosition)), _firingSwitch);
+                    _config.RadiusAttack, buildPosition, _mainMultiplierDamage, _mainMultiplierDelay)), _firingSwitch);
 
                 Built?.Invoke(tempTower, Cost);
+
                 return true;
             }
             else

@@ -783,21 +783,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fefb3d9c715d554dbf577c5b6b3f08d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
-  _buttonCastleHealth: {fileID: 0}
-  _buttonCastleSpeed: {fileID: 0}
-  _buttonCastleDamage: {fileID: 0}
-  _buttonTowerSpeed: {fileID: 0}
-  _buttonTowerDamage: {fileID: 0}
-  _closeButton: {fileID: 0}
   _startMenu: {fileID: 1100279012}
   _gameSceneName: Game
   _loadingScreen: {fileID: 97114058}
   _canvas: {fileID: 1276943932}
   _mainUpgraderMenuPrefab: {fileID: -9150927285250005455, guid: 8d70f9e884b82864e83c2217db20bbc6, type: 3}
-  _moneyConfig: {fileID: 0}
-  _mainUpgradeConfig: {fileID: 0}
-  _castleConfig: {fileID: 0}
-  _towerConfig: {fileID: 0}
+  _levelConfig: {fileID: 11400000, guid: 73dafddd43b1127419473ccadcc09291, type: 2}
 --- !u!4 &1138483916
 Transform:
   m_ObjectHideFlags: 0
@@ -1364,9 +1355,9 @@ RectTransform:
   - {fileID: 1766939291}
   m_Father: {fileID: 1276943933}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 540, y: -193}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -213.33}
   m_SizeDelta: {x: 950, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1955925227

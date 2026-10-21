@@ -13,11 +13,11 @@ namespace _Project.Scripts.Savers
 
         public SaveDataLevels()
         {
-            CastleHealthLevel = 1;
-            CastleDamageLevel = 1;
-            CastleSpeedLevel = 1;
-            TowersDamageLevel = 1;
-            TowersSpeedLevel = 1;
+            CastleHealthLevel = 0;
+            CastleDamageLevel = 0;
+            CastleSpeedLevel = 0;
+            TowersDamageLevel = 0;
+            TowersSpeedLevel = 0;
         }
 
         public SaveDataLevels(int castleHealthLevel, int castleDamageLevel, int castleSpeedLevel,

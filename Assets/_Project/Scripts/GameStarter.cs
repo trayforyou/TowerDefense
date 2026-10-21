@@ -20,10 +20,10 @@ namespace _Project.Scripts
         [SerializeField] private LoadingScreen _loadingScreen;
         [SerializeField] private Canvas _canvas;
         [SerializeField] private MainUpgraderMenu _mainUpgraderMenuPrefab;
-        [SerializeField] private LevelConfig levelConfig;
+        [SerializeField] private LevelConfig _levelConfig;
 
         private MetaMoneyBank _metaMoneyBank;
-        private MetaLevelController _metaLevelController;
+        private MetaLevelController _metaLevelController; 
         private FirebaseCreator _firebaseCreator;
         private FirebaseApp _firebaseApp;
         private MenuInfoCollector _menuInfoCollector;
@@ -58,12 +58,13 @@ namespace _Project.Scripts
                 _saver = new Saver();
                 _metaMoneyBank = new MetaMoneyBank(_saver);
                 _metaLevelController = new MetaLevelController(_saver);
-                _mainGrowthCalculator = new MainGrowthCalculator(levelConfig);
+                _mainGrowthCalculator = new MainGrowthCalculator(_levelConfig);
                 UICreator uICreator = new UICreator(_canvas);
                 _mainUpgraderMenu = uICreator.Create(_mainUpgraderMenuPrefab);
-                _mainUpgraderMenu.Initialize();
+                _mainUpgraderMenu.Initialize(_levelConfig.CastleHealthUpCost, _levelConfig.CastleSpeedUpCost,
+                    _levelConfig.CastleDamageUpCost, _levelConfig.TowerSpeedUpCost, _levelConfig.TowerDamageUpCost);
                 _upgraderHandler = new UpgradeHandler(_startMenu, _mainUpgraderMenu, _metaLevelController,
-                    _mainGrowthCalculator, _metaMoneyBank, levelConfig);
+                    _mainGrowthCalculator, _metaMoneyBank, _levelConfig);
                 _startMenu.Initialize(_metaMoneyBank);
                 FirebaseMenuInfoDispatcher menuInfoDispatcher = new FirebaseMenuInfoDispatcher();
                 _menuInfoCollector = new MenuInfoCollector(this, menuInfoDispatcher);
@@ -84,10 +85,8 @@ namespace _Project.Scripts
             OnGameStarted?.Invoke(_metaCurrency);
             SceneManager.LoadScene(_gameSceneName);
         }
-        
-        
+
+
         //Для тестов
-        
-        
     }
 }

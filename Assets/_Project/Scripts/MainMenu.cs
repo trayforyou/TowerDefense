@@ -35,10 +35,8 @@ namespace _Project.Scripts
             _upgrade.onClick.RemoveListener(ClickButtonUpgrade);
         }
 
-        private void ChangeValue(int value)
-        {
-            _metaCoins.text += value;
-        }
+        private void ChangeValue(int value) => 
+            _metaCoins.text = value.ToString();
 
         private void ClickButtonStart() =>
             TriedLoadGame?.Invoke();

@@ -37,6 +37,7 @@ namespace _Project.Scripts.Session
         [SerializeField] private CastleConfig _castleConfig;
         [SerializeField] private MoneyConfig _moneyConfig;
         [SerializeField] private BuildConfig _buildConfig;
+        [SerializeField] private LevelConfig _levelConfig;
         [SerializeField] private string _menuSceneName = "Menu";
 
         private GameInfoCollector _gameInfoCollector;
@@ -66,6 +67,8 @@ namespace _Project.Scripts.Session
         private MetaMoneyBank _bank;
         private CastleUpper _castleUpper;
         private IGameInfoDispatcher _gameInfoDispatcher;
+        private MainGrowthCalculator _growthCalculator;
+        private SaveDataLevels _levelData;
 
         private void Awake()
         {
@@ -77,10 +80,11 @@ namespace _Project.Scripts.Session
             _wallet = new Wallet();
             _uICreator = new UICreator(_canvas);
             _bank = new MetaMoneyBank(_saver, _moneyConfig);
+            _levelData = _saver.LoadDataLevels();
+            _growthCalculator = new MainGrowthCalculator(_levelConfig);
 
             CastlePlacer castlePlacer = new CastlePlacer();
             _castle = castlePlacer.PlaceAtScreenCenter(_castlePrefab, _mainCamera, _groundLayer);
-
             _buildMenu = _uICreator.Create(_buildMenuPrefab);
             _buildMenu.SetCostTowers(_buildConfig.FastTowerCost, _buildConfig.StrongTowerCost);
             _upgradeMenu = _uICreator.Create(_upgradeMenuPrefab);
@@ -97,10 +101,12 @@ namespace _Project.Scripts.Session
             _disposables.Add(_moneyCollector);
             _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);
             _firingSwitch = new FiringSwitch();
+            float damageTowerMultiplier = _growthCalculator.GetTowerDamageMultiply(_levelData.TowersDamageLevel);
+            float delayTowerMultiplier = _growthCalculator.GetTowerSpeedMultiply(_levelData.TowersSpeedLevel);
             _strongBuilder = new TowerBuilder(_strongTowerPrefab, _strongTowerConfig, _wallet,
-                _buildConfig.StrongTowerCost, CreateGun, _firingSwitch);
+                _buildConfig.StrongTowerCost, CreateGun, _firingSwitch, damageTowerMultiplier, delayTowerMultiplier);
             _fastBuilder = new TowerBuilder(_fastTowerPrefab, _fastTowerConfig, _wallet, _buildConfig.FastTowerCost,
-                CreateGun, _firingSwitch);
+                CreateGun, _firingSwitch, damageTowerMultiplier, delayTowerMultiplier);
             _buildHandler = new BuildHandler(_wallet, _buildValidator, _buildMenu, _strongBuilder, _fastBuilder);
             _disposables.Add(_buildHandler);
             _castleUpper = new CastleUpper(_castleConfig, _wallet, _castle,
@@ -124,7 +130,9 @@ namespace _Project.Scripts.Session
         private void Start()
         {
             Gun tempGun = CreateGun(new GunParameters(_castleConfig.StartDamageCastle,
-                _castleConfig.StartDelayShootCastle, _castleConfig.RadiusRangeCastle, _castle.transform.position));
+                _castleConfig.StartDelayShootCastle, _castleConfig.RadiusRangeCastle, _castle.transform.position,
+                _growthCalculator.GetCastleDamageMultiply(_levelData.CastleDamageLevel),
+                _growthCalculator.GetCastleSpeedMultiply(_levelData.CastleSpeedLevel)));
 
             _castle.SetConfig(_castleConfig, tempGun);
             _sessionHandler.Start();
@@ -141,6 +149,6 @@ namespace _Project.Scripts.Session
 
         private Gun CreateGun(GunParameters parameters) =>
             new(new Shooter(_shooterConfig, parameters.Damage, parameters.ShootDelay, _bulletPrefab),
-                new EnemyFinder(parameters.Radius, _shooterConfig, parameters.CenterFindPosition));
+                new EnemyFinder(parameters.Radius, _shooterConfig, parameters.CenterFindPosition)); //TO DO внедрить множители внуть Gun, чтобы урон и скорость множились
     }
 }

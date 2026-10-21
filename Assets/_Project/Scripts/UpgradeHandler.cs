@@ -29,6 +29,7 @@ namespace _Project.Scripts
             _menu = menu;
 
             SubscribeAll();
+            ChangeOpportunitiesBuy(_bank.GetBalance()); 
         }
 
         public void Dispose() =>
@@ -92,20 +93,35 @@ namespace _Project.Scripts
         private void ChangeLevelTowerDamage(int level) =>
             _upgraderMenu.SetTowerDamageLevel(level, _calculator.GetTowerDamageMultiply(level));
 
-        private void UpTowersDamage() =>
-            _levelController.UpTowerDamage();
+        private void UpTowersDamage()
+        {
+            if (_bank.TryGetMoney(_config.TowerDamageUpCost))
+                _levelController.UpTowerDamage();
+        }
 
-        private void UpTowersSpeed() =>
-            _levelController.UpTowerSpeed();
+        private void UpTowersSpeed()
+        {
+            if (_bank.TryGetMoney(_config.TowerSpeedUpCost))
+                _levelController.UpTowerSpeed();
+        }
 
-        private void UpCastleDamage() =>
-            _levelController.UpCastleDamage();
+        private void UpCastleDamage()
+        {
+            if (_bank.TryGetMoney(_config.CastleDamageUpCost))
+                _levelController.UpCastleDamage();
+        }
 
-        private void UpCastleSpeed() =>
-            _levelController.UpCastleSpeed();
+        private void UpCastleSpeed()
+        {
+            if (_bank.TryGetMoney(_config.CastleSpeedUpCost))
+                _levelController.UpCastleSpeed();
+        }
 
-        private void UpCastleHealth() =>
-            _levelController.UpCastleHealth();
+        private void UpCastleHealth()
+        {
+            if (_bank.TryGetMoney(_config.CastleHealthUpCost))
+                _levelController.UpCastleHealth();
+        }
 
         private void OpenUpgraderMenu()
         {

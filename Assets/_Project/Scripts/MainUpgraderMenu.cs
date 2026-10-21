@@ -1,7 +1,7 @@
 ﻿using System;
-using _Project.Scripts.Session;
 using UnityEngine;
 using UnityEngine.UI;
+using _Project.Scripts.Session;
 
 namespace _Project.Scripts
 {
@@ -24,9 +24,18 @@ namespace _Project.Scripts
         protected override void OnDestroy() =>
             UnSubscribeAll();
 
-        public void Initialize() =>
+        public void Initialize(int costCastleHealth, int costCastleSpeed, int costCastleDamage, int costTowerSpeed,
+            int costTowerDamage)
+        {
+            _buttonCastleHealth.Initialize(costCastleHealth);
+            _buttonCastleSpeed.Initialize(costCastleSpeed);
+            _buttonCastleDamage.Initialize(costCastleDamage);
+            _buttonTowerSpeed.Initialize(costTowerSpeed);
+            _buttonTowerDamage.Initialize(costTowerDamage);
+
             SubscribeAll();
-        
+        }
+
         public void SetCastleHealthLevel(int level, float growthMultiplier) =>
             _buttonCastleHealth.SetLevel(level, growthMultiplier);
 
@@ -59,7 +68,9 @@ namespace _Project.Scripts
 
         private void SubscribeAll()
         {
-            _buttonCastleHealth.OnClick += (UpHealth);
+            Debug.Log("Происходит подписка на все кнопки");
+
+            _buttonCastleHealth.OnClick += (UpCastleHealth);
             _buttonCastleSpeed.OnClick += (UpCastleSpeed);
             _buttonCastleDamage.OnClick += (UpCastleDamage);
             _buttonTowerSpeed.OnClick += (UpTowersSpeed);
@@ -69,7 +80,7 @@ namespace _Project.Scripts
 
         private void UnSubscribeAll()
         {
-            _buttonCastleHealth.OnClick -= (UpHealth);
+            _buttonCastleHealth.OnClick -= (UpCastleHealth);
             _buttonCastleSpeed.OnClick -= (UpCastleSpeed);
             _buttonCastleDamage.OnClick -= (UpCastleDamage);
             _buttonTowerSpeed.OnClick -= (UpTowersSpeed);
@@ -89,7 +100,7 @@ namespace _Project.Scripts
         private void UpCastleSpeed() =>
             OnUpCastleSpeed?.Invoke();
 
-        private void UpHealth() =>
+        private void UpCastleHealth() => 
             OnUpCastleHealth?.Invoke();
 
         private void CloseMenu() =>

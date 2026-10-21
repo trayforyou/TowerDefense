@@ -1,6 +1,5 @@
 ﻿using System;
 using _Project.Scripts.Savers;
-using _Project.Scripts.ScriptableObjects;
 
 namespace _Project.Scripts
 {

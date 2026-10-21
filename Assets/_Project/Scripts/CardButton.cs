@@ -11,8 +11,8 @@ namespace _Project.Scripts
         private const string LevelText = "Lvl";
         private const string CurrencySymbol = "$";
         
-        private readonly Color _affordableColor = Color.green;
-        private readonly Color _unaffordableColor = Color.red;
+        private  Color _affordableColor;
+        private  Color _unaffordableColor;
 
         private bool _canBuy;
         
@@ -26,6 +26,8 @@ namespace _Project.Scripts
 
         public void Initialize(int cost)
         {
+            _affordableColor = _costTextMesh.color;
+            _unaffordableColor = Color.red;
             _canBuy = true;
             _button.onClick.AddListener(ClickButton);
             _costTextMesh.text = cost + CurrencySymbol;
