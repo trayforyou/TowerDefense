@@ -9,9 +9,8 @@ using Cysharp.Threading.Tasks;
 using Firebase;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.MainMenuScene
 {
     public class GameStarter : MonoBehaviour
     {
@@ -23,15 +22,15 @@ namespace _Project.Scripts
         [SerializeField] private LevelConfig _levelConfig;
 
         private MetaMoneyBank _metaMoneyBank;
-        private MetaLevelController _metaLevelController; 
+        private MetaLevelController _metaLevelController;
         private FirebaseCreator _firebaseCreator;
         private FirebaseApp _firebaseApp;
         private MenuInfoCollector _menuInfoCollector;
         private Saver _saver;
         private MainUpgraderMenu _mainUpgraderMenu;
-        private int _metaCurrency;
         private UpgradeHandler _upgraderHandler;
         private MainGrowthCalculator _mainGrowthCalculator;
+        private int _metaCurrency;
 
         public event Action<int> OnGameStarted;
 
@@ -85,8 +84,5 @@ namespace _Project.Scripts
             OnGameStarted?.Invoke(_metaCurrency);
             SceneManager.LoadScene(_gameSceneName);
         }
-
-
-        //Для тестов
     }
 }

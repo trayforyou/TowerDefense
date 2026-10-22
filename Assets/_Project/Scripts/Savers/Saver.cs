@@ -12,7 +12,7 @@ namespace _Project.Scripts.Savers
 
         public void SaveLevels(SaveDataLevels dataLevels) =>
             Save(dataLevels, _levelsKey);
-        
+
         public SaveDataMoney LoadDataMoney() =>
             Load<SaveDataMoney>(_moneyKey);
 

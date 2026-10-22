@@ -24,7 +24,7 @@ namespace _Project.Scripts.Analytics.Firebase
                 if (FirebaseApp.DefaultInstance != null)
                     return FirebaseApp.DefaultInstance;
             }
-            catch (System.InvalidOperationException)
+            catch (InvalidOperationException)
             {
             }
             

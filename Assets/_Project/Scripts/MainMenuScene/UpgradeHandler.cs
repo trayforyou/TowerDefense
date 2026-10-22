@@ -1,7 +1,7 @@
 ﻿using System;
 using _Project.Scripts.ScriptableObjects;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.MainMenuScene
 {
     public class UpgradeHandler : IDisposable
     {

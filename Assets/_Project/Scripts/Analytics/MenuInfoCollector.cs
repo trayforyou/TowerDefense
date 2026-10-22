@@ -1,4 +1,5 @@
 ﻿using System;
+using _Project.Scripts.MainMenuScene;
 
 namespace _Project.Scripts.Analytics
 {

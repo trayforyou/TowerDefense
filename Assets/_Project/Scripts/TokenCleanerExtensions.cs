@@ -24,7 +24,7 @@ namespace _Project.Scripts
                     token.Dispose();
                 }
                 catch (ObjectDisposedException)
-                { 
+                {
                 }
             }
         }

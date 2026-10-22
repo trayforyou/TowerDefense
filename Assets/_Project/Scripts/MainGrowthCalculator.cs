@@ -7,22 +7,22 @@ namespace _Project.Scripts
     {
         private readonly LevelConfig _config;
 
-        public MainGrowthCalculator(LevelConfig config) => 
+        public MainGrowthCalculator(LevelConfig config) =>
             _config = config;
 
         public float GetCastleHealthMultiply(int level) =>
             Mathf.Pow(_config.CastleHealthMultiplier, level);
 
         public float GetCastleSpeedMultiply(int level) =>
-            Mathf.Pow(_config.CastleSpeedMultiplier, level);
+            Mathf.Max(Mathf.Pow(_config.CastleSpeedMultiplier, level), _config.MaxCastleSpeed);
 
         public float GetCastleDamageMultiply(int level) =>
             Mathf.Pow(_config.CastleDamageMultiplier, level);
 
         public float GetTowerSpeedMultiply(int level) =>
-            Mathf.Pow(_config.TowerSpeedMultiplier, level);
+            Mathf.Max(Mathf.Pow(_config.TowerSpeedMultiplier, level), _config.MaxTowerSpeed);
 
-        public float GetTowerDamageMultiply(int level) => 
+        public float GetTowerDamageMultiply(int level) =>
             Mathf.Pow(_config.TowerDamageMultiplier, level);
     }
 }

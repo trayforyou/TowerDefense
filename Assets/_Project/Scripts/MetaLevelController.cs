@@ -27,17 +27,6 @@ namespace _Project.Scripts
             InvokeAllLevels();
         }
 
-        private void LoadLevels()
-        {
-            SaveDataLevels data = _saver.LoadDataLevels();
-
-            _currentLevelCastleHealth = data.CastleHealthLevel;
-            _currentLevelCastleSpeed = data.CastleSpeedLevel;
-            _currentLevelCastleDamage = data.CastleDamageLevel;
-            _currentLevelTowerSpeed = data.TowersSpeedLevel;
-            _currentLevelTowerDamage = data.TowersDamageLevel;
-        }
-
         public void InvokeAllLevels()
         {
             OnLevelCastleHealthChanged?.Invoke(_currentLevelCastleHealth);
@@ -45,13 +34,6 @@ namespace _Project.Scripts
             OnLevelCastleDamageChanged?.Invoke(_currentLevelCastleDamage);
             OnLevelTowerSpeedChanged?.Invoke(_currentLevelTowerSpeed);
             OnLevelTowerDamageChanged?.Invoke(_currentLevelTowerDamage);
-        }
-
-        private void RefreshData()
-        {
-            SaveDataLevels data = new SaveDataLevels(_currentLevelCastleHealth, _currentLevelCastleDamage,
-                _currentLevelCastleSpeed, _currentLevelTowerDamage, _currentLevelTowerSpeed);
-            _saver.SaveLevels(data);
         }
 
         public void UpCastleHealth()
@@ -71,14 +53,14 @@ namespace _Project.Scripts
         public void UpCastleDamage()
         {
             _currentLevelCastleDamage++;
-            OnLevelCastleSpeedChanged?.Invoke(_currentLevelCastleDamage);
+            OnLevelCastleDamageChanged?.Invoke(_currentLevelCastleDamage);
             RefreshData();
         }
 
         public void UpTowerSpeed()
         {
             _currentLevelTowerSpeed++;
-            OnLevelCastleDamageChanged?.Invoke(_currentLevelTowerSpeed);
+            OnLevelTowerSpeedChanged?.Invoke(_currentLevelTowerSpeed);
             RefreshData();
         }
 
@@ -87,6 +69,24 @@ namespace _Project.Scripts
             _currentLevelTowerDamage++;
             OnLevelTowerDamageChanged?.Invoke(_currentLevelTowerDamage);
             RefreshData();
+        }
+
+        private void LoadLevels()
+        {
+            SaveDataLevels data = _saver.LoadDataLevels();
+
+            _currentLevelCastleHealth = data.CastleHealthLevel;
+            _currentLevelCastleSpeed = data.CastleSpeedLevel;
+            _currentLevelCastleDamage = data.CastleDamageLevel;
+            _currentLevelTowerSpeed = data.TowersSpeedLevel;
+            _currentLevelTowerDamage = data.TowersDamageLevel;
+        }
+
+        private void RefreshData()
+        {
+            SaveDataLevels data = new SaveDataLevels(_currentLevelCastleHealth, _currentLevelCastleDamage,
+                _currentLevelCastleSpeed, _currentLevelTowerDamage, _currentLevelTowerSpeed);
+            _saver.SaveLevels(data);
         }
     }
 }

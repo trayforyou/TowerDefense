@@ -10,22 +10,18 @@ namespace _Project.Scripts
         private readonly MoneyConfig _moneyConfig;
 
         private int _currentValue;
-        private bool _isInitializedConfig = false;
 
         public event Action<int> OnValueChanged;
 
-        public MetaMoneyBank(Saver saver, MoneyConfig moneyConfig) : this(saver)
-        {
-            _isInitializedConfig = true;
+        public MetaMoneyBank(Saver saver, MoneyConfig moneyConfig) : this(saver) =>
             _moneyConfig = moneyConfig;
-        }
 
         public MetaMoneyBank(Saver saver) =>
             _saver = saver;
 
         public int CalculateMoney(int waveCount, int enemiesDeath)
         {
-            if (!_isInitializedConfig)
+            if (_moneyConfig == null)
                 return 0;
 
             if (waveCount < 0 || enemiesDeath < 0)

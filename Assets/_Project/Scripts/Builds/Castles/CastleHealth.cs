@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace _Project.Scripts.Builds.Castles
+﻿namespace _Project.Scripts.Builds.Castles
 {
     public delegate void HealthChangedEventHandler(int currentHealth, int maxHealth);
 

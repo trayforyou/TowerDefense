@@ -1,10 +1,9 @@
 using System;
 using TMPro;
-using TMPro.SpriteAssetUtilities;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.MainMenuScene
 {
     public class MainMenu : MonoBehaviour
     {
@@ -17,6 +16,13 @@ namespace _Project.Scripts
         public event Action TriedLoadGame;
         public event Action OnClickUpgrade;
 
+        private void OnDestroy()
+        {
+            _metaMoneyBank.OnValueChanged -= ChangeValue;
+            _start.onClick.RemoveListener(ClickButtonStart);
+            _upgrade.onClick.RemoveListener(ClickButtonUpgrade);
+        }
+        
         public void Initialize(MetaMoneyBank bank)
         {
             ChangeValue(bank.GetBalance());
@@ -26,13 +32,6 @@ namespace _Project.Scripts
             _metaMoneyBank.OnValueChanged += ChangeValue;
             _start.onClick.AddListener(ClickButtonStart);
             _upgrade.onClick.AddListener(ClickButtonUpgrade);
-        }
-
-        private void OnDestroy()
-        {
-            _metaMoneyBank.OnValueChanged -= ChangeValue;
-            _start.onClick.RemoveListener(ClickButtonStart);
-            _upgrade.onClick.RemoveListener(ClickButtonUpgrade);
         }
 
         private void ChangeValue(int value) => 

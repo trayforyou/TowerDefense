@@ -41,12 +41,12 @@ namespace _Project.Scripts.Builds.Castles
             Damaged?.Invoke();
         }
 
-        public void SetConfig(CastleConfig config, Gun gun)
+        public void SetConfig(CastleConfig config, Gun gun,float healthMultiplier)
         {
             _gun = gun;
             _gun.SetShootPoint(_shootPoint.position);
 
-            CreateHealth(config);
+            CreateHealth(config, healthMultiplier);
             ValueChanged?.Invoke(_health.MaxPoints, _health.MaxPoints);
             
             _gun.FindAndShoot();
@@ -70,9 +70,9 @@ namespace _Project.Scripts.Builds.Castles
         private void ChangedHealthValue(int points, int maxPoints) =>
             ValueChanged?.Invoke(points, maxPoints);
 
-        private void CreateHealth(CastleConfig config)
+        private void CreateHealth(CastleConfig config, float healthMultiplier)
         {
-            _health = new CastleHealth(config.StartHealthCastle, config.UpgradeMultiplier);
+            _health = new CastleHealth((int)(config.StartHealthCastle * healthMultiplier), config.UpgradeMultiplier);
             _health.ValueChanged += ChangedHealthValue;
             _health.Died += Die;
             _health.RefreshInfo();

@@ -134,7 +134,8 @@ namespace _Project.Scripts.Session
                 _growthCalculator.GetCastleDamageMultiply(_levelData.CastleDamageLevel),
                 _growthCalculator.GetCastleSpeedMultiply(_levelData.CastleSpeedLevel)));
 
-            _castle.SetConfig(_castleConfig, tempGun);
+            _castle.SetConfig(_castleConfig, tempGun,
+                _growthCalculator.GetCastleHealthMultiply(_levelData.CastleHealthLevel));
             _sessionHandler.Start();
         }
 
@@ -148,7 +149,10 @@ namespace _Project.Scripts.Session
         }
 
         private Gun CreateGun(GunParameters parameters) =>
-            new(new Shooter(_shooterConfig, parameters.Damage, parameters.ShootDelay, _bulletPrefab),
-                new EnemyFinder(parameters.Radius, _shooterConfig, parameters.CenterFindPosition)); //TO DO внедрить множители внуть Gun, чтобы урон и скорость множились
+            new(
+                new Shooter(_shooterConfig, parameters.Damage, parameters.ShootDelay, _bulletPrefab,
+                    parameters.MainMultiplierDamage, parameters.MainMultiplierDelay),
+                new EnemyFinder(parameters.Radius, _shooterConfig,
+                    parameters.CenterFindPosition));
     }
 }

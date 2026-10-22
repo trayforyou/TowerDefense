@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using _Project.Scripts.Session;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.MainMenuScene
 {
     public class MainUpgraderMenu : GameInteractionMenu, IUIElement
     {
@@ -68,8 +68,6 @@ namespace _Project.Scripts
 
         private void SubscribeAll()
         {
-            Debug.Log("Происходит подписка на все кнопки");
-
             _buttonCastleHealth.OnClick += (UpCastleHealth);
             _buttonCastleSpeed.OnClick += (UpCastleSpeed);
             _buttonCastleDamage.OnClick += (UpCastleDamage);
