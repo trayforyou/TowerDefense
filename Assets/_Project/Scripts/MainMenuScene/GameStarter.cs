@@ -6,7 +6,6 @@ using _Project.Scripts.Savers;
 using _Project.Scripts.ScriptableObjects;
 using _Project.Scripts.Session;
 using Cysharp.Threading.Tasks;
-using Firebase;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -24,7 +23,6 @@ namespace _Project.Scripts.MainMenuScene
         private MetaMoneyBank _metaMoneyBank;
         private MetaLevelController _metaLevelController;
         private FirebaseCreator _firebaseCreator;
-        private FirebaseApp _firebaseApp;
         private MenuInfoCollector _menuInfoCollector;
         private Saver _saver;
         private MainUpgraderMenu _mainUpgraderMenu;
@@ -56,6 +54,7 @@ namespace _Project.Scripts.MainMenuScene
             {
                 _saver = new Saver();
                 _metaMoneyBank = new MetaMoneyBank(_saver);
+                _metaCurrency = _metaMoneyBank.GetBalance();
                 _metaLevelController = new MetaLevelController(_saver);
                 _mainGrowthCalculator = new MainGrowthCalculator(_levelConfig);
                 UICreator uICreator = new UICreator(_canvas);
@@ -68,7 +67,7 @@ namespace _Project.Scripts.MainMenuScene
                 FirebaseMenuInfoDispatcher menuInfoDispatcher = new FirebaseMenuInfoDispatcher();
                 _menuInfoCollector = new MenuInfoCollector(this, menuInfoDispatcher);
                 _startMenu.TriedLoadGame += LoadGame;
-                _loadingScreen.gameObject.SetActive(false);
+                _loadingScreen.gameObject.SetActive(false); 
             }
         }
 

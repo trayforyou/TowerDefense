@@ -9,7 +9,7 @@ namespace _Project.Scripts.Analytics.Firebase
     {
         public async UniTask<FirebaseApp> Initialize()
         {
-            FirebaseApp app = await GetFireBase();
+            FirebaseApp app = await GetFirebase();
 
             if (app != null)
                 return app;
@@ -17,7 +17,7 @@ namespace _Project.Scripts.Analytics.Firebase
             throw new Exception("Инициализация сорвалась. Ошибка сети.");
         }
 
-        private async UniTask<FirebaseApp> GetFireBase()
+        private async UniTask<FirebaseApp> GetFirebase()
         {
             try
             {
