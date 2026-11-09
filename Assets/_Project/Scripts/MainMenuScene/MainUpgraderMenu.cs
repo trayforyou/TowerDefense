@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using _Project.Scripts.Session;
@@ -14,12 +15,10 @@ namespace _Project.Scripts.MainMenuScene
         [SerializeField] private CardButton _buttonTowerSpeed;
         [SerializeField] private CardButton _buttonTowerDamage;
 
-        public event Action OnCloseMenu;
-        public event Action OnUpCastleSpeed;
-        public event Action OnUpCastleDamage;
-        public event Action OnUpCastleHealth;
-        public event Action OnUpTowersDamage;
-        public event Action OnUpTowersSpeed;
+        private Dictionary<MetaUpgradeType, CardButton> _cardButtons;
+
+        public event Action OnClickCloseMenu;
+        public event Action<MetaUpgradeType> OnClickUpgrade;
 
         protected override void OnDestroy() =>
             UnSubscribeAll();
@@ -32,76 +31,52 @@ namespace _Project.Scripts.MainMenuScene
             _buttonCastleDamage.Initialize(costCastleDamage);
             _buttonTowerSpeed.Initialize(costTowerSpeed);
             _buttonTowerDamage.Initialize(costTowerDamage);
-
+            InitializeCardButtons();
             SubscribeAll();
         }
 
-        public void SetCastleHealthLevel(int level, float growthMultiplier) =>
-            _buttonCastleHealth.SetLevel(level, growthMultiplier);
+        private CardButton GetCardButton(MetaUpgradeType type)
+        {
+            if (!_cardButtons.TryGetValue(type, out var button))
+                throw new ArgumentException($"Нет кнопки с типом {type.ToString()}");
+            
+            return button;
+        }
+        
+        public void SetLevel(MetaUpgradeType type, int level, float growthMultiplier) => 
+            GetCardButton(type).SetLevel(level, growthMultiplier);
 
-        public void SetCastleSpeedLevel(int level, float growthMultiplier) =>
-            _buttonCastleSpeed.SetLevel(level, growthMultiplier);
-
-        public void SetCastleDamageLevel(int level, float growthMultiplier) =>
-            _buttonCastleDamage.SetLevel(level, growthMultiplier);
-
-        public void SetTowerSpeedLevel(int level, float growthMultiplier) =>
-            _buttonTowerSpeed.SetLevel(level, growthMultiplier);
-
-        public void SetTowerDamageLevel(int level, float growthMultiplier) =>
-            _buttonTowerDamage.SetLevel(level, growthMultiplier);
-
-        public void SetCanBuyCastleHealth(bool value) =>
-            _buttonCastleHealth.SetCanBuy(value);
-
-        public void SetCanBuyCastleSpeed(bool value) =>
-            _buttonCastleSpeed.SetCanBuy(value);
-
-        public void SetCanBuyCastleDamage(bool value) =>
-            _buttonCastleDamage.SetCanBuy(value);
-
-        public void SetCanBuyTowerSpeed(bool value) =>
-            _buttonTowerSpeed.SetCanBuy(value);
-
-        public void SetCanBuyTowerDamage(bool value) =>
-            _buttonTowerDamage.SetCanBuy(value);
-
+        public void SetCanBuy(MetaUpgradeType type, bool value) => 
+            GetCardButton(type).SetCanBuy(value);
+        
+        private void InitializeCardButtons()
+        {
+            _cardButtons = new();
+            _cardButtons[MetaUpgradeType.CastleHealth] = _buttonCastleHealth;
+            _cardButtons[MetaUpgradeType.CastleSpeed] = _buttonCastleSpeed;
+            _cardButtons[MetaUpgradeType.CastleDamage] = _buttonCastleDamage;
+            _cardButtons[MetaUpgradeType.TowerSpeed] = _buttonTowerSpeed;
+            _cardButtons[MetaUpgradeType.TowerDamage] = _buttonTowerDamage;
+        }
+        
         private void SubscribeAll()
         {
-            _buttonCastleHealth.OnClick += (UpCastleHealth);
-            _buttonCastleSpeed.OnClick += (UpCastleSpeed);
-            _buttonCastleDamage.OnClick += (UpCastleDamage);
-            _buttonTowerSpeed.OnClick += (UpTowersSpeed);
-            _buttonTowerDamage.OnClick += (UpTowersDamage);
-            _closeMenu.onClick.AddListener(CloseMenu);
+            _buttonCastleHealth.OnClick += () => OnClickUpgrade?.Invoke(MetaUpgradeType.CastleHealth);
+            _buttonCastleSpeed.OnClick += () => OnClickUpgrade?.Invoke(MetaUpgradeType.CastleSpeed);
+            _buttonCastleDamage.OnClick += () => OnClickUpgrade?.Invoke(MetaUpgradeType.CastleDamage);
+            _buttonTowerSpeed.OnClick += () => OnClickUpgrade?.Invoke(MetaUpgradeType.TowerSpeed);
+            _buttonTowerDamage.OnClick += () => OnClickUpgrade?.Invoke(MetaUpgradeType.TowerDamage);
+            _closeMenu.onClick.AddListener(( )=> OnClickCloseMenu?.Invoke());
         }
 
         private void UnSubscribeAll()
         {
-            _buttonCastleHealth.OnClick -= (UpCastleHealth);
-            _buttonCastleSpeed.OnClick -= (UpCastleSpeed);
-            _buttonCastleDamage.OnClick -= (UpCastleDamage);
-            _buttonTowerSpeed.OnClick -= (UpTowersSpeed);
-            _buttonTowerDamage.OnClick -= (UpTowersDamage);
-            _closeMenu.onClick.RemoveListener(CloseMenu);
+            _buttonCastleHealth.ClearSubscribers();
+            _buttonCastleSpeed.ClearSubscribers();
+            _buttonCastleDamage.ClearSubscribers();
+            _buttonTowerSpeed.ClearSubscribers();
+            _buttonTowerDamage.ClearSubscribers();
+            _closeMenu.onClick.RemoveAllListeners();
         }
-
-        private void UpTowersDamage() =>
-            OnUpTowersDamage?.Invoke();
-
-        private void UpTowersSpeed() =>
-            OnUpTowersSpeed?.Invoke();
-
-        private void UpCastleDamage() =>
-            OnUpCastleDamage?.Invoke();
-
-        private void UpCastleSpeed() =>
-            OnUpCastleSpeed?.Invoke();
-
-        private void UpCastleHealth() => 
-            OnUpCastleHealth?.Invoke();
-
-        private void CloseMenu() =>
-            OnCloseMenu?.Invoke();
     }
 }

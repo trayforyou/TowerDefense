@@ -1,27 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
 using _Project.Scripts.Savers;
 
 namespace _Project.Scripts
 {
+    public delegate void LevelChangedHandler(MetaUpgradeType upgradeType, int level);
+
     public class MetaLevelController
     {
         private readonly Saver _saver;
 
-        private int _currentLevelCastleHealth;
-        private int _currentLevelCastleSpeed;
-        private int _currentLevelCastleDamage;
-        private int _currentLevelTowerSpeed;
-        private int _currentLevelTowerDamage;
+        private Dictionary<MetaUpgradeType, int> _currentLevels;
 
-        public event Action<int> OnLevelCastleHealthChanged;
-        public event Action<int> OnLevelCastleSpeedChanged;
-        public event Action<int> OnLevelCastleDamageChanged;
-        public event Action<int> OnLevelTowerSpeedChanged;
-        public event Action<int> OnLevelTowerDamageChanged;
+        public event LevelChangedHandler OnLevelChanged;
 
         public MetaLevelController(Saver saver)
         {
             _saver = saver;
+            _currentLevels = new();
+
+            foreach (MetaUpgradeType type in Enum.GetValues(typeof(MetaUpgradeType)))
+                _currentLevels[type] = 0;
 
             LoadLevels();
             InvokeAllLevels();
@@ -29,45 +28,17 @@ namespace _Project.Scripts
 
         public void InvokeAllLevels()
         {
-            OnLevelCastleHealthChanged?.Invoke(_currentLevelCastleHealth);
-            OnLevelCastleSpeedChanged?.Invoke(_currentLevelCastleSpeed);
-            OnLevelCastleDamageChanged?.Invoke(_currentLevelCastleDamage);
-            OnLevelTowerSpeedChanged?.Invoke(_currentLevelTowerSpeed);
-            OnLevelTowerDamageChanged?.Invoke(_currentLevelTowerDamage);
+            foreach (var pair in _currentLevels)
+                OnLevelChanged?.Invoke(pair.Key, pair.Value);
         }
 
-        public void UpCastleHealth()
+        public void UpLevel(MetaUpgradeType upgradeType)
         {
-            _currentLevelCastleHealth++;
-            OnLevelCastleHealthChanged?.Invoke(_currentLevelCastleHealth);
-            RefreshData();
-        }
+            if (_currentLevels.ContainsKey(upgradeType) == false)
+                throw new ArgumentException($"There is no such upgrade type: {upgradeType}");
 
-        public void UpCastleSpeed()
-        {
-            _currentLevelCastleSpeed++;
-            OnLevelCastleSpeedChanged?.Invoke(_currentLevelCastleSpeed);
-            RefreshData();
-        }
-
-        public void UpCastleDamage()
-        {
-            _currentLevelCastleDamage++;
-            OnLevelCastleDamageChanged?.Invoke(_currentLevelCastleDamage);
-            RefreshData();
-        }
-
-        public void UpTowerSpeed()
-        {
-            _currentLevelTowerSpeed++;
-            OnLevelTowerSpeedChanged?.Invoke(_currentLevelTowerSpeed);
-            RefreshData();
-        }
-
-        public void UpTowerDamage()
-        {
-            _currentLevelTowerDamage++;
-            OnLevelTowerDamageChanged?.Invoke(_currentLevelTowerDamage);
+            _currentLevels[upgradeType]++;
+            OnLevelChanged?.Invoke(upgradeType, _currentLevels[upgradeType]);
             RefreshData();
         }
 
@@ -75,17 +46,13 @@ namespace _Project.Scripts
         {
             SaveDataLevels data = _saver.LoadDataLevels();
 
-            _currentLevelCastleHealth = data.CastleHealthLevel;
-            _currentLevelCastleSpeed = data.CastleSpeedLevel;
-            _currentLevelCastleDamage = data.CastleDamageLevel;
-            _currentLevelTowerSpeed = data.TowersSpeedLevel;
-            _currentLevelTowerDamage = data.TowersDamageLevel;
+            foreach (MetaUpgradeType type in Enum.GetValues(typeof(MetaUpgradeType))) 
+                _currentLevels[type] = data.GetLevel(type);
         }
 
         private void RefreshData()
         {
-            SaveDataLevels data = new SaveDataLevels(_currentLevelCastleHealth, _currentLevelCastleDamage,
-                _currentLevelCastleSpeed, _currentLevelTowerDamage, _currentLevelTowerSpeed);
+            SaveDataLevels data = new SaveDataLevels(_currentLevels);
             _saver.SaveLevels(data);
         }
     }

@@ -42,6 +42,9 @@ namespace _Project.Scripts.MainMenuScene
             _costTextMesh.text = cost + CurrencySymbol;
         }
 
+        public void ClearSubscribers() => 
+            OnClick = null;
+
         public void SetLevel(int level, float multiplier)
         {
             _growthTextMesh.text = MultiplySymbol + multiplier.ToString(GrowTextFormat);

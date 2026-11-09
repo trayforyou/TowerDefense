@@ -29,7 +29,7 @@ namespace _Project.Scripts.MainMenuScene
             _menu = menu;
 
             SubscribeAll();
-            ChangeOpportunitiesBuy(_bank.GetBalance()); 
+            ChangeOpportunitiesBuy(_bank.GetBalance());
         }
 
         public void Dispose() =>
@@ -37,90 +37,48 @@ namespace _Project.Scripts.MainMenuScene
 
         private void SubscribeAll()
         {
-            _levelController.OnLevelCastleHealthChanged += ChangeLevelCastleHealth;
-            _levelController.OnLevelCastleSpeedChanged += ChangeLevelCastleSpeed;
-            _levelController.OnLevelCastleDamageChanged += ChangeLevelCastleDamage;
-            _levelController.OnLevelTowerSpeedChanged += ChangeLevelTowerSpeed;
-            _levelController.OnLevelTowerDamageChanged += ChangeLevelTowerDamage;
+            _levelController.OnLevelChanged += ChangeLevel;
             _menu.OnClickUpgrade += OpenUpgraderMenu;
-            _upgraderMenu.OnCloseMenu += CloseMenu;
-            _upgraderMenu.OnUpCastleHealth += UpCastleHealth;
-            _upgraderMenu.OnUpCastleSpeed += UpCastleSpeed;
-            _upgraderMenu.OnUpCastleDamage += UpCastleDamage;
-            _upgraderMenu.OnUpTowersSpeed += UpTowersSpeed;
-            _upgraderMenu.OnUpTowersDamage += UpTowersDamage;
+            _upgraderMenu.OnClickCloseMenu += CloseMenu;
+            _upgraderMenu.OnClickUpgrade += Upgrade;
             _bank.OnValueChanged += ChangeOpportunitiesBuy;
         }
 
         private void UnSubscribeAll()
         {
-            _levelController.OnLevelCastleHealthChanged -= ChangeLevelCastleHealth;
-            _levelController.OnLevelCastleSpeedChanged -= ChangeLevelCastleSpeed;
-            _levelController.OnLevelCastleDamageChanged -= ChangeLevelCastleDamage;
-            _levelController.OnLevelTowerSpeedChanged -= ChangeLevelTowerSpeed;
-            _levelController.OnLevelTowerDamageChanged -= ChangeLevelTowerDamage;
+            _levelController.OnLevelChanged -= ChangeLevel;
             _menu.OnClickUpgrade -= OpenUpgraderMenu;
-            _upgraderMenu.OnCloseMenu -= CloseMenu;
-            _upgraderMenu.OnUpCastleHealth -= UpCastleHealth;
-            _upgraderMenu.OnUpCastleSpeed -= UpCastleSpeed;
-            _upgraderMenu.OnUpCastleDamage -= UpCastleDamage;
-            _upgraderMenu.OnUpTowersSpeed -= UpTowersSpeed;
-            _upgraderMenu.OnUpTowersDamage -= UpTowersDamage;
+            _upgraderMenu.OnClickCloseMenu -= CloseMenu;
+            _upgraderMenu.OnClickUpgrade -= Upgrade;
             _bank.OnValueChanged -= ChangeOpportunitiesBuy;
         }
 
         private void ChangeOpportunitiesBuy(int count)
         {
-            _upgraderMenu.SetCanBuyCastleHealth(count >= _config.CastleHealthUpCost);
-            _upgraderMenu.SetCanBuyCastleSpeed(count >= _config.CastleSpeedUpCost);
-            _upgraderMenu.SetCanBuyCastleDamage(count >= _config.CastleDamageUpCost);
-            _upgraderMenu.SetCanBuyTowerSpeed(count >= _config.TowerSpeedUpCost);
-            _upgraderMenu.SetCanBuyTowerDamage(count >= _config.TowerDamageUpCost);
+            _upgraderMenu.SetCanBuy(MetaUpgradeType.CastleHealth, count >= _config.CastleHealthUpCost);
+            _upgraderMenu.SetCanBuy(MetaUpgradeType.CastleSpeed, count >= _config.CastleSpeedUpCost);
+            _upgraderMenu.SetCanBuy(MetaUpgradeType.CastleDamage, count >= _config.CastleDamageUpCost);
+            _upgraderMenu.SetCanBuy(MetaUpgradeType.TowerSpeed, count >= _config.TowerSpeedUpCost);
+            _upgraderMenu.SetCanBuy(MetaUpgradeType.TowerDamage, count >= _config.TowerDamageUpCost);
         }
 
-        private void ChangeLevelCastleHealth(int level) =>
-            _upgraderMenu.SetCastleHealthLevel(level, _calculator.GetCastleHealthMultiply(level));
+        private void ChangeLevel(MetaUpgradeType type, int level) =>
+            _upgraderMenu.SetLevel(type, level, _calculator.GetMultiply(type, level));
 
-        private void ChangeLevelCastleSpeed(int level) =>
-            _upgraderMenu.SetCastleSpeedLevel(level, _calculator.GetCastleSpeedMultiply(level));
-
-        private void ChangeLevelCastleDamage(int level) =>
-            _upgraderMenu.SetCastleDamageLevel(level, _calculator.GetCastleDamageMultiply(level));
-
-        private void ChangeLevelTowerSpeed(int level) =>
-            _upgraderMenu.SetTowerSpeedLevel(level, _calculator.GetTowerSpeedMultiply(level));
-
-        private void ChangeLevelTowerDamage(int level) =>
-            _upgraderMenu.SetTowerDamageLevel(level, _calculator.GetTowerDamageMultiply(level));
-
-        private void UpTowersDamage()
+        private void Upgrade(MetaUpgradeType type)
         {
-            if (_bank.TryGetMoney(_config.TowerDamageUpCost))
-                _levelController.UpTowerDamage();
-        }
+            int cost = type switch
+            {
+                MetaUpgradeType.CastleHealth => _config.CastleHealthUpCost,
+                MetaUpgradeType.CastleDamage => _config.CastleDamageUpCost,
+                MetaUpgradeType.CastleSpeed => _config.CastleSpeedUpCost,
+                MetaUpgradeType.TowerDamage => _config.TowerDamageUpCost,
+                MetaUpgradeType.TowerSpeed => _config.TowerSpeedUpCost,
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
 
-        private void UpTowersSpeed()
-        {
-            if (_bank.TryGetMoney(_config.TowerSpeedUpCost))
-                _levelController.UpTowerSpeed();
-        }
-
-        private void UpCastleDamage()
-        {
-            if (_bank.TryGetMoney(_config.CastleDamageUpCost))
-                _levelController.UpCastleDamage();
-        }
-
-        private void UpCastleSpeed()
-        {
-            if (_bank.TryGetMoney(_config.CastleSpeedUpCost))
-                _levelController.UpCastleSpeed();
-        }
-
-        private void UpCastleHealth()
-        {
-            if (_bank.TryGetMoney(_config.CastleHealthUpCost))
-                _levelController.UpCastleHealth();
+            if (_bank.TryGetMoney(cost))
+                _levelController.UpLevel(type);
         }
 
         private void OpenUpgraderMenu()

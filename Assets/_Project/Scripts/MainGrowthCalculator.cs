@@ -1,4 +1,6 @@
-﻿using _Project.Scripts.ScriptableObjects;
+﻿using System;
+using System.Collections.Generic;
+using _Project.Scripts.ScriptableObjects;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -6,23 +8,33 @@ namespace _Project.Scripts
     public class MainGrowthCalculator
     {
         private readonly LevelConfig _config;
+        private Dictionary<MetaUpgradeType, UpgradeCalculateParameters> _multipliers;
 
-        public MainGrowthCalculator(LevelConfig config) =>
+        public MainGrowthCalculator(LevelConfig config)
+        {
             _config = config;
+            InitializeMultipliers();
+        }
 
-        public float GetCastleHealthMultiply(int level) =>
-            Mathf.Pow(_config.CastleHealthMultiplier, level);
+        public float GetMultiply(MetaUpgradeType type, int level)
+        {
+            if (!_multipliers.TryGetValue(type, out UpgradeCalculateParameters parameters))
+                throw new ArgumentException($"В калькуляторе нет множителя для типа {type.ToString()}");
 
-        public float GetCastleSpeedMultiply(int level) =>
-            Mathf.Max(Mathf.Pow(_config.CastleSpeedMultiplier, level), _config.MaxCastleSpeed);
+            return Mathf.Max(Mathf.Pow(parameters.Multiplier, level), parameters.MaxLimit);
+        }
 
-        public float GetCastleDamageMultiply(int level) =>
-            Mathf.Pow(_config.CastleDamageMultiplier, level);
+        private void InitializeMultipliers()
+        {
+            _multipliers = new();
 
-        public float GetTowerSpeedMultiply(int level) =>
-            Mathf.Max(Mathf.Pow(_config.TowerSpeedMultiplier, level), _config.MaxTowerSpeed);
-
-        public float GetTowerDamageMultiply(int level) =>
-            Mathf.Pow(_config.TowerDamageMultiplier, level);
+            _multipliers[MetaUpgradeType.CastleHealth] = new UpgradeCalculateParameters(_config.CastleHealthMultiplier);
+            _multipliers[MetaUpgradeType.CastleDamage] = new UpgradeCalculateParameters(_config.CastleDamageMultiplier);
+            _multipliers[MetaUpgradeType.TowerDamage] = new UpgradeCalculateParameters(_config.TowerDamageMultiplier);
+            _multipliers[MetaUpgradeType.CastleSpeed] =
+                new UpgradeCalculateParameters(_config.CastleSpeedMultiplier, _config.MaxCastleSpeed);
+            _multipliers[MetaUpgradeType.TowerSpeed] =
+                new UpgradeCalculateParameters(_config.TowerSpeedMultiplier, _config.MaxTowerSpeed);
+        }
     }
 }

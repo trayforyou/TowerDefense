@@ -1,33 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace _Project.Scripts.Savers
 {
     [Serializable]
     public class SaveDataLevels : ISaveData
     {
-        public int CastleHealthLevel;
-        public int CastleDamageLevel;
-        public int CastleSpeedLevel;
-        public int TowersDamageLevel;
-        public int TowersSpeedLevel;
+        public List<LevelDataPair> Levels;
 
         public SaveDataLevels()
         {
-            CastleHealthLevel = 0;
-            CastleDamageLevel = 0;
-            CastleSpeedLevel = 0;
-            TowersDamageLevel = 0;
-            TowersSpeedLevel = 0;
+            Levels = new();
+
+            foreach (MetaUpgradeType type in Enum.GetValues(typeof(MetaUpgradeType)))
+                Levels.Add(new LevelDataPair(type, 0));
         }
 
-        public SaveDataLevels(int castleHealthLevel, int castleDamageLevel, int castleSpeedLevel,
-            int towersDamageLevel, int towersSpeedLevel)
+        public int GetLevel(MetaUpgradeType upgradeType)
         {
-            CastleHealthLevel = castleHealthLevel;
-            CastleDamageLevel = castleDamageLevel;
-            CastleSpeedLevel = castleSpeedLevel;
-            TowersDamageLevel = towersDamageLevel;
-            TowersSpeedLevel = towersSpeedLevel;
+            foreach (LevelDataPair pair in Levels)
+            {
+                if (pair.UpgradeType == upgradeType)
+                    return pair.UpgradeLevel;
+            }
+            
+            throw new Exception($"Level {upgradeType} not found");
+        }
+
+        public SaveDataLevels(Dictionary<MetaUpgradeType, int> upgrades)
+        {
+            Levels = new();
+
+            foreach (var pair in upgrades)
+                Levels.Add(new LevelDataPair(pair.Key, pair.Value));
         }
     }
 }
