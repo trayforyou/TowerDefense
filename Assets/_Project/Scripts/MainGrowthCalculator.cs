@@ -21,6 +21,9 @@ namespace _Project.Scripts
             if (!_multipliers.TryGetValue(type, out UpgradeCalculateParameters parameters))
                 throw new ArgumentException($"В калькуляторе нет множителя для типа {type.ToString()}");
 
+            if (Mathf.Approximately(parameters.MaxLimit, float.MaxValue))
+                return Mathf.Pow(parameters.Multiplier, level);
+
             return Mathf.Max(Mathf.Pow(parameters.Multiplier, level), parameters.MaxLimit);
         }
 

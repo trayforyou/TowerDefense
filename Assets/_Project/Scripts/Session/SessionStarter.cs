@@ -101,8 +101,10 @@ namespace _Project.Scripts.Session
             _disposables.Add(_moneyCollector);
             _buildValidator = new BuildValidator(_castle, _buildConfig.MinDistanceForBuilding);
             _firingSwitch = new FiringSwitch();
-            float damageTowerMultiplier = _growthCalculator.GetTowerDamageMultiply(_levelData.TowersDamageLevel);
-            float delayTowerMultiplier = _growthCalculator.GetTowerSpeedMultiply(_levelData.TowersSpeedLevel);
+            float damageTowerMultiplier = _growthCalculator.GetMultiply(MetaUpgradeType.TowerDamage,
+                _levelData.GetLevel(MetaUpgradeType.TowerDamage));
+            float delayTowerMultiplier = _growthCalculator.GetMultiply(MetaUpgradeType.TowerSpeed,
+                _levelData.GetLevel(MetaUpgradeType.TowerSpeed));
             _strongBuilder = new TowerBuilder(_strongTowerPrefab, _strongTowerConfig, _wallet,
                 _buildConfig.StrongTowerCost, CreateGun, _firingSwitch, damageTowerMultiplier, delayTowerMultiplier);
             _fastBuilder = new TowerBuilder(_fastTowerPrefab, _fastTowerConfig, _wallet, _buildConfig.FastTowerCost,
@@ -131,11 +133,14 @@ namespace _Project.Scripts.Session
         {
             Gun tempGun = CreateGun(new GunParameters(_castleConfig.StartDamageCastle,
                 _castleConfig.StartDelayShootCastle, _castleConfig.RadiusRangeCastle, _castle.transform.position,
-                _growthCalculator.GetCastleDamageMultiply(_levelData.CastleDamageLevel),
-                _growthCalculator.GetCastleSpeedMultiply(_levelData.CastleSpeedLevel)));
+                _growthCalculator.GetMultiply(MetaUpgradeType.CastleDamage,
+                    _levelData.GetLevel(MetaUpgradeType.CastleDamage)),
+                _growthCalculator.GetMultiply(MetaUpgradeType.CastleSpeed,
+                    _levelData.GetLevel(MetaUpgradeType.CastleSpeed))));
 
             _castle.SetConfig(_castleConfig, tempGun,
-                _growthCalculator.GetCastleHealthMultiply(_levelData.CastleHealthLevel));
+                _growthCalculator.GetMultiply(MetaUpgradeType.CastleHealth,
+                    _levelData.GetLevel(MetaUpgradeType.CastleHealth)));
             _sessionHandler.Start();
         }
 

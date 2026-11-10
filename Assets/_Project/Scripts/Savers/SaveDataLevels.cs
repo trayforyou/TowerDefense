@@ -24,7 +24,7 @@ namespace _Project.Scripts.Savers
                     return pair.UpgradeLevel;
             }
             
-            throw new Exception($"Level {upgradeType} not found");
+            throw new Exception($"Уровень {upgradeType.ToString()} не найден");
         }
 
         public SaveDataLevels(Dictionary<MetaUpgradeType, int> upgrades)
